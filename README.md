@@ -4,7 +4,7 @@ Trustful is a cutting-edge reputation aggregator designed to mitigate the risks 
 
 Trustful aims to revolutionize governance in DAOs by providing a seamless reputation aggregator system. Leveraging the principles of "Valocracy," Trustful uses blockchain technology to create a new social, economic, and political framework that empowers communities and individuals. The platform allows DAOs to define reputation based on their unique values, ensuring that aggregated data aligns with organizational standards and members' contributions.
 
-![alt text](image.png)
+![alt text](./docs/Hypercube.png)
 
 ## Pre-Requisites
 - node.js installed (developed on LTS v18)
