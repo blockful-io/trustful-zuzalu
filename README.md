@@ -1,4 +1,4 @@
-# Trustful-Zanzalu
+# Trustful-Zuzalu
 
 Trustful is a cutting-edge reputation aggregator designed to mitigate the risks of plutocracy and bribery within DAOs. By matching governance and efforts through a transparent and decentralized reputation aggregator system, Trustful enhances organizational efficiency and promotes fairer and onchain data-based decision-making processes.
 
@@ -7,6 +7,7 @@ Trustful aims to revolutionize governance in DAOs by providing a seamless reputa
 ![alt text](./docs/Hypercube.png)
 
 ## Pre-Requisites
+
 - node.js installed (developed on LTS v18)
 - typescript installed (developed on v5.3.3)
 - bun or pnpm or yarn or npm installed
@@ -15,12 +16,15 @@ Trustful aims to revolutionize governance in DAOs by providing a seamless reputa
 ## Installation
 
 ### Forkin the repository
+
 Fork this repository by:
+
 1. Clicking in the arrow aside from the `fork`
 2. Unmark the option `Copy the main branch only`
 3. Click `Create fork`
 
 ### Cloning the repository
+
 Open the VsCode or other IDE editor, and enteder the following command in the cmd:
 
 `git clone https://github.com/YourUserName/trustful-zuzalu.git`
@@ -30,11 +34,11 @@ Open the VsCode or other IDE editor, and enteder the following command in the cm
 Install all package dependencies by running:
 
 `bun install`
- or
+or
 `pnpm install`
- or
+or
 `yarn install`
- or
+or
 `npm install`
 
 ### Configure the `.env.example` file
@@ -50,11 +54,11 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID = "Project ID needed for WalletConnect v2 h
 First, run the development server:
 
 `bun dev`
- or
+or
 `pnpm dev`
- or
+or
 `yarn dev`
- or
+or
 `npm run dev`
 
 Open http://localhost:3000 with your browser.
