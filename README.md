@@ -1,8 +1,12 @@
 # Trustful-Zuzalu
 
-Trustful is a cutting-edge reputation aggregator designed to mitigate the risks of plutocracy and bribery within DAOs. By matching governance and efforts through a transparent and decentralized reputation aggregator system, Trustful enhances organizational efficiency and promotes fairer and onchain data-based decision-making processes.
+## It's time to break the reputation silos. Trustful is coming!
+Trustful is a cross-community reputation aggregator based on the concepts of Valocracy and Trust Networks. It’s an open-source software that enables users to import reputation badges from other systems or create new ones, allowing those to be used in multiple communities with little to no need for structural adaptation.
 
-Trustful aims to revolutionize governance in DAOs by providing a seamless reputation aggregator system. Leveraging the principles of "Valocracy," Trustful uses blockchain technology to create a new social, economic, and political framework that empowers communities and individuals. The platform allows DAOs to define reputation based on their unique values, ensuring that aggregated data aligns with organizational standards and members' contributions.
+[ZuVillage Georgia](https://zuvillage-georgia.framer.website/wiki) will be the first to test the MVP of Trustful, an advanced reputation aggregator. Trustful aims to foster real connections and deep dialogues, facilitating check-in processes and enabling attestations of the quality of interactions and the convergence of ideas. By integrating Trustful into ZuVillage Georgia, we aim to create an environment where reputation is defined and recognized based on the community's unique values, ensuring that members' contributions and interactions are duly valued.
+
+This first OP version for ZuVillage Georgia will focus on creating new Statement Badges and it will allow organizers and attendants of a Zuzalu pop-up village event to give badges to each other in recognition of their contributions and knowledge. This mobile-first version aims to enable the community to create its first badges, which members will later use to generate Reputation Scores.
+
 
 ![alt text](./docs/Hypercube.png)
 
