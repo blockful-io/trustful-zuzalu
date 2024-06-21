@@ -66,3 +66,7 @@ or
 `npm run dev`
 
 Open http://localhost:3000 with your browser.
+
+
+
+<a href="https://twitter.com/@blockful_io" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="@blockful_io" height="30" width="40" /></a>
