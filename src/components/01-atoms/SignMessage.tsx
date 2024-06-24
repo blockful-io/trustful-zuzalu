@@ -10,7 +10,7 @@ import { Button, Input, VStack } from "@chakra-ui/react";
 
 import { useSignMessageHook, useNotify } from "@/hooks";
 
-const SignMessage: FC = () => {
+export const SignMessage: FC = () => {
   const { signature, recoveredAddress, error, isPending, signMessage } =
     useSignMessageHook();
   const [messageAuth, setMessageAuth] = useState<string>("");
@@ -67,5 +67,3 @@ const SignMessage: FC = () => {
     </VStack>
   );
 };
-
-export default SignMessage;

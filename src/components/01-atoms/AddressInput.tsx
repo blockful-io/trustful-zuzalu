@@ -13,7 +13,7 @@ import { useEnsResolver } from "wagmi";
 
 import { useDebounce, useNotify } from "@/hooks";
 
-import Jazzicons from "./Jazzicons";
+import { Jazzicons } from "./Jazzicons";
 import warningImage from "../../../public/img/warning.svg";
 
 interface AddressInputProps {
@@ -21,7 +21,10 @@ interface AddressInputProps {
   setReceiver: (receiver: string) => void;
 }
 
-const AddressInput: FC<AddressInputProps> = ({ receiver, setReceiver }) => {
+export const AddressInput: FC<AddressInputProps> = ({
+  receiver,
+  setReceiver,
+}) => {
   const {
     data: resolvedAddress,
     isLoading: isResolvingInProgress,
@@ -104,5 +107,3 @@ const AddressInput: FC<AddressInputProps> = ({ receiver, setReceiver }) => {
     </Box>
   );
 };
-
-export default AddressInput;

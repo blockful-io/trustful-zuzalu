@@ -4,8 +4,7 @@ import { type FC } from "react";
 import { Box, Divider, Flex, Heading, useColorMode } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
-import styles from "@/styles/mainPane.module.css";
-
+import { SignMessage } from "@/components/01-atoms";
 import {
   Status,
   Address,
@@ -13,10 +12,10 @@ import {
   Balance,
   BlockNumber,
   TransferNative,
-  SignMessage,
-} from "./components";
+} from "@/components/02-molecules";
+import styles from "@/styles/mainPane.module.css";
 
-const MainPane: FC = () => {
+export const MainPane: FC = () => {
   const { isConnected } = useAccount();
   const { colorMode } = useColorMode();
 
@@ -59,5 +58,3 @@ const MainPane: FC = () => {
     </Box>
   );
 };
-
-export default MainPane;

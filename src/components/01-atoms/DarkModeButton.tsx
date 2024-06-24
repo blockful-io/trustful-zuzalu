@@ -3,7 +3,7 @@ import { type FC } from "react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Button, useColorMode } from "@chakra-ui/react";
 
-const DarkModeButton: FC = () => {
+export const DarkModeButton: FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -21,5 +21,3 @@ const DarkModeButton: FC = () => {
     </Button>
   );
 };
-
-export default DarkModeButton;

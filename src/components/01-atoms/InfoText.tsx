@@ -7,7 +7,11 @@ interface InfoTextProps extends BoxProps {
   value: string | undefined;
 }
 
-const InfoText: FC<InfoTextProps> = ({ label, value = "N/A", ...props }) => (
+export const InfoText: FC<InfoTextProps> = ({
+  label,
+  value = "N/A",
+  ...props
+}) => (
   <Text {...props}>
     {label}:{" "}
     <Text as="span" fontWeight="800">
@@ -15,5 +19,3 @@ const InfoText: FC<InfoTextProps> = ({ label, value = "N/A", ...props }) => (
     </Text>
   </Text>
 );
-
-export default InfoText;

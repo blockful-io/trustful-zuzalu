@@ -4,7 +4,7 @@ import { type FC } from "react";
 import { Box } from "@chakra-ui/react";
 import Link from "next/link";
 
-const Footer: FC = () => {
+export const Footer: FC = () => {
   return (
     <Box
       as="footer"
@@ -24,5 +24,3 @@ const Footer: FC = () => {
     </Box>
   );
 };
-
-export default Footer;

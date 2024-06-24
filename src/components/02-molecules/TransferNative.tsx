@@ -13,10 +13,10 @@ import {
 import { isAddress, parseEther } from "viem";
 import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 
-import { AddressInput } from "@/components";
+import { AddressInput } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 
-const TransferNative: FC = () => {
+export const TransferNative: FC = () => {
   const { data, error, isPending, isError, sendTransaction } =
     useSendTransaction();
   const { data: receipt, isLoading } = useWaitForTransactionReceipt({
@@ -100,5 +100,3 @@ const TransferNative: FC = () => {
     </VStack>
   );
 };
-
-export default TransferNative;

@@ -2,9 +2,9 @@ import { type FC } from "react";
 
 import { useAccount } from "wagmi";
 
-import { InfoText } from "@/components";
+import { InfoText } from "@/components/01-atoms";
 
-const Status: FC = (): JSX.Element => {
+export const Status: FC = (): JSX.Element => {
   const { isConnecting, isConnected } = useAccount();
 
   const statusMapping = {
@@ -22,5 +22,3 @@ const Status: FC = (): JSX.Element => {
 
   return <InfoText label="Account status" value={status} />;
 };
-
-export default Status;

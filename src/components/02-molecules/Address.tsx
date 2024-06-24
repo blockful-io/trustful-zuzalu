@@ -2,11 +2,11 @@ import { type FC } from "react";
 
 import { useAccount, useEnsName } from "wagmi";
 
-import { InfoText } from "@/components";
+import { InfoText } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks";
 import { getEllipsisTxt } from "@/utils/formatters";
 
-const Address: FC = (): JSX.Element => {
+export const Address: FC = (): JSX.Element => {
   const { address } = useAccount();
   const { data: ensName } = useEnsName({ address });
   const { isTablet } = useWindowSize();
@@ -16,5 +16,3 @@ const Address: FC = (): JSX.Element => {
 
   return <InfoText label="Address" value={ensName ?? displayedAddress} />;
 };
-
-export default Address;
