@@ -11,7 +11,8 @@ const Address: FC = (): JSX.Element => {
   const { data: ensName } = useEnsName({ address });
   const { isTablet } = useWindowSize();
 
-  const displayedAddress = isTablet && address ? getEllipsisTxt(address, 4) : address;
+  const displayedAddress =
+    isTablet && address ? getEllipsisTxt(address, 4) : address;
 
   return <InfoText label="Address" value={ensName ?? displayedAddress} />;
 };

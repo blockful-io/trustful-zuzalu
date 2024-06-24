@@ -1,6 +1,12 @@
 import React, { useCallback, type FC, type ChangeEvent } from "react";
 
-import { Box, Input, InputGroup, InputLeftAddon, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Spinner,
+} from "@chakra-ui/react";
 import Image from "next/image";
 import { isAddress, zeroAddress } from "viem";
 import { useEnsResolver } from "wagmi";
@@ -28,7 +34,8 @@ const AddressInput: FC<AddressInputProps> = ({ receiver, setReceiver }) => {
   const debouncedReceiver = useDebounce(receiver, 2000);
   const { notifyError } = useNotify();
 
-  const isValidEthAddress = (value: string) => value.startsWith("0x") && value.length === 42;
+  const isValidEthAddress = (value: string) =>
+    value.startsWith("0x") && value.length === 42;
 
   const handleInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>): void => {
@@ -47,7 +54,14 @@ const AddressInput: FC<AddressInputProps> = ({ receiver, setReceiver }) => {
         });
       }
     },
-    [resolvedAddress, debouncedReceiver, isError, error?.message, notifyError, setReceiver],
+    [
+      resolvedAddress,
+      debouncedReceiver,
+      isError,
+      error?.message,
+      notifyError,
+      setReceiver,
+    ],
   );
 
   const getAddonContent = (): JSX.Element | null => {
@@ -58,7 +72,8 @@ const AddressInput: FC<AddressInputProps> = ({ receiver, setReceiver }) => {
         ? resolvedAddress
         : undefined;
 
-    if (validAddress) return <Jazzicons seed={validAddress.toLowerCase()} size={30} />;
+    if (validAddress)
+      return <Jazzicons seed={validAddress.toLowerCase()} size={30} />;
     if (!resolvedAddress && receiver && !isResolvingInProgress)
       return (
         <Image

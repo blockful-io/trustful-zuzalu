@@ -1,11 +1,18 @@
-import { type FC, type ChangeEvent, type MouseEvent, useEffect, useState } from "react";
+import {
+  type FC,
+  type ChangeEvent,
+  type MouseEvent,
+  useEffect,
+  useState,
+} from "react";
 
 import { Button, Input, VStack } from "@chakra-ui/react";
 
 import { useSignMessageHook, useNotify } from "@/hooks";
 
 const SignMessage: FC = () => {
-  const { signature, recoveredAddress, error, isPending, signMessage } = useSignMessageHook();
+  const { signature, recoveredAddress, error, isPending, signMessage } =
+    useSignMessageHook();
   const [messageAuth, setMessageAuth] = useState<string>("");
   const { notifyError, notifySuccess } = useNotify();
 

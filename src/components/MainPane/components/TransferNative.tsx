@@ -17,8 +17,11 @@ import { AddressInput } from "@/components";
 import { useNotify } from "@/hooks";
 
 const TransferNative: FC = () => {
-  const { data, error, isPending, isError, sendTransaction } = useSendTransaction();
-  const { data: receipt, isLoading } = useWaitForTransactionReceipt({ hash: data });
+  const { data, error, isPending, isError, sendTransaction } =
+    useSendTransaction();
+  const { data: receipt, isLoading } = useWaitForTransactionReceipt({
+    hash: data,
+  });
   const { notifyError, notifySuccess } = useNotify();
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");

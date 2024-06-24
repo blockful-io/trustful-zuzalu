@@ -7,8 +7,17 @@ const DarkModeButton: FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Button w={"40px"} h={"40px"} onClick={toggleColorMode} className="custom-button">
-      {colorMode === "light" ? <SunIcon fontSize={20} /> : <MoonIcon fontSize={17} />}
+    <Button
+      w={"40px"}
+      h={"40px"}
+      onClick={toggleColorMode}
+      className="custom-button"
+    >
+      {colorMode === "light" ? (
+        <SunIcon fontSize={20} />
+      ) : (
+        <MoonIcon fontSize={17} />
+      )}
     </Button>
   );
 };

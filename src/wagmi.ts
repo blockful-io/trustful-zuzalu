@@ -63,7 +63,10 @@ const connectors = connectorsForWallets(
 );
 
 // Fix missing icons
-const customZkSyncSepoliaTestnet = { ...zkSyncSepoliaTestnet, iconUrl: zksync_logo.src };
+const customZkSyncSepoliaTestnet = {
+  ...zkSyncSepoliaTestnet,
+  iconUrl: zksync_logo.src,
+};
 const customLinea = { ...linea, iconUrl: linea_logo.src };
 const customLineaTestnet = { ...lineaTestnet, iconUrl: lineaTesnet_logo.src };
 
