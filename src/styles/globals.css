@@ -42,3 +42,7 @@ a {
 .custom-button:hover {
   box-shadow: var(--button-box-shadow-hover);
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
