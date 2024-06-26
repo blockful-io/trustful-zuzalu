@@ -1,6 +1,6 @@
-export { AddressInput } from "./AddressInput";
-export { DarkModeButton } from "./DarkModeButton";
-export { Footer } from "./Footer";
-export { Header } from "./Header";
-export { InfoText } from "./InfoText";
-export { SignMessage } from "./SignMessage";
+export * from "./AddressInput";
+export * from "./DarkModeButton";
+export * from "./Footer";
+export * from "./Header";
+export * from "./InfoText";
+export * from "./SignMessage";

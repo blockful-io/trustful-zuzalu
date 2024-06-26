@@ -1,1 +1,1 @@
-export { MainPane } from "./MainPane";
+export * from "./MainPane";
