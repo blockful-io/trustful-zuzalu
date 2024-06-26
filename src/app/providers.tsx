@@ -16,7 +16,10 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
 
   const queryClient = new QueryClient();
 
-  const theme = extendTheme({ initialColorMode: "dark", useSystemColorMode: false });
+  const theme = extendTheme({
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+  });
 
   const appInfo = {
     appName: "Next-Web3-Boilerplate",

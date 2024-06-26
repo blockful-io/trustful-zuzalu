@@ -1,7 +1,8 @@
 "use client";
 import { Box, Flex } from "@chakra-ui/react";
 
-import { Footer, Header, MainPane } from "@/components";
+import { Footer, Header } from "@/components/01-atoms";
+import { MainPane } from "@/components/04-templates";
 
 export default function Home() {
   return (

@@ -5,12 +5,12 @@ import { HStack, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 
+import { DarkModeButton } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 import logo from "../../../public/img/logo_transparent.png";
-import { DarkModeButton } from "../DarkModeButton";
 
-const Header: FC = () => {
+export const Header: FC = () => {
   const { isTablet } = useWindowSize();
 
   return (
@@ -38,5 +38,3 @@ const Header: FC = () => {
     </HStack>
   );
 };
-
-export default Header;

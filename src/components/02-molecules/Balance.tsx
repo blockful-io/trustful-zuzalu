@@ -2,9 +2,9 @@ import type { FC } from "react";
 
 import { useAccount, useBalance } from "wagmi";
 
-import { InfoText } from "@/components";
+import { InfoText } from "@/components/01-atoms";
 
-const Balance: FC = (): JSX.Element => {
+export const Balance: FC = (): JSX.Element => {
   const { address } = useAccount();
   const { data } = useBalance({ address });
 
@@ -12,5 +12,3 @@ const Balance: FC = (): JSX.Element => {
 
   return <InfoText label="Balance" value={displayBalance} />;
 };
-
-export default Balance;
