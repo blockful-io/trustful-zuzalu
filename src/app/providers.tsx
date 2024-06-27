@@ -22,7 +22,7 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
   });
 
   const appInfo = {
-    appName: "Next-Web3-Boilerplate",
+    appName: "Trustful",
   };
 
   return (
