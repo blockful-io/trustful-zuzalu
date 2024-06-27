@@ -1,26 +1,26 @@
 "use client";
 import { type FC } from "react";
 
-import { Box } from "@chakra-ui/react";
-import Link from "next/link";
+import { Flex } from "@chakra-ui/react";
+
+import { BlockfulLogo } from "@/components/01-atoms";
 
 export const Footer: FC = () => {
   return (
-    <Box
+    <Flex
       as="footer"
       p={"1rem"}
       position="sticky"
       bottom={0}
       zIndex={10}
-      textAlign={"center"}
+      textAlign={"left"}
     >
-      <Link
-        href="https://github.com/Pedrojok01/Next-Web3-Boilerplate"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Don&apos;t forget to leave a ⭐️ on this boilerplate if you like it!
-      </Link>
-    </Box>
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-medium leading-[13.2px] uppercase tracking-[0.48px] font-['Inter'] text-[#F5FFFF80] opacity-50">
+          Created by
+        </p>
+        <BlockfulLogo className="w-full flex" />
+      </div>
+    </Flex>
   );
 };
