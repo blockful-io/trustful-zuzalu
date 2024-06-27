@@ -5,7 +5,7 @@ import { HStack, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
-import { DarkModeButton, TrustfulIcon } from "@/components/01-atoms";
+import { TrustfulIcon } from "@/components/01-atoms";
 
 export const Header: FC = () => {
   const { isConnected } = useAccount();
@@ -26,10 +26,7 @@ export const Header: FC = () => {
         </Heading>
       </HStack>
 
-      <HStack>
-        {isConnected && <ConnectButton />}
-        <DarkModeButton />
-      </HStack>
+      <HStack>{isConnected && <ConnectButton />}</HStack>
     </HStack>
   );
 };
