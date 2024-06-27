@@ -8,10 +8,12 @@ export const MainPane: FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-10">
-      <div className="flex">
-        <h1>Online reputation made easy</h1>
+      <div className="flex w-full">
+        <h1 className="text-slate-50 text-[52px] font-normal font-['Space Grotesk'] leading-[57.20px]">
+          Online reputation made easy
+        </h1>
       </div>
-      <div className="flex">
+      <div className="flex w-full">
         {!isConnected && <ConnectButton label="Connect" />}
       </div>
     </div>
