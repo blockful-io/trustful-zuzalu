@@ -1,4 +1,5 @@
 //Icons
+export * from "./icons/BlockfulLogo";
 export * from "./icons/TrustfulIcon";
 
 export * from "./AddressInput";
