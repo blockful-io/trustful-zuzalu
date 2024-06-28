@@ -1,40 +1,40 @@
 "use client";
 import { type FC } from "react";
 
-import { HStack, Heading } from "@chakra-ui/react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
+import { HStack } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 
-import { DarkModeButton } from "@/components/01-atoms";
-import { useWindowSize } from "@/hooks/useWindowSize";
-
-import logo from "../../../public/img/logo_transparent.png";
+import { CustomConnectButon, TrustfulIcon } from "@/components/01-atoms";
+import { useWindowSize } from "@/hooks";
 
 export const Header: FC = () => {
-  const { isTablet } = useWindowSize();
+  const { isConnected } = useAccount();
+  const { isMobile } = useWindowSize();
 
   return (
     <HStack
       as="header"
-      p={"1.5rem"}
       position="sticky"
       top={0}
       zIndex={10}
       justifyContent={"space-between"}
+      className="border-b border-[#F5FFFF14] px-6 py-5 h-14"
     >
-      <HStack>
-        <Image src={logo.src} alt="logo" width={45} height={45} />
-        {!isTablet && (
-          <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
-            Next-Web3-Boilerplate
-          </Heading>
+      <HStack className="flex w-full justify-between">
+        <div className="flex w-full gap-1">
+          <TrustfulIcon />
+          <h1 className="flex items-center text-white">Trustful</h1>
+        </div>
+        {!isConnected && !isMobile && (
+          <CustomConnectButon
+            className={
+              "w-[113px] h-9 px-6 bg-lime-400 rounded-lg justify-center items-center gap-2 inline-flex transition ease-out duration-300 text-center text-neutral-900 text-base font-medium font-['Inter'] leading-snug "
+            }
+          />
         )}
       </HStack>
 
-      <HStack>
-        <ConnectButton />
-        <DarkModeButton />
-      </HStack>
+      <HStack>{isConnected && <CustomConnectButon />}</HStack>
     </HStack>
   );
 };

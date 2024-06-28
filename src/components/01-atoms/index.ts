@@ -1,4 +1,9 @@
+//Icons
+export * from "./icons/BlockfulLogo";
+export * from "./icons/TrustfulIcon";
+
 export * from "./AddressInput";
+export * from "./CustomConnectButton";
 export * from "./DarkModeButton";
 export * from "./Footer";
 export * from "./Header";

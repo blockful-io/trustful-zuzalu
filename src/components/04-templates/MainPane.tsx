@@ -1,60 +1,41 @@
-// components/MainPane.tsx
 import { type FC } from "react";
 
-import { Box, Divider, Flex, Heading, useColorMode } from "@chakra-ui/react";
+import Image from "next/image";
 import { useAccount } from "wagmi";
 
-import { SignMessage } from "@/components/01-atoms";
-import {
-  Status,
-  Address,
-  Chain,
-  Balance,
-  BlockNumber,
-  TransferNative,
-} from "@/components/02-molecules";
-import styles from "@/styles/mainPane.module.css";
+import { CustomConnectButon } from "@/components/01-atoms/";
+import { useWindowSize } from "@/hooks";
+import Background from "@/styles/Background.png";
 
 export const MainPane: FC = () => {
   const { isConnected } = useAccount();
-  const { colorMode } = useColorMode();
+  const { isMobile } = useWindowSize();
 
   return (
-    <Box
-      className={styles.container}
-      border={
-        colorMode === "light" ? "none" : "1px solid rgba(152, 161, 192, 0.24)"
-      }
-    >
-      <Heading as="h2" fontSize={"2rem"} mb={10} className="text-shadow">
-        Display Info
-      </Heading>
-
-      <Flex className={styles.content}>
-        <Status />
-
-        {isConnected && (
-          <>
-            <Address />
-            <Chain />
-            <Balance />
-            <BlockNumber />
-
-            <Divider mb={5} />
-
-            <Flex
-              w={"100%"}
-              display={"flex"}
-              justifyContent={"space-around"}
-              flexWrap={"wrap"}
-              gap={5}
-            >
-              <SignMessage />
-              <TransferNative />
-            </Flex>
-          </>
+    <div className="w-full h-full flex flex-col justify-center items-center gap-10">
+      {isMobile && (
+        <Image
+          alt="Background Image"
+          src={Background}
+          quality={100}
+          fill
+          className="opacity-10"
+        />
+      )}
+      <div className="flex w-full">
+        <h1 className="text-slate-50 text-[52px] font-normal font-['Space Grotesk'] leading-[57.20px]">
+          Online reputation made easy
+        </h1>
+      </div>
+      <div className="flex w-full">
+        {!isConnected && isMobile && (
+          <CustomConnectButon
+            className={
+              "w-[129px] h-12 px-7 py-4 bg-lime-400 rounded-lg justify-center items-center gap-3 inline-flex transition ease-out duration-300 "
+            }
+          />
         )}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   );
 };

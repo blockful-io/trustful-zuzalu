@@ -10,12 +10,12 @@ import { Providers } from "./providers";
 const open_sans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Next-Web3-Boilerplate",
-  applicationName: "Next Web3 Boilerplate",
-  description: "Next.js Web3 boilerplate built on Wagmi, Viem, and Rainbow",
+  title: "Trustful",
+  applicationName: "Trustful",
+  description: "Trustful",
   authors: {
-    name: "Pedrojok01",
-    url: "https://github.com/Pedrojok01/Next-Web3-Boilerplate",
+    name: "Blockful",
+    url: "https://github.com/blockful-io/trustful-zuzalu",
   },
   icons: "favicon.ico",
   manifest: "site.webmanifest",
