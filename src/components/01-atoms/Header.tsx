@@ -18,6 +18,7 @@ export const Header: FC = () => {
       top={0}
       zIndex={10}
       justifyContent={"space-between"}
+      className="border-b border-[#F5FFFF14]"
     >
       <HStack>
         <TrustfulIcon />
