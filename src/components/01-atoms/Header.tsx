@@ -1,7 +1,7 @@
 "use client";
 import { type FC } from "react";
 
-import { HStack, Heading } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
@@ -21,9 +21,7 @@ export const Header: FC = () => {
     >
       <HStack>
         <TrustfulIcon />
-        <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
-          Trustful
-        </Heading>
+        <h1 className="text-shadow text-white">Trustful</h1>
       </HStack>
 
       <HStack>{isConnected && <ConnectButton />}</HStack>
