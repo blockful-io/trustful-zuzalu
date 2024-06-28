@@ -1,9 +1,9 @@
 import { type FC } from "react";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useAccount } from "wagmi";
 
+import { CustomConnectButon } from "@/components/01-atoms/";
 import { useWindowSize } from "@/hooks";
 import Background from "@/styles/Background.png";
 
@@ -28,7 +28,7 @@ export const MainPane: FC = () => {
         </h1>
       </div>
       <div className="flex w-full">
-        {!isConnected && <ConnectButton label="Connect" />}
+        {!isConnected && <CustomConnectButon />}
       </div>
     </div>
   );

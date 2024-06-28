@@ -2,10 +2,9 @@
 import { type FC } from "react";
 
 import { HStack } from "@chakra-ui/react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
-import { TrustfulIcon } from "@/components/01-atoms";
+import { CustomConnectButon, TrustfulIcon } from "@/components/01-atoms";
 
 export const Header: FC = () => {
   const { isConnected } = useAccount();
@@ -25,7 +24,7 @@ export const Header: FC = () => {
         <h1 className="text-shadow text-white">Trustful</h1>
       </HStack>
 
-      <HStack>{isConnected && <ConnectButton />}</HStack>
+      <HStack>{isConnected && <CustomConnectButon />}</HStack>
     </HStack>
   );
 };
