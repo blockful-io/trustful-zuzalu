@@ -36,7 +36,7 @@ export const CustomConnectButon = () => {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="w-[129px] h-12 px-7 py-4 bg-lime-400 rounded-lg justify-center items-center gap-3 inline-flex "
+                    className="w-[129px] h-12 px-7 py-4 bg-lime-400 rounded-lg justify-center items-center gap-3 inline-flex transition ease-out duration-300 "
                   >
                     <p className="text-center text-[#17181C] text-[18px] leading-[23px] font-medium font-['Onest']">
                       Connect
