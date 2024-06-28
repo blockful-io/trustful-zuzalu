@@ -1,5 +1,10 @@
+import type { ButtonHTMLAttributes } from "react";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-export const CustomConnectButon = () => {
+import Image from "next/image";
+export const CustomConnectButon = (
+  props: ButtonHTMLAttributes<HTMLButtonElement>,
+) => {
   return (
     <ConnectButton.Custom>
       {({
@@ -36,7 +41,7 @@ export const CustomConnectButon = () => {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="w-[129px] h-12 px-7 py-4 bg-lime-400 rounded-lg justify-center items-center gap-3 inline-flex transition ease-out duration-300 "
+                    className={props.className}
                   >
                     <p className="text-center text-[#17181C] text-[18px] leading-[23px] font-medium font-['Onest']">
                       Connect
@@ -71,7 +76,7 @@ export const CustomConnectButon = () => {
                         }}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
                             alt={chain.name ?? "Chain icon"}
                             src={chain.iconUrl}
                             style={{ width: 12, height: 12 }}

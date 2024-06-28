@@ -28,7 +28,13 @@ export const MainPane: FC = () => {
         </h1>
       </div>
       <div className="flex w-full">
-        {!isConnected && <CustomConnectButon />}
+        {!isConnected && isMobile && (
+          <CustomConnectButon
+            className={
+              "w-[129px] h-12 px-7 py-4 bg-lime-400 rounded-lg justify-center items-center gap-3 inline-flex transition ease-out duration-300 "
+            }
+          />
+        )}
       </div>
     </div>
   );
