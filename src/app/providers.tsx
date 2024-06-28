@@ -3,7 +3,7 @@ import { type ReactNode, useState, useEffect } from "react";
 
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider } from "@chakra-ui/react";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
@@ -25,7 +25,12 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
       <QueryClientProvider client={queryClient}>
         <CacheProvider>
           <ChakraProvider resetCSS>
-            <RainbowKitProvider coolMode appInfo={appInfo}>
+            <RainbowKitProvider
+              coolMode
+              appInfo={appInfo}
+              locale="en-US"
+              theme={darkTheme()}
+            >
               {mounted && children}
             </RainbowKitProvider>
           </ChakraProvider>
