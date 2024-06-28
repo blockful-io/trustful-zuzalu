@@ -1,26 +1,16 @@
-"use client";
 import { type FC } from "react";
-
-import { Flex } from "@chakra-ui/react";
 
 import { BlockfulLogo } from "@/components/01-atoms";
 
 export const Footer: FC = () => {
   return (
-    <Flex
-      as="footer"
-      p={"1rem"}
-      position="sticky"
-      bottom={0}
-      zIndex={10}
-      textAlign={"left"}
-    >
+    <div className="flex fixed bottom-0 left-0 right-0 z-10 text-left px-6 py-7">
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-medium leading-[13.2px] uppercase tracking-[0.48px] font-['Inter'] text-[#F5FFFF80] opacity-50">
+        <p className="text-xs font-medium leading-3 uppercase tracking-wider text-gray-200 opacity-50">
           Created by
         </p>
-        <BlockfulLogo className="w-full flex" />
+        <BlockfulLogo className="flex w-full" />
       </div>
-    </Flex>
+    </div>
   );
 };
