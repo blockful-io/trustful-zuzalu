@@ -1,1 +1,1 @@
-export * from "./MainPane";
+export * from "./HomeSection";

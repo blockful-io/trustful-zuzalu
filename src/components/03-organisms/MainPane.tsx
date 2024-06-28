@@ -22,12 +22,12 @@ export const MainPane: FC = () => {
           className="opacity-10"
         />
       )}
-      <div className="flex w-full">
-        <h1 className="text-slate-50 text-[52px] font-normal font-['Space Grotesk'] leading-[57.20px]">
+      <div className="flex w-full h-full">
+        <h1 className="w-full h-full  text-slate-50 text-[52px] font-normal font-['Space Grotesk'] leading-[57.20px]">
           Online reputation made easy
         </h1>
       </div>
-      <div className="flex w-full">
+      <div className="flex w-full h-full">
         {!isConnected && isMobile && (
           <CustomConnectButon
             className={

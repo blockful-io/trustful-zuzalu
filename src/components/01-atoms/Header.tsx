@@ -1,7 +1,6 @@
 "use client";
 import { type FC } from "react";
 
-import { HStack } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
 import { CustomConnectButon, TrustfulIcon } from "@/components/01-atoms";
@@ -12,15 +11,8 @@ export const Header: FC = () => {
   const { isMobile } = useWindowSize();
 
   return (
-    <HStack
-      as="header"
-      position="sticky"
-      top={0}
-      zIndex={10}
-      justifyContent={"space-between"}
-      className="border-b border-[#F5FFFF14] px-6 py-5 h-14"
-    >
-      <HStack className="flex w-full justify-between">
+    <div className="flex sticky top-0 z-10 justify-between border-b border-[#F5FFFF14] py-5 h-14 px-6 sm:px-[60px] items-center">
+      <div className="flex w-full justify-between">
         <div className="flex w-full gap-1">
           <TrustfulIcon />
           <h1 className="flex items-center text-white">Trustful</h1>
@@ -32,9 +24,9 @@ export const Header: FC = () => {
             }
           />
         )}
-      </HStack>
+      </div>
 
-      <HStack>{isConnected && <CustomConnectButon />}</HStack>
-    </HStack>
+      <div>{isConnected && <CustomConnectButon />}</div>
+    </div>
   );
 };
