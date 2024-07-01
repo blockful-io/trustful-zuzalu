@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
+
 import axios from "axios";
 
 const useFetchEASData = (query, variables) => {
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [data, setData] = useState(null);
 
   useEffect(() => {
-
     if (loading) {
       return;
     }
@@ -22,13 +22,13 @@ const useFetchEASData = (query, variables) => {
         });
         setData(result.data);
       } catch (err) {
-        setError(err as boolean); 
+        setError(err as boolean);
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [query, variables, loading]); 
+  }, [query, variables, loading]);
 
   return { loading, error, data };
 };
