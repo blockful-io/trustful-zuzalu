@@ -29,7 +29,10 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
               coolMode
               appInfo={appInfo}
               locale="en-US"
-              theme={darkTheme()}
+              theme={darkTheme({
+                accentColor: "#B1EF42",
+                accentColorForeground: "#161617",
+              })}
             >
               {mounted && children}
             </RainbowKitProvider>

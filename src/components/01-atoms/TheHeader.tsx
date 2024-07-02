@@ -2,10 +2,16 @@
 import { type FC } from "react";
 
 import { HStack, Heading } from "@chakra-ui/react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+
+import { useWindowSize } from "@/hooks";
 
 import { TrustfulIcon } from "./icons/TrustfulIcon";
 
 export const TheHeader: FC = () => {
+  const { isMobile } = useWindowSize();
+  const { isConnected } = useAccount();
   return (
     <HStack
       as="header"
@@ -23,9 +29,9 @@ export const TheHeader: FC = () => {
         </Heading>
       </HStack>
 
-      {/* <HStack>
-        <ConnectButton />
-      </HStack> */}
+      <HStack>
+        {isMobile && !isConnected && <ConnectButton label="Connect" />}
+      </HStack>
     </HStack>
   );
 };

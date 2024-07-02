@@ -1,7 +1,8 @@
 // components/MainPane.tsx
 import { type FC } from "react";
 
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
 import { CreatedByBlockful } from "@/components/01-atoms";
@@ -23,7 +24,7 @@ export const MainPane: FC = () => {
         </Heading>
       </Flex>
       <Flex className={styles.content}>
-        {!isConnected && <Button colorScheme="blue">Button</Button>}
+        {!isConnected && !isMobile && <ConnectButton label="Connect" />}
       </Flex>
       {!isMobile && <CreatedByBlockful />}
     </Box>
