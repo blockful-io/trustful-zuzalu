@@ -24,7 +24,7 @@ export const MainPane: FC = () => {
         </Heading>
       </Flex>
       <Flex className={styles.content}>
-        {!isConnected && !isMobile && <ConnectButton label="Connect" />}
+        {!isConnected && isMobile && <ConnectButton label="Connect" />}
       </Flex>
       {!isMobile && <CreatedByBlockful />}
     </Box>

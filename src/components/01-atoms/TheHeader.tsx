@@ -30,7 +30,7 @@ export const TheHeader: FC = () => {
       </HStack>
 
       <HStack>
-        {isMobile && !isConnected && <ConnectButton label="Connect" />}
+        {!isMobile && !isConnected && <ConnectButton label="Connect" />}
       </HStack>
     </HStack>
   );
