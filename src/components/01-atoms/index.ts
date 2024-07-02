@@ -1,3 +1,7 @@
+// Icons
+export * from "./icons/TrustfulIcon";
+
+// Components
 export * from "./AddressInput";
 export * from "./DarkModeButton";
 export * from "./Footer";
