@@ -8,6 +8,7 @@ import {
   Text,
   Divider,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 import {
   ArrowIcon,
@@ -18,16 +19,18 @@ import {
 } from "@/components/01-atoms";
 
 export const BadgeCard = () => {
+  const router = useRouter();
   return (
     <SimpleGrid
       spacing={4}
       templateColumns="repeat(auto-fill, minmax(240px, 1fr))"
     >
       <Card
+        className="cursor-pointer"
         background={"#F5FFFF0D"}
         border={2}
         onClick={() => {
-          // router.push(`my-badge/${[id]}`);
+          router.push(`my-badge-1`); //TODO: Replace with dynamic route ID
           console.log("Card Clicked go to Details of this Card");
         }}
       >
