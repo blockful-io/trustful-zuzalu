@@ -1,19 +1,13 @@
 "use client";
-import { Box, Flex } from "@chakra-ui/react";
+// import { useRouter } from "next/navigation";
+// import { useAccount } from "wagmi";
 
-import { Footer, Header } from "@/components/01-atoms";
-import { MainPane } from "@/components/04-templates";
+import { HomeSection } from "@/components/04-templates";
 
 export default function Home() {
-  return (
-    <Flex flexDirection="column" minHeight="100vh">
-      <Header />
+  // const { isConnected } = useAccount();
+  // const { push } = useRouter();
 
-      <Box as="main" flex={1} p={4}>
-        <MainPane />
-      </Box>
-
-      <Footer />
-    </Flex>
-  );
+  // if (isConnected) push("/pre-checkin");
+  return <HomeSection />;
 }
