@@ -14,6 +14,7 @@ export const TheHeader: FC = () => {
       top={0}
       zIndex={10}
       justifyContent={"space-between"}
+      className="p-6 sm:px-[60px] sm:py-[20px]"
     >
       <HStack>
         <TrustfulIcon />

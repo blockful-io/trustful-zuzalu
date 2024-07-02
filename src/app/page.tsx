@@ -9,7 +9,11 @@ export default function Home() {
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />
 
-      <Box as="main" flex={1} p={4}>
+      <Box
+        flex={1}
+        as="main"
+        className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center sm:justify-normal"
+      >
         <MainPane />
       </Box>
 
