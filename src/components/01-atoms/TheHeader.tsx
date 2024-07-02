@@ -1,37 +1,39 @@
 "use client";
 import { type FC } from "react";
 
-import { HStack, Heading } from "@chakra-ui/react";
+import { Divider, HStack, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
+import { TrustfulIcon } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks";
-
-import { TrustfulIcon } from "./icons/TrustfulIcon";
 
 export const TheHeader: FC = () => {
   const { isMobile } = useWindowSize();
   const { isConnected } = useAccount();
   return (
-    <HStack
-      as="header"
-      p={"1.5rem"}
-      position="sticky"
-      top={0}
-      zIndex={10}
-      justifyContent={"space-between"}
-      className="p-6 sm:px-[60px] sm:py-[20px]"
-    >
-      <HStack>
-        <TrustfulIcon />
-        <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
-          Trustful
-        </Heading>
-      </HStack>
+    <>
+      <HStack
+        as="header"
+        p={"1.5rem"}
+        position="sticky"
+        top={0}
+        zIndex={10}
+        justifyContent={"space-between"}
+        className="p-6 sm:px-[60px] sm:py-[20px]"
+      >
+        <HStack>
+          <TrustfulIcon />
+          <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
+            Trustful
+          </Heading>
+        </HStack>
 
-      <HStack>
-        {!isMobile && !isConnected && <ConnectButton label="Connect" />}
+        <HStack>
+          {!isMobile && !isConnected && <ConnectButton label="Connect" />}
+        </HStack>
       </HStack>
-    </HStack>
+      <Divider className="border-slate-50 opacity-10" />
+    </>
   );
 };
