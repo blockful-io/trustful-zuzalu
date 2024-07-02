@@ -4,7 +4,7 @@ import { type FC } from "react";
 import { Box } from "@chakra-ui/react";
 import Link from "next/link";
 
-export const Footer: FC = () => {
+export const TheFooter: FC = () => {
   return (
     <Box
       as="footer"

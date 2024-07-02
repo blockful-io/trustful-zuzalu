@@ -5,7 +5,7 @@ import { HStack, Heading } from "@chakra-ui/react";
 
 import { TrustfulIcon } from "./icons/TrustfulIcon";
 
-export const Header: FC = () => {
+export const TheHeader: FC = () => {
   return (
     <HStack
       as="header"
