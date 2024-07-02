@@ -4,10 +4,13 @@ import { type FC } from "react";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
+import { CreatedByBlockful } from "@/components/01-atoms";
+import { useWindowSize } from "@/hooks";
 import styles from "@/styles/mainPane.module.css";
 
 export const MainPane: FC = () => {
   const { isConnected } = useAccount();
+  const { isMobile } = useWindowSize();
 
   return (
     <Box className={styles.container}>
@@ -22,6 +25,7 @@ export const MainPane: FC = () => {
       <Flex className={styles.content}>
         {!isConnected && <Button colorScheme="blue">Button</Button>}
       </Flex>
+      {!isMobile && <CreatedByBlockful />}
     </Box>
   );
 };

@@ -1,10 +1,14 @@
 "use client";
 import { Box, Flex } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 
 import { TheFooter, TheHeader } from "@/components/01-atoms";
 import { MainPane } from "@/components/04-templates";
+import { useWindowSize } from "@/hooks";
 
 export default function Home() {
+  const { isMobile } = useWindowSize();
+  const { isConnected } = useAccount();
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />
@@ -17,7 +21,7 @@ export default function Home() {
         <MainPane />
       </Box>
 
-      <TheFooter />
+      {isMobile && !isConnected && <TheFooter />}
     </Flex>
   );
 }
