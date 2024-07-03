@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { Text, type BoxProps } from "@chakra-ui/react";
 
 interface InfoTextProps extends BoxProps {
-  label: string;
+  label?: string;
   value: string | undefined;
 }
 
@@ -13,7 +13,7 @@ export const InfoText: FC<InfoTextProps> = ({
   ...props
 }) => (
   <Text {...props}>
-    {label}:{" "}
+    {label}{" "}
     <Text as="span" fontWeight="800">
       {value}
     </Text>

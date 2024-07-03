@@ -14,5 +14,5 @@ export const Address: FC = (): JSX.Element => {
   const displayedAddress =
     isTablet && address ? getEllipsisTxt(address, 4) : address;
 
-  return <InfoText label="Address" value={ensName ?? displayedAddress} />;
+  return <InfoText value={ensName ?? displayedAddress} />;
 };
