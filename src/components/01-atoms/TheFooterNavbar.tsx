@@ -21,22 +21,40 @@ export const TheFooterNavbar = () => {
           className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
           onClick={() => router.push("/my-badge")}
         >
-          <BadgeIcon />
-          <Text>My badges</Text>
+          <BadgeIcon
+            className={`w-5 h-5 text-white ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"}`}
+          />
+          <Text
+            className={`text-slate-50 ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+          >
+            My badges
+          </Text>
         </Box>
         <Box
           className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "give-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
           onClick={() => router.push("/give-badge")}
         >
-          <HeartIcon />
-          <Text>Give badge</Text>
+          <HeartIcon
+            className={`w-5 h-5 text-white ${params.slug == "give-badge" ? " opacity-100" : "opacity-50"}`}
+          />
+          <Text
+            className={`text-slate-50 ${params.slug == "give-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+          >
+            Give badge
+          </Text>
         </Box>
         <Box
           className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "check-out" ? "border-[#B1EF42]" : "border-transparent"}`}
           onClick={() => router.push("/check-out")}
         >
-          <LogoutIcon />
-          <Text>Check out</Text>
+          <LogoutIcon
+            className={`w-5 h-5 text-white ${params.slug == "check-out" ? "opacity-100" : "opacity-50"}`}
+          />
+          <Text
+            className={`text-slate-50 ${params.slug == "check-out" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+          >
+            Check out
+          </Text>
         </Box>
       </Flex>
     </Box>
