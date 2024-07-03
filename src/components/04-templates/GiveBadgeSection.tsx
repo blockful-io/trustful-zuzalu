@@ -263,7 +263,7 @@ export const GiveBadgeSection = () => {
                         Badge
                       </Text>
                       <Flex gap={2}>
-                        <HeartIcon className="w-5 h-5" />
+                        <HeartIcon className="w-5 h-5 opacity-5" />
                         <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
                           ChangeMyMind
                         </Text>

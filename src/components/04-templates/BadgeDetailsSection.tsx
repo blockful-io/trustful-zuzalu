@@ -22,7 +22,7 @@ export const BadgeDetailsSection = () => {
       >
         <Flex gap={4} className="w-full h-full items-center">
           <Flex>
-            <HeartIcon className="w-6 h-6" />
+            <HeartIcon className="w-6 h-6 opacity-5" />
           </Flex>
           <Flex flexDirection={"column"} className="w-full">
             <Box>

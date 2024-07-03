@@ -44,7 +44,7 @@ export const BadgeCard = () => {
           justifyContent={"space-between"}
         >
           <Flex gap={4} className={"items-center"}>
-            <HeartIcon className="w-4 h-4" />
+            <HeartIcon className="w-4 h-4 opacity-50" />
             <Heading size="md">Change My Mind</Heading>
           </Flex>
           <Flex className={"items-center"} gap={2}>
@@ -90,7 +90,7 @@ export const BadgeCard = () => {
           justifyContent={"space-between"}
         >
           <Flex gap={4} className={"items-center"}>
-            <HeartIcon className="w-4 h-4" />
+            <HeartIcon className="w-4 h-4 opacity-5" />
             <Heading size="md">CheckIn</Heading>
           </Flex>
           <Flex className={"items-center"} gap={2}>
