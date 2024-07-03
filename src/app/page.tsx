@@ -1,13 +1,13 @@
 "use client";
-// import { useRouter } from "next/navigation";
-// import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
 
 import { HomeSection } from "@/components/04-templates";
 
 export default function Home() {
-  // const { isConnected } = useAccount();
-  // const { push } = useRouter();
+  const { isConnected } = useAccount();
+  const { push } = useRouter();
 
-  // if (isConnected) push("/pre-checkin");
+  if (isConnected) push("/pre-checkin");
   return <HomeSection />;
 }

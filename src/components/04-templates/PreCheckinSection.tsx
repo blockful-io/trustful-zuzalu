@@ -1,0 +1,26 @@
+import { Box, Button, Flex } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+
+import { TheHeader } from "@/components/01-atoms";
+
+export const PreCheckinSection = () => {
+  const router = useRouter();
+
+  return (
+    <Flex flexDirection="column" minHeight="100vh">
+      <TheHeader />
+
+      <Box
+        flex={1}
+        as="main"
+        className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
+      >
+        <Flex flexDirection={"column"} gap={2}>
+          <Button onClick={() => router.push("my-badge")}>My Badges</Button>
+          <Button onClick={() => router.push("give-badge")}>Give Badges</Button>
+          <Button onClick={() => router.push("check-in")}> Check In</Button>
+        </Flex>
+      </Box>
+    </Flex>
+  );
+};
