@@ -2,6 +2,7 @@
 export * from "./icons/ArrowIcon";
 export * from "./icons/BadgeTagIcon";
 export * from "./icons/BlockfulLogo";
+export * from "./icons/CalendarIcon";
 export * from "./icons/HeartIcon";
 export * from "./icons/TrustfulIcon";
 
