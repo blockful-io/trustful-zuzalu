@@ -1,5 +1,4 @@
 import { Avatar, Box, Card, Divider, Flex, Text } from "@chakra-ui/react";
-import { useParams } from "next/navigation";
 
 import {
   BadgeStatus,
@@ -11,8 +10,6 @@ import {
 import { BadgeDetails } from "@/components/03-organisms";
 
 export const BadgeDetailsSection = () => {
-  const params = useParams();
-  console.log("params in MyBadgeSection", params);
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />

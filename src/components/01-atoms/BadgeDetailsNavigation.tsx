@@ -7,8 +7,8 @@ export const BadgeDetailsNavigation = ({
   isDetail = false,
   isFeedback = false,
 }: {
-  isDetail: boolean;
-  isFeedback: boolean;
+  isDetail?: boolean;
+  isFeedback?: boolean;
 }) => {
   console.log("BadgeDetailsNavigation", isDetail, isFeedback);
   const router = useRouter();
