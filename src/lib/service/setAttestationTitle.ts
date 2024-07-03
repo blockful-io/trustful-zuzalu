@@ -1,4 +1,5 @@
 import { encodeFunctionData } from "viem";
+
 import { TRUSTFUL_SMART_CONTRACT_ADDRESS } from "../client/constants";
 import { publicClient } from "../wallet/wallet-config";
 
