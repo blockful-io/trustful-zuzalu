@@ -1,11 +1,19 @@
-import { Avatar, Box, Card, Divider, Flex, Text } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  Divider,
+  Flex,
+  Text,
+} from "@chakra-ui/react";
 
 import {
   BadgeStatus,
   BadgeTagIcon,
   HeartIcon,
   TheHeader,
-  TheFooterNavbar,
 } from "@/components/01-atoms";
 import { BadgeDetails } from "@/components/03-organisms";
 
@@ -113,7 +121,23 @@ export const BadgeDetailsSection = () => {
           </Flex>
         </Card>
       </Box>
-      <TheFooterNavbar />
+      <Box
+        as="footer"
+        position="fixed"
+        bottom={0}
+        zIndex={10}
+        textAlign={"center"}
+        className="px-6 py-4 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8] gap-3"
+      >
+        <Button className="w-full flex justify-center items-center gap-2 px-6 bg-lime-200 bg-opacity-10 text-[#B1EF42] rounded-lg">
+          <CloseIcon className="w-[14px] h-[14px]" />
+          Deny
+        </Button>
+        <Button className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg">
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Box>
     </Flex>
   );
 };
