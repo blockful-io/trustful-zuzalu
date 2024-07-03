@@ -6,6 +6,7 @@ import {
   BadgeTagIcon,
   HeartIcon,
   TheHeader,
+  TheFooterNavbar,
 } from "@/components/01-atoms";
 import { BadgeDetails } from "@/components/03-organisms";
 
@@ -115,6 +116,7 @@ export const BadgeDetailsSection = () => {
           </Flex>
         </Card>
       </Box>
+      <TheFooterNavbar />
     </Flex>
   );
 };

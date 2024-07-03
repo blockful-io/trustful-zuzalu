@@ -1,7 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 
-import { BadgeCard, TheHeader } from "@/components/01-atoms";
+import { BadgeCard, TheHeader, TheFooterNavbar } from "@/components/01-atoms";
 
 export const MyBadgeSection = () => {
   const params = useParams();
@@ -19,6 +19,7 @@ export const MyBadgeSection = () => {
           <BadgeCard />
         </Flex>
       </Box>
+      <TheFooterNavbar />
     </Flex>
   );
 };
