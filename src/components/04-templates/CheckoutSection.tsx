@@ -11,6 +11,7 @@ import {
 import {
   CircleQuestion,
   QRCodeLargeIcon,
+  TheFooterNavbar,
   TheHeader,
 } from "@/components/01-atoms";
 
@@ -22,10 +23,10 @@ export const CheckoutSection = () => {
       <Box
         flex={1}
         as="main"
-        className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex flex-col items-center"
+        className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center"
         gap={6}
       >
-        <Card className="py-8 px-6" background={"#212223"} border={2} gap={8}>
+        <Card className="px-8 py-6" background={"#212223"} border={2} gap={8}>
           <CardHeader
             gap={2}
             display={"flex"}
@@ -55,9 +56,9 @@ export const CheckoutSection = () => {
             </Flex>
           </CardBody>
         </Card>
-        <Flex flexDirection={"column"} className="w-full items-center">
+        <Flex flexDirection={"column"} className="w-full h-full items-center">
           <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row p-4" gap={4}>
+          <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
               <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
@@ -66,7 +67,7 @@ export const CheckoutSection = () => {
             </Flex>
           </Flex>
           <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row p-4" gap={4}>
+          <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
               <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
@@ -75,7 +76,7 @@ export const CheckoutSection = () => {
             </Flex>
           </Flex>
           <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row p-4" gap={4}>
+          <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
               <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
@@ -86,6 +87,7 @@ export const CheckoutSection = () => {
           <Divider className="border-slate-50 opacity-10 w-full" />
         </Flex>
       </Box>
+      <TheFooterNavbar />
     </Flex>
   );
 };
