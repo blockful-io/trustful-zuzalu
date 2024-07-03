@@ -14,7 +14,7 @@ export const BadgeDetailsNavigation = ({
   const router = useRouter();
   return (
     <Box className="w-full flex items-center p-4">
-      <Flex onClick={() => router.push("my-badge")} className="cursor-pointer">
+      <Flex onClick={() => router.back()} className="cursor-pointer p-2">
         <ArrowIcon variant={ArrowIconVariant.LEFT} />
       </Flex>
       <Flex justifyContent={"center"} className="w-full">
