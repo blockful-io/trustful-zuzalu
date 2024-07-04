@@ -32,7 +32,7 @@ export async function schemas(
   });
 
   try {
-    const resultSchemas = await publicClient({
+    const response = await publicClient({
       chainId: configurations.chain,
     }).readContract({
       address: TRUSTFUL_SMART_CONTRACT_ADDRESS[
@@ -43,7 +43,7 @@ export async function schemas(
       args: [uid, roleId],
     });
 
-    return resultSchemas;
+    return response;
   } catch (error) {
     console.error(error);
     throw new Error(String(error));

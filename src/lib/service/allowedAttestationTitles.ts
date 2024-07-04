@@ -26,7 +26,7 @@ export async function allowedAttestationTitles(
   });
 
   try {
-    const resultAllowedAttestation = await publicClient({
+    const response = await publicClient({
       chainId: configurations.chain,
     }).readContract({
       address: TRUSTFUL_SMART_CONTRACT_ADDRESS[
@@ -37,7 +37,7 @@ export async function allowedAttestationTitles(
       args: [attestationTitle],
     });
 
-    return resultAllowedAttestation;
+    return response;
   } catch (error) {
     console.error(error);
     throw new Error(String(error));

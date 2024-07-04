@@ -28,7 +28,7 @@ export async function checkedOutVillagers(
   });
 
   try {
-    const resultCheckedOutVillagers = await publicClient({
+    const response = await publicClient({
       chainId: configurations.chain,
     }).readContract({
       address: TRUSTFUL_SMART_CONTRACT_ADDRESS[
@@ -39,7 +39,7 @@ export async function checkedOutVillagers(
       args: [villagerAddress],
     });
 
-    return resultCheckedOutVillagers;
+    return response;
   } catch (error) {
     console.error(error);
     throw new Error(String(error));
