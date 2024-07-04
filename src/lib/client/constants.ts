@@ -3,6 +3,8 @@ export enum DeployedAddresses {
   OPTIMISM_TRUSTFUL_RESOLVER = "OPTIMISM_TRUSTFUL_RESOLVER",
   OPTIMISM_EAS = "OPTIMISM_EAS",
   OPTIMISM_REGISTRY = "OPTIMISM_REGISTRY",
+  OPTIMISM_SEPOLIA_EAS = "OPTIMISM_SEPOLIA_EAS",
+  OPTIMISM_SEPOLIA_REGISTRY = "OPTIMISM_SEPOLIA_REGISTRY",
 }
 
 interface ChainProps {
@@ -27,6 +29,14 @@ export const ChainInfo: Record<DeployedAddresses, ChainProps> = {
     id: 11155420,
     name: "Optimism Sepolia",
   },
+  [DeployedAddresses.OPTIMISM_SEPOLIA_EAS]: {
+    id: 11155420,
+    name: "Optimism Sepolia",
+  },
+  [DeployedAddresses.OPTIMISM_SEPOLIA_REGISTRY]: {
+    id: 11155420,
+    name: "Optimism Sepolia",
+  },
 };
 
 export const TRUSTFUL_SMART_CONTRACT_ADDRESS = {
@@ -35,4 +45,8 @@ export const TRUSTFUL_SMART_CONTRACT_ADDRESS = {
   [ChainInfo.OPTIMISM_REGISTRY.id]:
     " 0x4200000000000000000000000000000000000020",
   [ChainInfo.OPSEPOLIA_TRUSTFUL_RESOLVER.id]: "0X123...",
+  [ChainInfo.OPTIMISM_SEPOLIA_EAS.id]:
+    "0x4200000000000000000000000000000000000021...",
+  [ChainInfo.OPTIMISM_SEPOLIA_REGISTRY.id]:
+    "0x4200000000000000000000000000000000000020",
 };
