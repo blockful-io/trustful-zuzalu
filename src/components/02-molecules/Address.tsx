@@ -4,7 +4,7 @@ import { useAccount, useEnsName } from "wagmi";
 
 import { InfoText } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks";
-import { getEllipsisTxt } from "@/utils/formatters";
+import { collapsedAddress } from "@/utils/formatters";
 
 export const Address: FC = (): JSX.Element => {
   const { address } = useAccount();
@@ -12,7 +12,7 @@ export const Address: FC = (): JSX.Element => {
   const { isTablet } = useWindowSize();
 
   const displayedAddress =
-    isTablet && address ? getEllipsisTxt(address, 4) : address;
+    isTablet && address ? collapsedAddress(address, 4) : address;
 
   return <InfoText value={ensName ?? displayedAddress} />;
 };

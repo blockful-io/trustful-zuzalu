@@ -1,3 +1,4 @@
+import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
@@ -7,16 +8,20 @@ import {
   Flex,
   Divider,
 } from "@chakra-ui/react";
+import { useQRCode } from "next-qrcode";
+import { useAccount } from "wagmi";
 
 import {
   CircleQuestion,
-  QRCodeLargeIcon,
   TheFooterNavbar,
   TheHeader,
   TicketIcon,
 } from "@/components/01-atoms";
+import { collapsedAddress } from "@/utils/formatters";
 
 export const CheckInSection = () => {
+  const { Canvas } = useQRCode();
+  const { address, chain } = useAccount();
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />
@@ -60,9 +65,34 @@ export const CheckInSection = () => {
             <Flex
               alignItems={"center"}
               justifyContent={"center"}
-              flexDirection={"row"}
+              flexDirection={"column"}
             >
-              <QRCodeLargeIcon />
+              {address && chain ? (
+                <>
+                  <Canvas
+                    text={address}
+                    options={{
+                      errorCorrectionLevel: "M",
+                      width: 250,
+                      color: {
+                        dark: "#F5FFFFDC",
+                        light: "#212223",
+                      },
+                    }}
+                  />
+                  <Flex className="justify-center items-center gap-2">
+                    <Text>{chain.name + ":" + collapsedAddress(address)}</Text>
+                    <CopyIcon
+                      onClick={() => {
+                        navigator.clipboard.writeText(address);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </Flex>
+                </>
+              ) : (
+                "NO WALLET CONNECTED"
+              )}
             </Flex>
           </CardBody>
         </Card>
