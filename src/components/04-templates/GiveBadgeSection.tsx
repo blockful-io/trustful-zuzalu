@@ -35,7 +35,7 @@ export enum GiveBadgeAction {
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
-  INSERT_SUMMARY = "INSERT_SUMMARY",
+  INSERT_BADGE_AND_COMMENT = "INSERT_BADGE_AND_COMMENT",
   CONFIRMATION = "CONFIRMATION",
 }
 
@@ -135,12 +135,14 @@ export const GiveBadgeSection = () => {
                 <TheFooterBadgeDetails
                   actualStep={addressStep}
                   onUpdateStep={() =>
-                    setAddressStep(GiveBadgeStepAddress.INSERT_SUMMARY)
+                    setAddressStep(
+                      GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
+                    )
                   }
                 />
               </>
             );
-          case GiveBadgeStepAddress.INSERT_SUMMARY:
+          case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
             return (
               <>
                 <TheHeader />

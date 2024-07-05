@@ -19,10 +19,10 @@ export const TheFooterBadgeDetails = ({
     switch (actualStep) {
       case GiveBadgeStepAddress.INSERT_ADDRESS:
         if (buttonClicked === ButtonClickPossibilities.NEXT_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.INSERT_SUMMARY);
+          onUpdateStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
         }
         break;
-      case GiveBadgeStepAddress.INSERT_SUMMARY:
+      case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
         if (buttonClicked === ButtonClickPossibilities.PREVIOUS_STEP) {
           onUpdateStep(GiveBadgeStepAddress.INSERT_ADDRESS);
         } else if (buttonClicked === ButtonClickPossibilities.NEXT_STEP) {
@@ -31,7 +31,7 @@ export const TheFooterBadgeDetails = ({
         break;
       case GiveBadgeStepAddress.CONFIRMATION:
         if (buttonClicked === ButtonClickPossibilities.PREVIOUS_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.INSERT_SUMMARY);
+          onUpdateStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
         }
         break;
     }
