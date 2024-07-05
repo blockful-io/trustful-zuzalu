@@ -2,6 +2,7 @@
 
 import { HomeSection } from "@/components/04-templates";
 import { BadgeDetailsSection } from "@/components/04-templates/BadgeDetailsSection";
+import { CheckInSection } from "@/components/04-templates/CheckInSection";
 import { CheckoutSection } from "@/components/04-templates/CheckoutSection";
 import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
 import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
@@ -15,6 +16,8 @@ export default function renderPage({
   switch (params.slug) {
     case "pre-checkin":
       return <PreCheckinSection />;
+    case "check-in":
+      return <CheckInSection />;
     case "my-badge":
       return <MyBadgeSection />;
     case "my-badge-1": // TO DO: replace with dynamic id
