@@ -13,7 +13,6 @@ export const BadgeDetailsNavigation = ({
   isFeedback?: boolean;
   isQRCode?: boolean;
 }) => {
-  console.log("BadgeDetailsNavigation", isDetail, isFeedback);
   const router = useRouter();
   return !isDetail && !isFeedback && !isQRCode ? (
     <Box className="w-full flex items-center p-4">
