@@ -1,20 +1,29 @@
 import { Box } from "@chakra-ui/react";
-import Image from "next/image";
 
-import { BadgeDetailsNavigation } from "@/components/01-atoms";
-
-import qrCodeImage from "../../../public/img/QR-Code-image.png";
+import {
+  BadgeDetailsNavigation,
+  TheFooterNavbar,
+  QRCodeScanner,
+} from "@/components/01-atoms";
 
 export const QRCode = () => {
+  const onNewScanResult = (decodedText: string, decodedResult: any) => {
+    console.log("onNewScanResult", decodedText, decodedResult);
+    return decodedText;
+  };
   return (
-    <Box className="absolute w-full h-full">
+    <Box className="flex flex-col items-center w-full">
       <BadgeDetailsNavigation isQRCode={true} />
-      <Image
-        src={qrCodeImage}
-        fill
-        alt={"QR CODE IMAGE"}
-        className="relative"
-      />
+      <Box className="flex-1 flex-col justify-center items-center">
+        <QRCodeScanner
+          fps={10}
+          qrbox={{ width: 300, height: 300 }}
+          disableFlip={false}
+          aspectRatio={1.0}
+          qrCodeSuccessCallback={onNewScanResult}
+        />
+        <TheFooterNavbar />
+      </Box>
     </Box>
   );
 };
