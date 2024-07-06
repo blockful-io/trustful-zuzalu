@@ -19,7 +19,7 @@ import { BadgeDetails } from "@/components/03-organisms";
 
 export const BadgeDetailsSection = () => {
   return (
-    <Flex flexDirection="column" minHeight="100vh">
+    <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
       <BadgeDetails />
       <Box
