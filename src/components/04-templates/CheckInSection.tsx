@@ -1,4 +1,3 @@
-import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
@@ -12,6 +11,7 @@ import { useQRCode } from "next-qrcode";
 import { useAccount } from "wagmi";
 
 import {
+  CopyToClipboardButton,
   CircleQuestion,
   TheFooterNavbar,
   TheHeader,
@@ -22,6 +22,7 @@ import { collapsedAddress } from "@/utils/formatters";
 export const CheckInSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
+
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />
@@ -82,12 +83,7 @@ export const CheckInSection = () => {
                   />
                   <Flex className="justify-center items-center gap-2">
                     <Text>{chain.name + ":" + collapsedAddress(address)}</Text>
-                    <CopyIcon
-                      onClick={() => {
-                        navigator.clipboard.writeText(address);
-                      }}
-                      className="cursor-pointer"
-                    />
+                    <CopyToClipboardButton />
                   </Flex>
                 </>
               ) : (

@@ -23,6 +23,7 @@ export * from "./icons/UserIcon";
 export * from "./AddressInput";
 export * from "./BadgeCard";
 export * from "./BadgeDetailsNavigation";
+export * from "./CopyToClipboardButton";
 export * from "./CreatedByBlockful";
 export * from "./DarkModeButton";
 export * from "./InfoText";
