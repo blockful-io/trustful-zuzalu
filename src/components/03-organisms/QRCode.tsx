@@ -1,8 +1,10 @@
 import { Box } from "@chakra-ui/react";
 
-import { BadgeDetailsNavigation, TheFooterNavbar } from "@/components/01-atoms";
-
-import QRCodeScanner from "../01-atoms/QRCodeScanner";
+import {
+  BadgeDetailsNavigation,
+  TheFooterNavbar,
+  QRCodeScanner,
+} from "@/components/01-atoms";
 
 export const QRCode = () => {
   const onNewScanResult = (decodedText: string, decodedResult: any) => {

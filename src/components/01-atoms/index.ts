@@ -27,6 +27,7 @@ export * from "./CopyToClipboardButton";
 export * from "./CreatedByBlockful";
 export * from "./DarkModeButton";
 export * from "./InfoText";
+export * from "./QRCodeScanner";
 export * from "./SignMessage";
 export * from "./TheFooter";
 export * from "./TheFooterBadgeDetails";
