@@ -125,7 +125,7 @@ export const BadgeDetailsSection = () => {
         as="footer"
         position="fixed"
         bottom={0}
-        zIndex={10}
+        zIndex={0}
         textAlign={"center"}
         className="px-6 py-4 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8] gap-3"
       >

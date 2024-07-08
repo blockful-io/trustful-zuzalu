@@ -41,9 +41,10 @@ export const TheFooterBadgeDetails = ({
       as="footer"
       position="fixed"
       bottom={0}
-      zIndex={10}
+      left={0}
+      zIndex={0}
       textAlign={"center"}
-      className="px-6 py-4 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8]"
+      className="px-6 py-4 sm:px-[60px] sm:py-4 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8]"
     >
       <Flex gap={4} className="w-full justify-between items-center">
         <Text>Continue</Text>
