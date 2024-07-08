@@ -16,11 +16,16 @@ import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 
 export const QRCode = () => {
-  const { setBadgeInputAddress, setAddressStep, setAction } =
+  const { setBadgeInputAddress, badgeInputAddress, setAddressStep, setAction } =
     useContext(QRCodeContext);
   const [QRCodeIsOpen, setQRCodeisOpen] = useState<boolean>(true);
+  const currentInputAddress = badgeInputAddress;
   const onNewScanResult = (decodedText: string) => {
-    if (isAddress(decodedText)) {
+    if (
+      currentInputAddress?.address.toLowerCase() !==
+        decodedText.toLowerCase() &&
+      isAddress(decodedText)
+    ) {
       setQRCodeisOpen(false);
       setBadgeInputAddress(new EthereumAddress(decodedText));
       setAction(GiveBadgeAction.ADDRESS);

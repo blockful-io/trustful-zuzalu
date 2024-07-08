@@ -25,7 +25,7 @@ export const BadgeDetailsNavigation = ({
     <Box className="w-full flex items-center p-4">
       <Flex
         onClick={() => {
-          setAction(GiveBadgeAction.DEFAULT);
+          setAction(GiveBadgeAction.ADDRESS);
           setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
         }}
         className="cursor-pointer p-2"
@@ -42,7 +42,7 @@ export const BadgeDetailsNavigation = ({
     <Box className="w-full flex items-center p-4">
       <Flex
         onClick={() => {
-          setAction(GiveBadgeAction.DEFAULT);
+          setAction(GiveBadgeAction.ADDRESS);
           setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
         }}
         className="cursor-pointer p-2"

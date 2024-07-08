@@ -22,16 +22,20 @@ interface QRCodeContextProps {
   addressStep: GiveBadgeStepAddress;
   setAddressStep: Dispatch<SetStateAction<GiveBadgeStepAddress>>;
   handleActionChange: (newAction: GiveBadgeAction) => void;
+  setQRCodeisOpen: Dispatch<SetStateAction<boolean>>;
+  QRCodeIsOpen: boolean;
 }
 
 const defaultContextValue: QRCodeContextProps = {
   badgeInputAddress: null,
   setBadgeInputAddress: () => {},
-  action: GiveBadgeAction.DEFAULT,
+  action: GiveBadgeAction.ADDRESS,
   setAction: () => {},
   addressStep: GiveBadgeStepAddress.INSERT_ADDRESS,
   setAddressStep: () => {},
   handleActionChange: () => {},
+  setQRCodeisOpen: () => {},
+  QRCodeIsOpen: false,
 };
 
 export const QRCodeContext =
@@ -45,11 +49,12 @@ export const QRCodeContextProvider = ({
   const [badgeInputAddress, setBadgeInputAddress] =
     useState<EthereumAddress | null>(null);
   const [action, setAction] = useState<GiveBadgeAction>(
-    GiveBadgeAction.DEFAULT,
+    GiveBadgeAction.ADDRESS,
   );
   const [addressStep, setAddressStep] = useState<GiveBadgeStepAddress>(
     GiveBadgeStepAddress.INSERT_ADDRESS,
   );
+  const [QRCodeIsOpen, setQRCodeisOpen] = useState<boolean>(false);
 
   const handleActionChange = (newAction: GiveBadgeAction) => {
     setAction(newAction);
@@ -64,8 +69,10 @@ export const QRCodeContextProvider = ({
       addressStep,
       setAddressStep,
       handleActionChange,
+      setQRCodeisOpen,
+      QRCodeIsOpen,
     }),
-    [badgeInputAddress, action, addressStep],
+    [badgeInputAddress, action, addressStep, QRCodeIsOpen],
   );
 
   return (
