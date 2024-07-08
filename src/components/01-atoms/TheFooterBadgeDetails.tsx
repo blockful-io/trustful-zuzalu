@@ -9,7 +9,6 @@ import { QRCodeContext } from "@/lib/context/QRCodeContext";
 export const TheFooterBadgeDetails = () => {
   const { setAddressStep } = useContext(QRCodeContext);
 
-  // INSERT ADDRESS
   return (
     <Box
       as="footer"
