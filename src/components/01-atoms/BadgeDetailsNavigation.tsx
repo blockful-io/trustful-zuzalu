@@ -3,7 +3,6 @@ import { useContext } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-
 import { ArrowIcon, ArrowIconVariant } from "@/components/01-atoms";
 import {
   GiveBadgeAction,

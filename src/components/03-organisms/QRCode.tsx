@@ -15,7 +15,6 @@ import {
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 
-
 export const QRCode = () => {
   const { setBadgeInputAddress, setAddressStep, setAction } =
     useContext(QRCodeContext);
