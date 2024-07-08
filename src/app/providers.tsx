@@ -7,6 +7,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
+import { QRCodeContextProvider } from "@/lib/context/QRCodeContext";
 import { wagmiConfig } from "@/wagmi";
 
 export function Providers({ children }: Readonly<{ children: ReactNode }>) {
@@ -34,7 +35,9 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
                 accentColorForeground: "#161617",
               })}
             >
-              {mounted && children}
+              <QRCodeContextProvider>
+                {mounted && children}
+              </QRCodeContextProvider>
             </RainbowKitProvider>
           </ChakraProvider>
         </CacheProvider>
