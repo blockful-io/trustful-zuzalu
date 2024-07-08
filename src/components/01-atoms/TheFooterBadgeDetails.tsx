@@ -1,41 +1,15 @@
+import { useContext } from "react";
+
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-import { ArrowIcon, ArrowIconVariant } from "./icons/ArrowIcon";
-import { GiveBadgeStepAddress } from "../04-templates";
+import { ArrowIcon, ArrowIconVariant } from "@/components/01-atoms";
+import { GiveBadgeStepAddress } from "@/components/04-templates";
+import { QRCodeContext } from "@/lib/context/QRCodeContext";
 
-export enum ButtonClickPossibilities {
-  PREVIOUS_STEP,
-  NEXT_STEP,
-}
+export const TheFooterBadgeDetails = () => {
+  const { setAddressStep } = useContext(QRCodeContext);
 
-export const TheFooterBadgeDetails = ({
-  actualStep,
-  onUpdateStep,
-}: {
-  actualStep: GiveBadgeStepAddress;
-  onUpdateStep: (newStep: GiveBadgeStepAddress) => void;
-}) => {
-  const updateAddressStep = (buttonClicked: ButtonClickPossibilities) => {
-    switch (actualStep) {
-      case GiveBadgeStepAddress.INSERT_ADDRESS:
-        if (buttonClicked === ButtonClickPossibilities.NEXT_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
-        }
-        break;
-      case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
-        if (buttonClicked === ButtonClickPossibilities.PREVIOUS_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.INSERT_ADDRESS);
-        } else if (buttonClicked === ButtonClickPossibilities.NEXT_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.CONFIRMATION);
-        }
-        break;
-      case GiveBadgeStepAddress.CONFIRMATION:
-        if (buttonClicked === ButtonClickPossibilities.PREVIOUS_STEP) {
-          onUpdateStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
-        }
-        break;
-    }
-  };
+  // INSERT ADDRESS
   return (
     <Box
       as="footer"
@@ -50,7 +24,9 @@ export const TheFooterBadgeDetails = ({
         <Text>Continue</Text>
         <button
           className="flex rounded-full bg-[#37383A] justify-center items-center w-8 h-8"
-          onClick={() => updateAddressStep(ButtonClickPossibilities.NEXT_STEP)}
+          onClick={() =>
+            setAddressStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT)
+          }
         >
           <ArrowIcon
             variant={ArrowIconVariant.RIGHT}

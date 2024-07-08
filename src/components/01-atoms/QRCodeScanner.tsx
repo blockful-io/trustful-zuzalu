@@ -20,6 +20,9 @@ const createConfig = (props: any) => {
   if (props.disableFlip !== undefined) {
     config.disableFlip = props.disableFlip;
   }
+  if (props.open !== undefined) {
+    config.open = props.open;
+  }
   config.formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
 
   return config;
@@ -27,29 +30,31 @@ const createConfig = (props: any) => {
 
 export const QRCodeScanner = (props: any) => {
   useEffect(() => {
-    // when component mounts
-    const config = createConfig(props);
-    const verbose = props.verbose === true;
-    // Suceess callback is required.
-    if (!props.qrCodeSuccessCallback) {
-      throw "qrCodeSuccessCallback is required callback.";
-    }
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      qrcodeRegionId,
-      config,
-      verbose,
-    );
-    html5QrcodeScanner.render(
-      props.qrCodeSuccessCallback,
-      props.qrCodeErrorCallback,
-    );
+    if (props.open) {
+      // when component mounts
+      const config = createConfig(props);
+      const verbose = props.verbose === true;
+      // Suceess callback is required.
+      if (!props.qrCodeSuccessCallback) {
+        throw "qrCodeSuccessCallback is required callback.";
+      }
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        qrcodeRegionId,
+        config,
+        verbose,
+      );
+      html5QrcodeScanner.render(
+        props.qrCodeSuccessCallback,
+        props.qrCodeErrorCallback,
+      );
 
-    // cleanup function when component will unmount
-    return () => {
-      html5QrcodeScanner.clear().catch((error) => {
-        console.error("Failed to clear html5QrcodeScanner. ", error);
-      });
-    };
+      // cleanup function when component will unmount
+      return () => {
+        html5QrcodeScanner.clear().catch((error) => {
+          console.error("Failed to clear html5QrcodeScanner. ", error);
+        });
+      };
+    }
   }, []);
 
   return <div id={qrcodeRegionId} />;

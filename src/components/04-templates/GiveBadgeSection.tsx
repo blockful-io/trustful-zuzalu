@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect } from "react";
 
 import {
   Avatar,
@@ -15,7 +15,6 @@ import {
 import {
   BadgeDetailsNavigation,
   CommentIcon,
-  EthereumIcon,
   TheHeader,
   TheFooterBadgeDetails,
   TheFooterNavbar,
@@ -26,6 +25,7 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useWindowSize } from "@/hooks";
+import { QRCodeContext } from "@/lib/context/QRCodeContext";
 
 export enum GiveBadgeAction {
   DEFAULT = "DEFAULT",
@@ -41,20 +41,15 @@ export enum GiveBadgeStepAddress {
 
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
-  const [action, setAction] = useState<GiveBadgeAction>(
-    GiveBadgeAction.DEFAULT,
-  );
-  const [addressStep, setAddressStep] = useState<GiveBadgeStepAddress>(
-    GiveBadgeStepAddress.INSERT_ADDRESS,
-  );
+  const { action, addressStep, handleActionChange, setAddressStep } =
+    useContext(QRCodeContext);
 
-  const handleActionChange = (newAction: GiveBadgeAction) => {
-    setAction(newAction);
-    // Reset address step to default when changing action
-    if (newAction === GiveBadgeAction.ADDRESS) {
+  useEffect(() => {
+    return () => {
+      handleActionChange(GiveBadgeAction.DEFAULT);
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
-    }
-  };
+    };
+  }, []);
 
   const renderStepContent = (action: GiveBadgeAction) => {
     switch (action) {
@@ -82,19 +77,8 @@ export const GiveBadgeSection = () => {
                       handleActionChange(GiveBadgeAction.ADDRESS);
                     }} // TO DO: Add address to correct router or add useState to fill the step
                   >
-                    <UserIcon />
+                    <UserIcon className="text-[#B1EF42]" />
                     <Text>Insert address or ENS</Text>
-                  </Flex>
-                  <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                  <Flex
-                    className="py-4 gap-4"
-                    onClick={() => {
-                      // router.push("/give-badge-address");
-                      handleActionChange(GiveBadgeAction.QR_CODE);
-                    }} // TO DO: Add address to correct router or add useState to fill the step
-                  >
-                    <QrCodeIcon />
-                    <Text>Scan QR code</Text>
                   </Flex>
                   <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                 </Flex>
@@ -111,35 +95,33 @@ export const GiveBadgeSection = () => {
                 <TheHeader />
                 <BadgeDetailsNavigation />
                 <Box
-                  flex={1}
                   as="main"
-                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
+                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
                   gap={8}
                 >
                   <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                    Who would you like to give a badge to?
+                    Let&apos;s give a badge to someone
                   </Text>
                   <Flex className="w-full flex-col">
                     <Flex className="gap-4 pb-4 justify-start items-center">
-                      <EthereumIcon />
+                      <UserIcon className="text-[#B1EF42]" />
                       <Input
                         className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
-                        placeholder="ETH address or ENS"
+                        placeholder="Insert address or ENS"
                         _placeholder={{ className: "text-slate-50 opacity-30" }}
                         focusBorderColor={"#F5FFFF1A"}
+                      />
+                      <QrCodeIcon
+                        onClick={() => {
+                          // router.push("/give-badge-address");
+                          handleActionChange(GiveBadgeAction.QR_CODE);
+                        }} // TO DO: Add address to correct router or add useState to fill the step
                       />
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                   </Flex>
+                  <TheFooterBadgeDetails />
                 </Box>
-                <TheFooterBadgeDetails
-                  actualStep={addressStep}
-                  onUpdateStep={() =>
-                    setAddressStep(
-                      GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
-                    )
-                  }
-                />
               </>
             );
           case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
@@ -218,9 +200,9 @@ export const GiveBadgeSection = () => {
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
-                    onClick={() => {
-                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
-                    }}
+                    onClick={() =>
+                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION)
+                    }
                   >
                     Confirm
                   </Button>
