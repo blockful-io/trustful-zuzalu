@@ -8,69 +8,72 @@ export interface ConnetedWalletConfiguration {
 }
 
 export async function submitAttest(
-  uid: `0x${string}`,
-  schema: `0x${string}`,
-  time: bigint,
-  expirationTime: bigint,
-  refUID: `0x${string}`,
+  schemaUID: `0x${string}`,
   recipient: `0x${string}`,
-  attester: `0x${string}`,
+  expirationTime: bigint,
   revocable: boolean,
+  refUID: `0x${string}`,
   data: `0x${string}`,
+  value: bigint,
   configurations: ConnetedWalletConfiguration,
-  msgValue: bigint,
 ) {
-  const attestation = {
-    uid,
-    schema,
-    time,
-    expirationTime,
-    revocationTime: 0n,
-    refUID,
-    recipient,
-    attester,
-    revocable,
-    data,
+  const AttestationRequestData = {
+    recipient: recipient,
+    expirationTime: expirationTime,
+    revocable: revocable,
+    refUID: refUID,
+    data: data,
+    value: value,
   };
 
+  const AttestationRequest = {
+    schema: schemaUID,
+    data: AttestationRequestData,
+  };
+
+  // refactor - get the ABI from the EAS.sol instead of the resolver.sol
   const encodedData = encodeFunctionData({
     abi: [
       {
-        type: "function",
-        name: "attest",
         inputs: [
           {
-            name: "attestation",
-            type: "tuple",
-            internalType: "struct Attestation",
             components: [
-              { name: "uid", type: "bytes32", internalType: "bytes32" },
-              { name: "schema", type: "bytes32", internalType: "bytes32" },
-              { name: "time", type: "uint64", internalType: "uint64" },
+              { internalType: "bytes32", name: "schema", type: "bytes32" },
               {
-                name: "expirationTime",
-                type: "uint64",
-                internalType: "uint64",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "recipient",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint64",
+                    name: "expirationTime",
+                    type: "uint64",
+                  },
+                  { internalType: "bool", name: "revocable", type: "bool" },
+                  { internalType: "bytes32", name: "refUID", type: "bytes32" },
+                  { internalType: "bytes", name: "data", type: "bytes" },
+                  { internalType: "uint256", name: "value", type: "uint256" },
+                ],
+                internalType: "struct AttestationRequestData",
+                name: "data",
+                type: "tuple",
               },
-              {
-                name: "revocationTime",
-                type: "uint64",
-                internalType: "uint64",
-              },
-              { name: "refUID", type: "bytes32", internalType: "bytes32" },
-              { name: "recipient", type: "address", internalType: "address" },
-              { name: "attester", type: "address", internalType: "address" },
-              { name: "revocable", type: "bool", internalType: "bool" },
-              { name: "data", type: "bytes", internalType: "bytes" },
             ],
+            internalType: "struct AttestationRequest",
+            name: "request",
+            type: "tuple",
           },
         ],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
+        name: "attest",
+        outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
         stateMutability: "payable",
+        type: "function",
       },
     ],
 
-    args: [attestation],
+    args: [AttestationRequest],
   });
 
   try {
@@ -82,7 +85,7 @@ export async function submitAttest(
       to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
         configurations.chain
       ] as `0x${string}`,
-      value: msgValue,
+      value: value,
     });
 
     const transactionHash = await configurations.walletClient.sendTransaction({
@@ -91,7 +94,7 @@ export async function submitAttest(
         configurations.chain
       ] as `0x${string}`,
       gasLimit: gasLimit,
-      value: msgValue,
+      value: value,
     });
 
     const transactionReceipt = await publicClient({
