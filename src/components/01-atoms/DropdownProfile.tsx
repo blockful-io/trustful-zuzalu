@@ -9,9 +9,9 @@ import {
   Heading,
   Slide,
 } from "@chakra-ui/react";
+import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
-import { useDisconnect } from "wagmi";
 
 export const DropdownProfile = ({ isOpenMenu }: { isOpenMenu: boolean }) => {
   const { disconnect } = useDisconnect();

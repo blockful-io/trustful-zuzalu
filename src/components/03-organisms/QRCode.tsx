@@ -8,13 +8,13 @@ import {
   TheFooterNavbar,
   QRCodeScanner,
 } from "@/components/01-atoms";
-import { QRCodeContext } from "@/lib/context/QRCodeContext";
-import { EthereumAddress } from "@/lib/shared/types";
-
 import {
   GiveBadgeAction,
   GiveBadgeStepAddress,
 } from "@/components/04-templates";
+import { QRCodeContext } from "@/lib/context/QRCodeContext";
+import { EthereumAddress } from "@/lib/shared/types";
+
 
 export const QRCode = () => {
   const { setBadgeInputAddress, setAddressStep, setAction } =

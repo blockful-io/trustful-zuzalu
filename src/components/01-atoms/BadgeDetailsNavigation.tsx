@@ -3,13 +3,13 @@ import { useContext } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-import { QRCodeContext } from "@/lib/context/QRCodeContext";
 
 import { ArrowIcon, ArrowIconVariant } from "@/components/01-atoms";
 import {
   GiveBadgeAction,
   GiveBadgeStepAddress,
 } from "@/components/04-templates";
+import { QRCodeContext } from "@/lib/context/QRCodeContext";
 
 export const BadgeDetailsNavigation = ({
   isDetail = false,

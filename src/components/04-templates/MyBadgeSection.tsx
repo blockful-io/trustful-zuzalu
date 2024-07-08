@@ -1,4 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
+
 import { BadgeCard, TheHeader, TheFooterNavbar } from "@/components/01-atoms";
 
 export const MyBadgeSection = () => {
