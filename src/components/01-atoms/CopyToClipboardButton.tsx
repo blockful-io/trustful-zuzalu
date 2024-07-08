@@ -1,6 +1,7 @@
+import { useState } from "react";
+
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import { Tooltip } from "@chakra-ui/react";
-import { useState } from "react";
 import { useAccount } from "wagmi";
 
 export const CopyToClipboardButton = () => {

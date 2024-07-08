@@ -24,7 +24,7 @@ export const CheckInSection = () => {
   const { address, chain } = useAccount();
 
   return (
-    <Flex flexDirection="column" minHeight="100vh">
+    <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
 
       <Box

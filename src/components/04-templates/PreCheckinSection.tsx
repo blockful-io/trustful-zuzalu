@@ -14,6 +14,7 @@ export const PreCheckinSection = () => {
         flex={1}
         as="main"
         className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
+        marginBottom="60px"
       >
         <Flex flexDirection={"column"} gap={2}>
           <Button onClick={() => router.push("my-badge")}>My Badges</Button>
