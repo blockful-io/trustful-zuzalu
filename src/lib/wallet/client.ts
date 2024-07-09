@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient } from "viem";
+import { http } from "viem";
 import { optimism } from "viem/chains";
-import { http } from "wagmi";
 
 export const publicClient = createPublicClient({
   chain: optimism,

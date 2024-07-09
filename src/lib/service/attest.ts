@@ -1,11 +1,14 @@
+import { getWalletClient, getPublicClient } from "@wagmi/core";
 import { encodeFunctionData } from "viem";
+import {
+  sendTransaction,
+  estimateGas,
+  waitForTransactionReceipt,
+} from "viem/actions";
 
-import { publicClient, walletClient } from "../../lib/wallet/client";
+import { wagmiConfig } from "@/wagmi";
 
-export interface ConnetedWalletConfiguration {
-  walletClient: any;
-  chain: number;
-}
+import { publicClient, walletClient } from "../wallet/client";
 
 export async function submitAttest(
   schema: `0x${string}`,
@@ -15,8 +18,14 @@ export async function submitAttest(
   refUID: `0x${string}`,
   data: `0x${string}`,
   value: bigint,
-  //configurations: ConnetedWalletConfiguration,
+  // walletClient: any,x
 ) {
+  const walletClient2 = await getWalletClient(wagmiConfig);
+  console.log("walletClient2", walletClient2);
+
+  const publicClient2 = getPublicClient(wagmiConfig);
+  console.log("publicClient2", publicClient2);
+
   const AttestationRequestData = {
     recipient: recipient,
     expirationTime: expirationTime,
@@ -76,28 +85,37 @@ export async function submitAttest(
     args: [AttestationRequest],
   });
 
+  console.log("encodedData", encodedData);
+  console.log("value", value);
+  console.log("publicClient", publicClient);
+  console.log("walletClient", walletClient);
+
   try {
-    const gasLimit = await publicClient.estimateGas({
+    const gasLimit = estimateGas(publicClient, {
       account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
       data: encodedData,
       to: "0x4200000000000000000000000000000000000021",
       value: value,
-    });
+    })
+      .then((gasLimit: any) => console.log("gasLimit", gasLimit))
+      .catch((error: any) => console.error("gasLimit,", error));
 
-    const transactionHash = await walletClient.sendTransaction({
+    const transactionHash = await sendTransaction(walletClient2, {
       data: encodedData,
       account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
       to: "0x4200000000000000000000000000000000000021",
       gasLimit: gasLimit,
       value: value,
+      chain: walletClient.chain,
     });
 
-    const transactionReceipt = await publicClient.waitForTransactionReceipt({
+    const transactionReceipt = await waitForTransactionReceipt(publicClient, {
       hash: transactionHash,
     });
 
     return transactionReceipt;
   } catch (error) {
+    alert("error submitting attestation request");
     console.error(error);
     throw new Error(String(error));
   }

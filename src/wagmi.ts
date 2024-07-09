@@ -11,6 +11,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import type { Transport } from "viem";
+// import { createClient } from "viem";
 import { createConfig, http } from "wagmi";
 import {
   mainnet,
@@ -88,6 +89,12 @@ const transports: Record<number, Transport> = {
   [bsc.id]: http(),
   [bscTestnet.id]: http(),
 };
+
+// const viemClient = createClient({
+//   chain: optimism,
+//   transport: http(),
+// });
+
 export const wagmiConfig = createConfig({
   chains: [
     mainnet,
@@ -110,4 +117,9 @@ export const wagmiConfig = createConfig({
   connectors,
   transports,
   ssr: true,
+  // client: (optimism) => {
+  //   return createClient({
+  //     transport: http(),
+  //   });
+  // },
 });

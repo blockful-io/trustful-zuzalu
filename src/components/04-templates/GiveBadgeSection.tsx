@@ -12,9 +12,16 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { isAddress } from "viem";
-import { useSendTransaction } from "wagmi";
+import { getBlock } from "viem/actions";
+import {
+  useAccount,
+  useClient,
+  usePublicClient,
+  useSendTransaction,
+  useWalletClient,
+} from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -30,8 +37,10 @@ import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
+import { publicClient } from "@/lib/wallet/client";
 
 import { submitAttest } from "../../lib/service/attest";
+import { wagmiConfig } from "@/wagmi";
 // import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
@@ -58,6 +67,8 @@ export const GiveBadgeSection = () => {
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
+  const client = usePublicClient({ config: wagmiConfig });
+  console.log("client", client);
   useEffect(() => {
     return () => {
       handleActionChange(GiveBadgeAction.ADDRESS);
@@ -107,14 +118,12 @@ export const GiveBadgeSection = () => {
   };
 
   const handleAttest = async () => {
+    console.log("blockNUmber PUBLIC CLIENT", publicClient);
+    const blockNumber = await getBlock(publicClient, { blockTag: "latest" });
+    console.log("bLOCKnUMBER", blockNumber);
+
     const schema =
       "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa"; //Temporary hardcoded
-
-    const abiCoder = new ethers.AbiCoder();
-
-    const encodedData = abiCoder.encode(["string"], ["check-in"]);
-    console.log("encodedData", encodedData);
-    //
 
     const attestationRequestData = {
       recipient: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51" as `0x${string}`, //Temporary hardcoded
@@ -126,11 +135,6 @@ export const GiveBadgeSection = () => {
       value: BigInt(0),
     };
 
-    // const configurations = {
-    //   walletClient: {},
-    //   chain: 10,
-    // };
-
     try {
       const transactionReceipt = await submitAttest(
         schema,
@@ -140,7 +144,8 @@ export const GiveBadgeSection = () => {
         attestationRequestData.refUID,
         attestationRequestData.data,
         attestationRequestData.value,
-        //configurations,
+        // walletClient,
+        // publicClient,
       );
       console.log("Transaction receipt:", transactionReceipt);
     } catch (error) {
@@ -266,7 +271,7 @@ export const GiveBadgeSection = () => {
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
                     onClick={() => {
-                      handleTransfer();
+                      handleAttest();
                       setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
                     }}
                   >
