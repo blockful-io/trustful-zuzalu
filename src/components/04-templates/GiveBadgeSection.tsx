@@ -231,10 +231,10 @@ export const GiveBadgeSection = () => {
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
-                    onClick={() =>
+                    onClick={() => {
                       handleAttest();
-                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION)
-                    }
+                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
+                    }}
                   >
                     Confirm
                   </Button>
