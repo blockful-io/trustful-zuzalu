@@ -1,6 +1,6 @@
 import { encodeFunctionData } from "viem";
-import { TRUSTFUL_SMART_CONTRACT_ADDRESS } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
+
+import { publicClient, walletClient } from "../../lib/wallet/client";
 
 export interface ConnetedWalletConfiguration {
   walletClient: any;
@@ -8,14 +8,14 @@ export interface ConnetedWalletConfiguration {
 }
 
 export async function submitAttest(
-  schemaUID: `0x${string}`,
+  schema: `0x${string}`,
   recipient: `0x${string}`,
   expirationTime: bigint,
   revocable: boolean,
   refUID: `0x${string}`,
   data: `0x${string}`,
   value: bigint,
-  configurations: ConnetedWalletConfiguration,
+  //configurations: ConnetedWalletConfiguration,
 ) {
   const AttestationRequestData = {
     recipient: recipient,
@@ -27,7 +27,7 @@ export async function submitAttest(
   };
 
   const AttestationRequest = {
-    schema: schemaUID,
+    schema: schema,
     data: AttestationRequestData,
   };
 
@@ -77,29 +77,22 @@ export async function submitAttest(
   });
 
   try {
-    const gasLimit = await publicClient({
-      chainId: configurations.chain,
-    }).estimateGas({
-      account: configurations.walletClient.account as `0x${string}`,
+    const gasLimit = await publicClient.estimateGas({
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
       data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      to: "0x4200000000000000000000000000000000000021",
       value: value,
     });
 
-    const transactionHash = await configurations.walletClient.sendTransaction({
+    const transactionHash = await walletClient.sendTransaction({
       data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
+      to: "0x4200000000000000000000000000000000000021",
       gasLimit: gasLimit,
       value: value,
     });
 
-    const transactionReceipt = await publicClient({
-      chainId: configurations.chain,
-    }).waitForTransactionReceipt({
+    const transactionReceipt = await publicClient.waitForTransactionReceipt({
       hash: transactionHash,
     });
 
