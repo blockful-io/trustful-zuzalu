@@ -10,18 +10,18 @@ import {
 } from "@chakra-ui/react";
 
 import {
+  BadgeDetailsNavigation,
   BadgeStatus,
   BadgeTagIcon,
   HeartIcon,
   TheHeader,
 } from "@/components/01-atoms";
-import { BadgeDetails } from "@/components/03-organisms";
 
 export const BadgeDetailsSection = () => {
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
-      <BadgeDetails />
+      <BadgeDetailsNavigation />
       <Box
         flex={1}
         as="main"
