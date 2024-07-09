@@ -20,6 +20,9 @@ const createConfig = (props: any) => {
   if (props.disableFlip !== undefined) {
     config.disableFlip = props.disableFlip;
   }
+  if (props.open !== undefined) {
+    config.open = props.open;
+  }
   config.formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
 
   return config;
