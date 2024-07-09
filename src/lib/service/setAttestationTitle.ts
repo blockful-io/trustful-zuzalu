@@ -8,7 +8,7 @@ export interface ConnetedWalletConfiguration {
   chain: number;
 }
 
-export async function schemas(
+export async function setAttestationTitle(
   title: string,
   isValid: boolean,
   configurations: ConnetedWalletConfiguration,
