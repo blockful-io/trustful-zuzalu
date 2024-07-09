@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 
 import {
@@ -13,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { isAddress } from "viem";
+import { useSendTransaction } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -25,11 +27,12 @@ import {
   HeartIcon,
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
-import { useWindowSize } from "@/hooks";
-
-import { submitAttest } from "../../lib/service/attest";
+import { useNotify, useWindowSize } from "@/hooks";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
+
+import { submitAttest } from "../../lib/service/attest";
+// import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -72,6 +75,36 @@ export const GiveBadgeSection = () => {
   if (badgeInputAddress !== null && isAddress(badgeInputAddress.address)) {
     badgeInput = badgeInputAddress.address;
   }
+
+  const { sendTransaction } = useSendTransaction();
+  // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
+  //   hash: data,
+  // });
+  const { notifyError } = useNotify();
+
+  const handleTransfer = () => {
+    const receiver = "0x4200000000000000000000000000000000000021";
+    const amount = BigInt(0);
+    if (receiver.length === 0 || !isAddress(receiver)) {
+      return notifyError({
+        title: "Error:",
+        message: "The receiver address is not set!",
+      });
+    }
+
+    // if (parseFloat(amount) <= 0) {
+    //   return notifyError({
+    //     title: "Error:",
+    //     message: "The amount to send must be greater than 0.",
+    //   });
+    // }
+
+    sendTransaction({
+      to: receiver,
+      value: amount,
+      data: "0xf17325e70000000000000000000000000000000000000000000000000000000000000020d130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa000000000000000000000000000000000000000000000000000000000000004000000000000000000000000007231e0fd9f668d4aafae7a5d5f432b8e6e4fe5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    });
+  };
 
   const handleAttest = async () => {
     const schema =
@@ -166,6 +199,7 @@ export const GiveBadgeSection = () => {
                   className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
                   gap={4}
                 >
+                  {/* <TransferNative /> */}
                   <Card
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8]"
@@ -232,7 +266,7 @@ export const GiveBadgeSection = () => {
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
                     onClick={() => {
-                      handleAttest();
+                      handleTransfer();
                       setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
                     }}
                   >
