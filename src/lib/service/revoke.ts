@@ -1,102 +1,96 @@
+import { getWalletClient, getPublicClient } from "@wagmi/core";
 import { encodeFunctionData } from "viem";
-import { TRUSTFUL_SMART_CONTRACT_ADDRESS } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
 
-export interface ConnetedWalletConfiguration {
-  walletClient: any;
-  chain: number;
-}
+import { wagmiConfig } from "@/wagmi";
 
-export async function submitRevoke(
-  uid: `0x${string}`,
+import { publicClient, walletClient } from "../wallet/client";
+
+export async function revoke(
   schema: `0x${string}`,
-  time: bigint,
-  expirationTime: bigint,
-  refUID: `0x${string}`,
-  recipient: `0x${string}`,
-  attester: `0x${string}`,
-  revocable: boolean,
+  uid: `0x${string}`,
+  value: bigint,
   data: `0x${string}`,
-  configurations: ConnetedWalletConfiguration,
-  msgValue: bigint,
+  // walletClient: any,
 ) {
-  const attestation = {
-    uid,
-    schema,
-    time,
-    expirationTime,
-    revocationTime: 0n,
-    refUID,
-    recipient,
-    attester,
-    revocable,
-    data,
+  const walletClient2 = await getWalletClient(wagmiConfig);
+  console.log("walletClient2", walletClient2);
+
+  const publicClient2 = getPublicClient(wagmiConfig);
+  console.log("publicClient2", publicClient2);
+
+  const RevocationRequestData = {
+    uid: uid,
+    data: data,
+    value: value,
   };
 
+  const RevocationRequest = {
+    schema: schema,
+    data: RevocationRequestData,
+  };
+
+  // refactor - get the ABI from the EAS.sol instead of the resolver.sol
   const encodedData = encodeFunctionData({
     abi: [
       {
-        type: "function",
-        name: "revoke",
         inputs: [
           {
-            name: "attestation",
-            type: "tuple",
-            internalType: "struct Attestation",
             components: [
-              { name: "uid", type: "bytes32", internalType: "bytes32" },
-              { name: "schema", type: "bytes32", internalType: "bytes32" },
-              { name: "time", type: "uint64", internalType: "uint64" },
               {
-                name: "expirationTime",
-                type: "uint64",
-                internalType: "uint64",
+                internalType: "bytes32",
+                name: "schema",
+                type: "bytes32",
               },
               {
-                name: "revocationTime",
-                type: "uint64",
-                internalType: "uint64",
+                components: [
+                  {
+                    internalType: "bytes32",
+                    name: "uid",
+                    type: "bytes32",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "value",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct RevocationRequestData",
+                name: "data",
+                type: "tuple",
               },
-              { name: "refUID", type: "bytes32", internalType: "bytes32" },
-              { name: "recipient", type: "address", internalType: "address" },
-              { name: "attester", type: "address", internalType: "address" },
-              { name: "revocable", type: "bool", internalType: "bool" },
-              { name: "data", type: "bytes", internalType: "bytes" },
             ],
+            internalType: "struct RevocationRequest",
+            name: "request",
+            type: "tuple",
           },
         ],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
+        name: "revoke",
+        outputs: [],
         stateMutability: "payable",
+        type: "function",
       },
     ],
 
-    args: [attestation],
+    args: [RevocationRequest],
   });
 
   try {
-    const gasLimit = await publicClient({
-      chainId: configurations.chain,
-    }).estimateGas({
-      account: configurations.walletClient.account as `0x${string}`,
+    const gasLimit = await publicClient.estimateGas({
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
       data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
-      value: msgValue,
+      to: "0x4200000000000000000000000000000000000021",
+      value: value,
     });
 
-    const transactionHash = await configurations.walletClient.sendTransaction({
+    const transactionHash = await walletClient.sendTransaction({
       data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
+      to: "0x4200000000000000000000000000000000000021",
       gasLimit: gasLimit,
-      value: msgValue,
+      value: value,
     });
 
-    const transactionReceipt = await publicClient({
-      chainId: configurations.chain,
-    }).waitForTransactionReceipt({
+    const transactionReceipt = await publicClient.waitForTransactionReceipt({
       hash: transactionHash,
     });
 
