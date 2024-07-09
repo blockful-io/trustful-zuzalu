@@ -11,6 +11,7 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { isAddress } from "viem";
 
 import {
@@ -25,6 +26,8 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useWindowSize } from "@/hooks";
+
+import { submitAttest } from "../../lib/service/attest";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 
@@ -69,6 +72,48 @@ export const GiveBadgeSection = () => {
   if (badgeInputAddress !== null && isAddress(badgeInputAddress.address)) {
     badgeInput = badgeInputAddress.address;
   }
+
+  const handleAttest = async () => {
+    const schema =
+      "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa"; //Temporary hardcoded
+
+    const abiCoder = new ethers.AbiCoder();
+
+    const encodedData = abiCoder.encode(["string"], ["check-in"]);
+    console.log("encodedData", encodedData);
+    //
+
+    const attestationRequestData = {
+      recipient: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51" as `0x${string}`, //Temporary hardcoded
+      expirationTime: BigInt(0),
+      revocable: true,
+      refUID:
+        "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
+      data: "0x" as `0x${string}`,
+      value: BigInt(0),
+    };
+
+    // const configurations = {
+    //   walletClient: {},
+    //   chain: 10,
+    // };
+
+    try {
+      const transactionReceipt = await submitAttest(
+        schema,
+        attestationRequestData.recipient,
+        attestationRequestData.expirationTime,
+        attestationRequestData.revocable,
+        attestationRequestData.refUID,
+        attestationRequestData.data,
+        attestationRequestData.value,
+        //configurations,
+      );
+      console.log("Transaction receipt:", transactionReceipt);
+    } catch (error) {
+      console.error("Failed to submit attest:", error);
+    }
+  };
 
   const renderStepContent = (action: GiveBadgeAction) => {
     switch (action) {
@@ -187,6 +232,7 @@ export const GiveBadgeSection = () => {
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
                     onClick={() =>
+                      handleAttest();
                       setAddressStep(GiveBadgeStepAddress.CONFIRMATION)
                     }
                   >
