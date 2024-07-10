@@ -1,11 +1,8 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { Box, Flex } from "@chakra-ui/react";
 
-import { TheHeader } from "@/components/01-atoms";
+import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 
 export const PreCheckinSection = () => {
-  const router = useRouter();
-
   return (
     <Flex flexDirection="column" minHeight="100vh">
       <TheHeader />
@@ -15,13 +12,8 @@ export const PreCheckinSection = () => {
         as="main"
         className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
         marginBottom="60px"
-      >
-        <Flex flexDirection={"column"} gap={2}>
-          <Button onClick={() => router.push("my-badge")}>My Badges</Button>
-          <Button onClick={() => router.push("give-badge")}>Give Badges</Button>
-          <Button onClick={() => router.push("check-in")}> Check In</Button>
-        </Flex>
-      </Box>
+      />
+      <TheFooterNavbar />
     </Flex>
   );
 };
