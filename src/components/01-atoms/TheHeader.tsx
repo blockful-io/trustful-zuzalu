@@ -33,7 +33,12 @@ export const TheHeader: FC = () => {
           }}
         >
           <TrustfulIcon />
-          <Heading as="h1" fontSize={"1.5rem"} className="text-shadow">
+          <Heading
+            as="h1"
+            fontSize={"1.5rem"}
+            className="text-shadow"
+            color="white"
+          >
             Trustful
           </Heading>
         </HStack>
