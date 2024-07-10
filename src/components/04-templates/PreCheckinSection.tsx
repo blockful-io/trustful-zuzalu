@@ -1,4 +1,5 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 // import { useAccount } from "wagmi";
 
@@ -6,7 +7,6 @@ import { TheHeader } from "@/components/01-atoms";
 
 import useFetchEASData from "../../hooks/useFetchEASData";
 import { VILLAGER_QUERY } from "../../lib/client/schema_queries";
-import { ethers } from "ethers";
 
 //OBS - Code working but could use some refinement
 //TODO - Adjust typing
