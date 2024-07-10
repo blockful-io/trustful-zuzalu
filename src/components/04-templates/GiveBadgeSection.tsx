@@ -37,11 +37,11 @@ import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
 import { publicClient } from "@/lib/wallet/client";
+import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 import { submitAttest } from "../../lib/service/attest";
-import { wagmiConfig } from "@/wagmi";
 // import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
@@ -206,7 +206,6 @@ export const GiveBadgeSection = () => {
                   className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
                   gap={4}
                 >
-                  {/* <TransferNative /> */}
                   <Card
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8]"
@@ -240,7 +239,7 @@ export const GiveBadgeSection = () => {
                             Receiver
                           </Text>
                           <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                            my_user.eth
+                            {getEllipsedAddress(badgeInputAddress?.address)}
                           </Text>
                         </Flex>
                       </Flex>
@@ -250,8 +249,14 @@ export const GiveBadgeSection = () => {
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
                   >
-                    <Text className="flex">Badge</Text>
-                    <Select placeholder="Select option" className="flex">
+                    <Text className="text-slate-50 mb-2 text-sm font-medium font-['Inter'] leading-none">
+                      Select a Badge
+                    </Text>
+                    <Select
+                      placeholder="Select option"
+                      className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
+                      color="white"
+                    >
                       <option>ok</option>
                       <option>o2</option>
                     </Select>
