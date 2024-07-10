@@ -1,22 +1,31 @@
+import { getWalletClient, getPublicClient } from "@wagmi/core";
 import { encodeFunctionData } from "viem";
-import { TRUSTFUL_SMART_CONTRACT_ADDRESS } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
+import {
+  sendTransaction,
+  estimateGas,
+  waitForTransactionReceipt,
+} from "viem/actions";
 
-export interface ConnetedWalletConfiguration {
-  walletClient: any;
-  chain: number;
-}
+import { wagmiConfig } from "@/wagmi";
+
+import { publicClient, walletClient } from "../wallet/client";
 
 export async function submitAttest(
-  schemaUID: `0x${string}`,
+  schema: `0x${string}`,
   recipient: `0x${string}`,
   expirationTime: bigint,
   revocable: boolean,
   refUID: `0x${string}`,
   data: `0x${string}`,
   value: bigint,
-  configurations: ConnetedWalletConfiguration,
+  // walletClient: any,x
 ) {
+  const walletClient2 = await getWalletClient(wagmiConfig);
+  console.log("walletClient2", walletClient2);
+
+  const publicClient2 = getPublicClient(wagmiConfig);
+  console.log("publicClient2", publicClient2);
+
   const AttestationRequestData = {
     recipient: recipient,
     expirationTime: expirationTime,
@@ -27,7 +36,7 @@ export async function submitAttest(
   };
 
   const AttestationRequest = {
-    schema: schemaUID,
+    schema: schema,
     data: AttestationRequestData,
   };
 
@@ -76,35 +85,37 @@ export async function submitAttest(
     args: [AttestationRequest],
   });
 
-  try {
-    const gasLimit = await publicClient({
-      chainId: configurations.chain,
-    }).estimateGas({
-      account: configurations.walletClient.account as `0x${string}`,
-      data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
-      value: value,
-    });
+  console.log("encodedData", encodedData);
+  console.log("value", value);
+  console.log("publicClient", publicClient);
+  console.log("walletClient", walletClient);
 
-    const transactionHash = await configurations.walletClient.sendTransaction({
+  try {
+    const gasLimit = estimateGas(publicClient, {
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
       data: encodedData,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      to: "0x4200000000000000000000000000000000000021",
+      value: value,
+    })
+      .then((gasLimit: any) => console.log("gasLimit", gasLimit))
+      .catch((error: any) => console.error("gasLimit,", error));
+
+    const transactionHash = await sendTransaction(walletClient2, {
+      data: encodedData,
+      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
+      to: "0x4200000000000000000000000000000000000021",
       gasLimit: gasLimit,
       value: value,
+      chain: walletClient.chain,
     });
 
-    const transactionReceipt = await publicClient({
-      chainId: configurations.chain,
-    }).waitForTransactionReceipt({
+    const transactionReceipt = await waitForTransactionReceipt(publicClient, {
       hash: transactionHash,
     });
 
     return transactionReceipt;
   } catch (error) {
+    alert("error submitting attestation request");
     console.error(error);
     throw new Error(String(error));
   }
