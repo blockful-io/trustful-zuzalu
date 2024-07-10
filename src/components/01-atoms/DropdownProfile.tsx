@@ -13,7 +13,13 @@ import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
 
-export const DropdownProfile = ({ isOpenMenu }: { isOpenMenu: boolean }) => {
+export const DropdownProfile = ({
+  isOpenMenu,
+  onClose,
+}: {
+  isOpenMenu: boolean;
+  onClose: () => void;
+}) => {
   const { disconnect } = useDisconnect();
 
   return (
@@ -39,7 +45,7 @@ export const DropdownProfile = ({ isOpenMenu }: { isOpenMenu: boolean }) => {
             <Heading size="md">Profile options</Heading>
           </Flex>
           <Flex className={"items-center"} gap={2}>
-            <CloseIcon onClick={() => (isOpenMenu = false)} />
+            <CloseIcon onClick={onClose} />
           </Flex>
         </CardHeader>
         <Divider color={"#F5FFFF14"} />
@@ -58,13 +64,24 @@ export const DropdownProfile = ({ isOpenMenu }: { isOpenMenu: boolean }) => {
               </Text>
             </Flex>
           </Flex>
-          <Flex gap={4} alignItems={"center"} flexDirection={"row"} p={4}>
-            <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
-            <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                Profile
-              </Text>
+          <Flex
+            gap={4}
+            alignItems={"center"}
+            flexDirection={"row"}
+            p={4}
+            justifyContent={"space-between"}
+          >
+            <Flex gap={3} alignItems={"center"}>
+              <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
+              <Flex>
+                <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                  Profile
+                </Text>
+              </Flex>
             </Flex>
+            <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium font-['Inter'] uppercase leading-[13.20px] tracking-wide">
+              coming soon
+            </Text>
           </Flex>
         </CardBody>
       </Card>

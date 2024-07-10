@@ -12,6 +12,7 @@ export const TheFooterNavbar = () => {
       as="footer"
       position="fixed"
       bottom={0}
+      left={0}
       zIndex={0}
       textAlign={"center"}
       className="px-6 sm:p-0 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8]"
