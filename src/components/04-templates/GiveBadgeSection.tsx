@@ -11,10 +11,10 @@ import {
   Input,
   Select,
   Text,
+  Textarea,
 } from "@chakra-ui/react";
-import { isAddress } from "viem";
-import { getBlock } from "viem/actions";
-import { useAccount, useSendTransaction } from "wagmi";
+import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
+import { useAccount } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -30,14 +30,19 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
-import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
-import type { BadgeTitles } from "@/lib/client/constants";
+import {
+  ZUVILLAGE_BADGE_TITLES,
+  ZUVILLAGE_SCHEMAS,
+} from "@/lib/client/constants";
+import type { BadgeTitle } from "@/lib/client/constants";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
-import { publicClient } from "@/lib/wallet/client";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-import { submitAttest } from "../../lib/service/attest";
+import {
+  submitAttest,
+  type AttestationRequestData,
+} from "../../lib/service/attest";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -54,7 +59,6 @@ export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const { notifyError, notifySuccess } = useNotify();
-  const { sendTransaction } = useSendTransaction();
   const {
     setQRCodeisOpen,
     action,
@@ -66,7 +70,8 @@ export const GiveBadgeSection = () => {
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
-  const [selectedBadge, setSelectedBadge] = useState<BadgeTitles>();
+  const [inputBadge, setInputBadge] = useState<BadgeTitle>();
+  const [commentBadge, setCommentBadge] = useState<string>();
 
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
@@ -88,71 +93,84 @@ export const GiveBadgeSection = () => {
       });
     }
   }, [inputAddress]);
-  // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
-  //   hash: data,
-  // });
 
-  const handleSelectChange = (event: any) => {
+  // Get the current badge selected and move to state
+  const handleBadgeSelectChange = (event: any) => {
     ZUVILLAGE_BADGE_TITLES.filter((badge) => {
       if (badge.title === event.target.value) {
-        setSelectedBadge(badge);
+        setInputBadge(badge);
       }
     });
   };
 
-  const handleTransfer = () => {
-    const receiver = "0x4200000000000000000000000000000000000021";
-    const amount = BigInt(0);
-    if (receiver.length === 0 || !isAddress(receiver)) {
-      return notifyError({
-        title: "Error:",
-        message: "The receiver address is not set!",
-      });
-    }
-
-    // if (parseFloat(amount) <= 0) {
-    //   return notifyError({
-    //     title: "Error:",
-    //     message: "The amount to send must be greater than 0.",
-    //   });
-    // }
-
-    sendTransaction({
-      to: receiver,
-      value: amount,
-      data: "0xf17325e70000000000000000000000000000000000000000000000000000000000000020d130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa000000000000000000000000000000000000000000000000000000000000004000000000000000000000000007231e0fd9f668d4aafae7a5d5f432b8e6e4fe5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    });
+  // Get the current comment and move to state
+  const handleCommentSelectChange = (event: any) => {
+    setCommentBadge(event.target.value);
   };
 
+  // Changes the continue arrow color based on the status of a valid input address
+  const iconColor =
+    inputAddress && isAddress(inputAddress)
+      ? "text-[#FFFFFF]"
+      : "text-[#F5FFFFB2]";
+  const iconBg =
+    inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
+
+  // Submit attestation
   const handleAttest = async () => {
-    console.log("blockNUmber PUBLIC CLIENT", publicClient);
-    const blockNumber = await getBlock(publicClient, { blockTag: "latest" });
-    console.log("bLOCKnUMBER", blockNumber);
+    if (!badgeInputAddress) {
+      notifyError({
+        title: "Invalid Ethereum Address",
+        message: "Please provide a valid Ethereum address.",
+      });
+      return;
+    }
 
-    const schema =
-      "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa"; //Temporary hardcoded
+    if (!inputBadge) {
+      notifyError({
+        title: "Invalid Badge",
+        message: "Please select a badge to give.",
+      });
+      return;
+    }
 
-    const attestationRequestData = {
-      recipient: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51" as `0x${string}`, //Temporary hardcoded
+    let encodeParam = "";
+    let encodeArgs: string[] = [];
+    if (inputBadge.uid === ZUVILLAGE_SCHEMAS[0].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[0].data;
+      encodeArgs = ["Manager"];
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[1].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[1].data;
+      encodeArgs = ["Check-in"];
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[2].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[2].data;
+      encodeArgs = [inputBadge.title, commentBadge ?? ""];
+    } else {
+      notifyError({
+        title: "Invalid Badge",
+        message: "Unexistent or invalid badge selected.",
+      });
+      return;
+    }
+
+    const data = encodeAbiParameters(parseAbiParameters(encodeParam), [
+      encodeArgs,
+    ]);
+
+    const attestationRequestData: AttestationRequestData = {
+      recipient: badgeInputAddress.address as `0x${string}`, //Temporary hardcoded
       expirationTime: BigInt(0),
-      revocable: true,
+      revocable: inputBadge.revocable,
       refUID:
         "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
-      data: "0x" as `0x${string}`,
+      data: data as `0x${string}`,
       value: BigInt(0),
     };
 
     try {
       const transactionReceipt = await submitAttest(
-        schema,
-        attestationRequestData.recipient,
-        attestationRequestData.expirationTime,
-        attestationRequestData.revocable,
-        attestationRequestData.refUID,
-        attestationRequestData.data,
-        attestationRequestData.value,
-        // walletClient,
-        // publicClient,
+        inputBadge.uid as `0x${string}`,
+        attestationRequestData,
       );
       console.log("Transaction receipt:", transactionReceipt);
     } catch (error) {
@@ -184,7 +202,7 @@ export const GiveBadgeSection = () => {
                         placeholder="Insert address or ENS"
                         _placeholder={{ className: "text-slate-50 opacity-30" }}
                         focusBorderColor={"#F5FFFF1A"}
-                        value={badgeInput}
+                        value={inputAddress}
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <QrCodeIcon
@@ -196,10 +214,16 @@ export const GiveBadgeSection = () => {
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                   </Flex>
-                  <Flex gap={4} className="w-full justify-between items-center">
-                    <Text>Continue</Text>
+                  <Flex
+                    gap={4}
+                    color="white"
+                    className="w-full justify-between items-center"
+                  >
+                    <Text className="text-slate-50 opacity-80 text-base font-normal font-['Inter'] leading-snug border-none">
+                      Continue
+                    </Text>
                     <button
-                      className="flex rounded-full bg-[#37383A] justify-center items-center w-8 h-8"
+                      className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
                       onClick={() =>
                         setAddressStep(
                           GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
@@ -208,7 +232,7 @@ export const GiveBadgeSection = () => {
                     >
                       <ArrowIcon
                         variant={ArrowIconVariant.RIGHT}
-                        props={{ className: "text-[#F5FFFFB2]" }}
+                        props={{ className: iconColor }}
                       />
                     </button>
                   </Flex>
@@ -277,7 +301,7 @@ export const GiveBadgeSection = () => {
                       placeholder="Select option"
                       className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
                       color="white"
-                      onChange={handleSelectChange}
+                      onChange={handleBadgeSelectChange}
                     >
                       {ZUVILLAGE_BADGE_TITLES.map((badge, index) => (
                         <option key={index} value={badge.title}>
@@ -286,18 +310,24 @@ export const GiveBadgeSection = () => {
                       ))}
                     </Select>
                   </Card>
-                  <Flex className="w-full flex-col">
-                    <Flex className="gap-4 pb-4 justify-start items-center">
-                      <CommentIcon />
-                      <Input
-                        className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
-                        placeholder="Add a comment if needed..."
-                        _placeholder={{ className: "text-slate-50 opacity-30" }}
-                        focusBorderColor={"#F5FFFF1A"}
-                      />
+                  {inputBadge?.allowComment && (
+                    <Flex className="w-full mt-2 flex-col">
+                      <Flex className="gap-4 pb-4 justify-start items-center">
+                        <CommentIcon />
+                        <Textarea
+                          className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
+                          placeholder="Add a comment if needed..."
+                          _placeholder={{
+                            className: "text-slate-50 opacity-30",
+                          }}
+                          focusBorderColor={"#F5FFFF1A"}
+                          onChange={handleCommentSelectChange}
+                          resize="vertical"
+                        />
+                      </Flex>
+                      <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                  </Flex>
+                  )}
                 </Box>
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
