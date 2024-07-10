@@ -13,7 +13,7 @@ export interface ConnetedWalletConfiguration {
 export async function hasRole(
   role: `0x${string}`,
   account: `0x${string}`,
-  configurations: ConnetedWalletConfiguration,
+  //   configurations: ConnetedWalletConfiguration,
 ) {
   const walletClient2 = await getWalletClient(wagmiConfig);
   console.log("walletClient2", walletClient2);
