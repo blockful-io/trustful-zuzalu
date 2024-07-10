@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
@@ -9,25 +10,25 @@ import {
   Divider,
   Flex,
   Input,
+  Link,
   Select,
   Text,
+  Textarea,
+  Icon,
 } from "@chakra-ui/react";
-// import { ethers } from "ethers";
-import { isAddress } from "viem";
-import { getBlock } from "viem/actions";
+import { useToast } from "@chakra-ui/react";
 import {
-  useAccount,
-  useClient,
-  usePublicClient,
-  useSendTransaction,
-  useWalletClient,
-} from "wagmi";
+  isAddress,
+  encodeAbiParameters,
+  parseAbiParameters,
+  type TransactionReceipt,
+} from "viem";
+import { useAccount } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
   CommentIcon,
   TheHeader,
-  TheFooterBadgeDetails,
   QrCodeIcon,
   UserIcon,
   HandHeartIcon,
@@ -38,15 +39,19 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
-import { ZUZALU_EVENT_TITLES } from "@/lib/client/constants";
+import {
+  ZUVILLAGE_BADGE_TITLES,
+  ZUVILLAGE_SCHEMAS,
+} from "@/lib/client/constants";
+import type { BadgeTitle } from "@/lib/client/constants";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
-import { publicClient } from "@/lib/wallet/client";
 import { getEllipsedAddress } from "@/utils/formatters";
-import { wagmiConfig } from "@/wagmi";
 
-import { submitAttest } from "../../lib/service/attest";
-// import TransferNative from "../01-atoms/TransferNative";
+import {
+  submitAttest,
+  type AttestationRequestData,
+} from "../../lib/service/attest";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -62,101 +67,177 @@ export enum GiveBadgeStepAddress {
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
+  const toast = useToast();
+  const { notifyError, notifySuccess } = useNotify();
   const {
+    setQRCodeisOpen,
     action,
-    addressStep,
     handleActionChange,
+    addressStep,
     setAddressStep,
     badgeInputAddress,
-    setQRCodeisOpen,
     setBadgeInputAddress,
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
-  const client = usePublicClient({ config: wagmiConfig });
-  console.log("client", client);
+  const [inputBadge, setInputBadge] = useState<BadgeTitle>();
+  const [commentBadge, setCommentBadge] = useState<string>();
+  const [transactionReceipt, setTrasactionReceipt] =
+    useState<TransactionReceipt>();
+
+  // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
       handleActionChange(GiveBadgeAction.ADDRESS);
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+      setBadgeInputAddress(null);
     };
   }, []);
 
+  // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
     if (inputAddress && isAddress(inputAddress)) {
       setBadgeInputAddress(new EthereumAddress(inputAddress));
+    } else if (inputAddress != null) {
+      notifyError({
+        title: "Invalid Ethereum Address",
+        message: "Ethereum address provided is not on correct format.",
+      });
     }
   }, [inputAddress]);
 
-  let badgeInput: string;
-  if (badgeInputAddress !== null && isAddress(badgeInputAddress.address)) {
-    badgeInput = badgeInputAddress.address;
-  }
-
-  const { sendTransaction } = useSendTransaction();
-  // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
-  //   hash: data,
-  // });
-  const { notifyError } = useNotify();
-
-  const handleTransfer = () => {
-    const receiver = "0x4200000000000000000000000000000000000021";
-    const amount = BigInt(0);
-    if (receiver.length === 0 || !isAddress(receiver)) {
-      return notifyError({
-        title: "Error:",
-        message: "The receiver address is not set!",
-      });
-    }
-
-    // if (parseFloat(amount) <= 0) {
-    //   return notifyError({
-    //     title: "Error:",
-    //     message: "The amount to send must be greater than 0.",
-    //   });
-    // }
-
-    sendTransaction({
-      to: receiver,
-      value: amount,
-      data: "0xf17325e70000000000000000000000000000000000000000000000000000000000000020d130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa000000000000000000000000000000000000000000000000000000000000004000000000000000000000000007231e0fd9f668d4aafae7a5d5f432b8e6e4fe5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  // Get the current badge selected and move to state
+  const handleBadgeSelectChange = (event: any) => {
+    ZUVILLAGE_BADGE_TITLES.filter((badge) => {
+      if (badge.title === event.target.value) {
+        setInputBadge(badge);
+      }
     });
   };
 
+  // Get the current comment and move to state
+  const handleCommentSelectChange = (event: any) => {
+    setCommentBadge(event.target.value);
+  };
+
+  // Changes the continue arrow color based on the status of a valid input address
+  const iconColor =
+    inputAddress && isAddress(inputAddress)
+      ? "text-[#FFFFFF]"
+      : "text-[#F5FFFFB2]";
+  const iconBg =
+    inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
+
+  // Submit attestation
   const handleAttest = async () => {
-    console.log("blockNUmber PUBLIC CLIENT", publicClient);
-    const blockNumber = await getBlock(publicClient, { blockTag: "latest" });
-    console.log("bLOCKnUMBER", blockNumber);
+    if (!address) {
+      notifyError({
+        title: "No account connected",
+        message: "Please connect your wallet.",
+      });
+      return;
+    }
 
-    const schema =
-      "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa"; //Temporary hardcoded
+    if (!badgeInputAddress) {
+      notifyError({
+        title: "Invalid Ethereum Address",
+        message: "Please provide a valid Ethereum address.",
+      });
+      return;
+    }
 
-    const attestationRequestData = {
-      recipient: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51" as `0x${string}`, //Temporary hardcoded
+    if (!inputBadge) {
+      notifyError({
+        title: "Invalid Badge",
+        message: "Please select a badge to give.",
+      });
+      return;
+    }
+
+    let encodeParam = "";
+    let encodeArgs: string[] = [];
+    if (inputBadge.uid === ZUVILLAGE_SCHEMAS[0].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[0].data;
+      encodeArgs = ["Manager"];
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[1].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[1].data;
+      encodeArgs = ["Check-in"];
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[2].uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS[2].data;
+      encodeArgs = [inputBadge.title, commentBadge ?? ""];
+    } else {
+      notifyError({
+        title: "Invalid Badge",
+        message: "Unexistent or invalid badge selected.",
+      });
+      return;
+    }
+
+    const data = encodeAbiParameters(parseAbiParameters(encodeParam), [
+      encodeArgs,
+    ]);
+
+    const attestationRequestData: AttestationRequestData = {
+      recipient: badgeInputAddress.address, //Temporary hardcoded
       expirationTime: BigInt(0),
-      revocable: true,
+      revocable: inputBadge.revocable,
       refUID:
-        "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
-      data: "0x" as `0x${string}`,
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+      data: data,
       value: BigInt(0),
     };
 
-    try {
-      const transactionReceipt = await submitAttest(
-        schema,
-        attestationRequestData.recipient,
-        attestationRequestData.expirationTime,
-        attestationRequestData.revocable,
-        attestationRequestData.refUID,
-        attestationRequestData.data,
-        attestationRequestData.value,
-        // walletClient,
-        // publicClient,
-      );
-      console.log("Transaction receipt:", transactionReceipt);
-    } catch (error) {
-      console.error("Failed to submit attest:", error);
+    const response = await submitAttest(
+      address,
+      inputBadge.uid,
+      attestationRequestData,
+    );
+
+    if (response instanceof Error) {
+      notifyError({
+        title: "Invalid Badge",
+        message: response.message,
+      });
+      return;
     }
+
+    setTrasactionReceipt(response);
+
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
+
+    return;
   };
 
   const renderStepContent = (action: GiveBadgeAction) => {
@@ -183,7 +264,7 @@ export const GiveBadgeSection = () => {
                         placeholder="Insert address or ENS"
                         _placeholder={{ className: "text-slate-50 opacity-30" }}
                         focusBorderColor={"#F5FFFF1A"}
-                        value={badgeInput}
+                        value={inputAddress}
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <QrCodeIcon
@@ -195,10 +276,16 @@ export const GiveBadgeSection = () => {
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                   </Flex>
-                  <Flex gap={4} className="w-full justify-between items-center">
-                    <Text>Continue</Text>
+                  <Flex
+                    gap={4}
+                    color="white"
+                    className="w-full justify-between items-center"
+                  >
+                    <Text className="text-slate-50 opacity-80 text-base font-normal font-['Inter'] leading-snug border-none">
+                      Continue
+                    </Text>
                     <button
-                      className="flex rounded-full bg-[#37383A] justify-center items-center w-8 h-8"
+                      className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
                       onClick={() =>
                         setAddressStep(
                           GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
@@ -207,7 +294,7 @@ export const GiveBadgeSection = () => {
                     >
                       <ArrowIcon
                         variant={ArrowIconVariant.RIGHT}
-                        props={{ className: "text-[#F5FFFFB2]" }}
+                        props={{ className: iconColor }}
                       />
                     </button>
                   </Flex>
@@ -276,23 +363,33 @@ export const GiveBadgeSection = () => {
                       placeholder="Select option"
                       className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
                       color="white"
+                      onChange={handleBadgeSelectChange}
                     >
-                      <option>ok</option>
-                      <option>o2</option>
+                      {ZUVILLAGE_BADGE_TITLES.map((badge, index) => (
+                        <option key={index} value={badge.title}>
+                          {badge.title}
+                        </option>
+                      ))}
                     </Select>
                   </Card>
-                  <Flex className="w-full flex-col">
-                    <Flex className="gap-4 pb-4 justify-start items-center">
-                      <CommentIcon />
-                      <Input
-                        className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
-                        placeholder="Add a comment if needed..."
-                        _placeholder={{ className: "text-slate-50 opacity-30" }}
-                        focusBorderColor={"#F5FFFF1A"}
-                      />
+                  {inputBadge?.allowComment && (
+                    <Flex className="w-full mt-2 flex-col">
+                      <Flex className="gap-4 pb-4 justify-start items-center">
+                        <CommentIcon />
+                        <Textarea
+                          className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
+                          placeholder="Add a comment if needed..."
+                          _placeholder={{
+                            className: "text-slate-50 opacity-30",
+                          }}
+                          focusBorderColor={"#F5FFFF1A"}
+                          onChange={handleCommentSelectChange}
+                          resize="vertical"
+                        />
+                      </Flex>
+                      <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                  </Flex>
+                  )}
                 </Box>
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
