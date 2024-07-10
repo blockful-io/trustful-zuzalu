@@ -12,21 +12,14 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import { isAddress, zeroAddress } from "viem";
+import { isAddress } from "viem";
 import { getBlock } from "viem/actions";
-import {
-  useAccount,
-  useClient,
-  usePublicClient,
-  useSendTransaction,
-  useWalletClient,
-} from "wagmi";
+import { useAccount, useSendTransaction } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
   CommentIcon,
   TheHeader,
-  TheFooterBadgeDetails,
   QrCodeIcon,
   UserIcon,
   HandHeartIcon,
