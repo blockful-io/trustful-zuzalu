@@ -400,12 +400,11 @@ export const GiveBadgeSection = () => {
                             className: "text-slate-50 opacity-30",
                           }}
                           focusBorderColor={"#F5FFFF1A"}
-                          // onChange={handleCommentSelectChange}
                           value={text}
                           onChange={handleTextareaChange}
-                          rows={1} // Começa com 1 linha
-                          minH="unset" // Altura mínima definida como indefinida para permitir expansão
-                          resize="none" // Desativa o redimensionamento manual
+                          rows={1}
+                          minH="unset"
+                          resize="none"
                         />
                       </Flex>
                       <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
