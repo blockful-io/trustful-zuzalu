@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 import {
   Avatar,
@@ -9,10 +10,13 @@ import {
   Divider,
   Flex,
   Input,
+  Link,
   Select,
   Text,
   Textarea,
+  Icon,
 } from "@chakra-ui/react";
+
 import {
   isAddress,
   encodeAbiParameters,
@@ -35,6 +39,7 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
+import { useToast } from "@chakra-ui/react";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
@@ -63,6 +68,7 @@ export enum GiveBadgeStepAddress {
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
+  const toast = useToast();
   const { notifyError, notifySuccess } = useNotify();
   const {
     setQRCodeisOpen,
@@ -197,10 +203,41 @@ export const GiveBadgeSection = () => {
     }
 
     setTrasactionReceipt(response);
-    notifySuccess({
-      title: "Success",
-      message: "Badge sent at transaction: " + response.transactionHash,
+
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
     });
+
     return;
   };
 

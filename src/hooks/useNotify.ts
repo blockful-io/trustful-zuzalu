@@ -17,7 +17,7 @@ export const useNotify = () => {
         description: message,
         position: "top-right",
         status: "success",
-        duration: 10000,
+        duration: 4000,
         isClosable: true,
       });
     },
@@ -31,7 +31,7 @@ export const useNotify = () => {
         description: message,
         position: "top-right",
         status: "error",
-        duration: 10000,
+        duration: 4000,
         isClosable: true,
       });
     },
