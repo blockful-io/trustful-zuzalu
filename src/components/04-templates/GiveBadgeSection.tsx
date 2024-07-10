@@ -12,8 +12,7 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-// import { ethers } from "ethers";
-import { isAddress } from "viem";
+import { isAddress, zeroAddress } from "viem";
 import { getBlock } from "viem/actions";
 import {
   useAccount,
@@ -36,14 +35,13 @@ import {
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
 import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
+import type { BadgeTitles } from "@/lib/client/constants";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { publicClient } from "@/lib/wallet/client";
 import { getEllipsedAddress } from "@/utils/formatters";
-import { wagmiConfig } from "@/wagmi";
 
 import { submitAttest } from "../../lib/service/attest";
-// import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -59,6 +57,7 @@ export enum GiveBadgeStepAddress {
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
+  const { notifyError, notifySuccess } = useNotify();
   const {
     action,
     addressStep,
@@ -70,20 +69,26 @@ export const GiveBadgeSection = () => {
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [selectedBadge, setSelectedBadge] = useState<BadgeTitles>();
 
-  const client = usePublicClient({ config: wagmiConfig });
-  console.log("client", client);
+  // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
       handleActionChange(GiveBadgeAction.ADDRESS);
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+      setBadgeInputAddress(null);
     };
   }, []);
 
+  // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
     if (inputAddress && isAddress(inputAddress)) {
       setBadgeInputAddress(new EthereumAddress(inputAddress));
+    } else if (inputAddress != null) {
+      notifyError({
+        title: "Invalid Ethereum Address",
+        message: "Ethereum address provided is not on correct format.",
+      });
     }
   }, [inputAddress]);
 
@@ -96,11 +101,13 @@ export const GiveBadgeSection = () => {
   // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
   //   hash: data,
   // });
-  const { notifyError } = useNotify();
 
   const handleSelectChange = (event: any) => {
-    const selectedValue = event.target.value;
-    setSelectedEvent(selectedValue);
+    ZUVILLAGE_BADGE_TITLES.filter((badge) => {
+      if (badge.title === event.target.value) {
+        setSelectedBadge(badge);
+      }
+    });
   };
 
   const handleTransfer = () => {
@@ -266,9 +273,9 @@ export const GiveBadgeSection = () => {
                       color="white"
                       onChange={handleSelectChange}
                     >
-                      {ZUVILLAGE_BADGE_TITLES.map((title, index) => (
-                        <option key={index} value={title}>
-                          {title}
+                      {ZUVILLAGE_BADGE_TITLES.map((badge, index) => (
+                        <option key={index} value={badge.title}>
+                          {badge.title}
                         </option>
                       ))}
                     </Select>
