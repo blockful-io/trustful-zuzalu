@@ -37,6 +37,7 @@ import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
+import { getEllipsedAddress } from "@/utils/formatters";
 import { publicClient } from "@/lib/wallet/client";
 
 import { submitAttest } from "../../lib/service/attest";
@@ -56,6 +57,7 @@ export enum GiveBadgeStepAddress {
 
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
+  const { address } = useAccount();
   const {
     action,
     addressStep,
@@ -223,7 +225,7 @@ export const GiveBadgeSection = () => {
                             Issued by
                           </Text>
                           <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                            crazy_monkey.eth
+                            {getEllipsedAddress(address)}
                           </Text>
                         </Flex>
                       </Flex>
