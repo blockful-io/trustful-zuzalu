@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
-import { CheckCircleIcon } from "@chakra-ui/icons";
 
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
@@ -16,7 +16,7 @@ import {
   Textarea,
   Icon,
 } from "@chakra-ui/react";
-
+import { useToast } from "@chakra-ui/react";
 import {
   isAddress,
   encodeAbiParameters,
@@ -39,7 +39,6 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
-import { useToast } from "@chakra-ui/react";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
