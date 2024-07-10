@@ -10,6 +10,7 @@ export * from "./icons/CommentIcon";
 export * from "./icons/CopyIcon";
 export * from "./icons/EthereumIcon";
 export * from "./icons/HeartIcon";
+export * from "./icons/LoadingIndicator";
 export * from "./icons/LogoutIcon";
 export * from "./icons/HandHeartIcon";
 export * from "./icons/LogoutIcon";

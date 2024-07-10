@@ -17,12 +17,8 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
-import {
-  isAddress,
-  encodeAbiParameters,
-  parseAbiParameters,
-  type TransactionReceipt,
-} from "viem";
+import { BeatLoader } from "react-spinners";
+import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
 
 import {
@@ -32,7 +28,6 @@ import {
   QrCodeIcon,
   UserIcon,
   HandHeartIcon,
-  HeartIcon,
   TheFooterNavbar,
   ArrowIcon,
   ArrowIconVariant,
@@ -68,7 +63,7 @@ export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const toast = useToast();
-  const { notifyError, notifySuccess } = useNotify();
+  const { notifyError } = useNotify();
   const {
     setQRCodeisOpen,
     action,
@@ -82,8 +77,8 @@ export const GiveBadgeSection = () => {
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
   const [commentBadge, setCommentBadge] = useState<string>();
-  const [transactionReceipt, setTrasactionReceipt] =
-    useState<TransactionReceipt>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [text, setText] = useState("");
 
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
@@ -98,13 +93,20 @@ export const GiveBadgeSection = () => {
   useEffect(() => {
     if (inputAddress && isAddress(inputAddress)) {
       setBadgeInputAddress(new EthereumAddress(inputAddress));
-    } else if (inputAddress != null) {
-      notifyError({
-        title: "Invalid Ethereum Address",
-        message: "Ethereum address provided is not on correct format.",
-      });
     }
   }, [inputAddress]);
+
+  // Do not allow invalid Ethereum addresses to move into the next step
+  const handleInputAddressChange = () => {
+    if (inputAddress && !isAddress(inputAddress)) {
+      notifyError({
+        title: "Invalid Ethereum Address",
+        message: "Wrong Ethereum address format. Please try again.",
+      });
+    } else {
+      setAddressStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
+    }
+  };
 
   // Get the current badge selected and move to state
   const handleBadgeSelectChange = (event: any) => {
@@ -116,7 +118,17 @@ export const GiveBadgeSection = () => {
   };
 
   // Get the current comment and move to state
-  const handleCommentSelectChange = (event: any) => {
+  // It also updates the textarea height based on the content
+  const handleTextareaChange = (event: any) => {
+    const textareaLineHeight = 22;
+    const scrollHeight = event.target.scrollHeight - 16;
+
+    const currentRows = Math.ceil(scrollHeight / textareaLineHeight);
+    if (currentRows >= 2) {
+      event.target.rows = currentRows;
+    }
+
+    setText(event.target.value);
     setCommentBadge(event.target.value);
   };
 
@@ -131,6 +143,7 @@ export const GiveBadgeSection = () => {
   // Submit attestation
   const handleAttest = async () => {
     if (!address) {
+      setLoading(false);
       notifyError({
         title: "No account connected",
         message: "Please connect your wallet.",
@@ -139,6 +152,7 @@ export const GiveBadgeSection = () => {
     }
 
     if (!badgeInputAddress) {
+      setLoading(false);
       notifyError({
         title: "Invalid Ethereum Address",
         message: "Please provide a valid Ethereum address.",
@@ -147,6 +161,7 @@ export const GiveBadgeSection = () => {
     }
 
     if (!inputBadge) {
+      setLoading(false);
       notifyError({
         title: "Invalid Badge",
         message: "Please select a badge to give.",
@@ -166,6 +181,7 @@ export const GiveBadgeSection = () => {
       encodeParam = ZUVILLAGE_SCHEMAS[2].data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
     } else {
+      setLoading(false);
       notifyError({
         title: "Invalid Badge",
         message: "Unexistent or invalid badge selected.",
@@ -173,9 +189,10 @@ export const GiveBadgeSection = () => {
       return;
     }
 
-    const data = encodeAbiParameters(parseAbiParameters(encodeParam), [
+    const data = encodeAbiParameters(
+      parseAbiParameters(encodeParam),
       encodeArgs,
-    ]);
+    );
 
     const attestationRequestData: AttestationRequestData = {
       recipient: badgeInputAddress.address, //Temporary hardcoded
@@ -194,14 +211,13 @@ export const GiveBadgeSection = () => {
     );
 
     if (response instanceof Error) {
+      setLoading(false);
       notifyError({
-        title: "Invalid Badge",
+        title: "Transaction Rejected",
         message: response.message,
       });
       return;
     }
-
-    setTrasactionReceipt(response);
 
     // TODO: Move to useNotify to create a notifySuccessWithLink function
     toast({
@@ -236,6 +252,11 @@ export const GiveBadgeSection = () => {
         </Box>
       ),
     });
+
+    setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
+    setLoading(false);
+    setBadgeInputAddress(null);
+    setInputAddress("");
 
     return;
   };
@@ -286,11 +307,7 @@ export const GiveBadgeSection = () => {
                     </Text>
                     <button
                       className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                      onClick={() =>
-                        setAddressStep(
-                          GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
-                        )
-                      }
+                      onClick={() => handleInputAddressChange()}
                     >
                       <ArrowIcon
                         variant={ArrowIconVariant.RIGHT}
@@ -378,13 +395,16 @@ export const GiveBadgeSection = () => {
                         <CommentIcon />
                         <Textarea
                           className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
-                          placeholder="Add a comment if needed..."
+                          placeholder="Share your experience!"
                           _placeholder={{
                             className: "text-slate-50 opacity-30",
                           }}
                           focusBorderColor={"#F5FFFF1A"}
-                          onChange={handleCommentSelectChange}
-                          resize="vertical"
+                          value={text}
+                          onChange={handleTextareaChange}
+                          rows={1}
+                          minH="unset"
+                          resize="none"
                         />
                       </Flex>
                       <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
@@ -394,9 +414,13 @@ export const GiveBadgeSection = () => {
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
+                    _hover={{ bg: "#B1EF42" }}
+                    _active={{ bg: "#B1EF42" }}
+                    isLoading={loading}
+                    spinner={<BeatLoader size={8} color="white" />}
                     onClick={() => {
+                      setLoading(true);
                       handleAttest();
-                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
                     }}
                   >
                     Confirm
@@ -430,9 +454,8 @@ export const GiveBadgeSection = () => {
                         Receiver
                       </Text>
                       <Flex gap={2}>
-                        <Avatar className="w-5 h-5" />
                         <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
-                          magic_stone1999.eth
+                          {badgeInputAddress?.getEllipsedAddress()}
                         </Text>
                       </Flex>
                     </Flex>
@@ -442,24 +465,27 @@ export const GiveBadgeSection = () => {
                         Badge
                       </Text>
                       <Flex gap={2}>
-                        <HeartIcon className="w-5 h-5 opacity-5" />
                         <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
-                          ChangeMyMind
+                          {inputBadge?.title}
                         </Text>
                       </Flex>
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                        Comment
-                      </Text>
-                      <Flex gap={2}>
-                        <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
-                          Really cool person, changed my mind.
+                    {commentBadge && (
+                      <Flex className="py-4 gap-4 items-center">
+                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                          Comment
                         </Text>
+                        <Flex gap={2}>
+                          <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+                            {commentBadge}
+                          </Text>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                    )}
+                    {commentBadge && (
+                      <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                    )}
                   </Flex>
                 </Box>
               </>

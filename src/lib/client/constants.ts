@@ -97,14 +97,14 @@ export interface BadgeTitle {
 
 export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
   {
-    title: "Give Manager Badge",
+    title: "Manager",
     uid: ZUVILLAGE_SCHEMAS[0].uid,
     allowComment: false,
     revocable: true,
     data: ZUVILLAGE_SCHEMAS[0].data,
   },
   {
-    title: "Check-in Villager",
+    title: "Check-in",
     uid: ZUVILLAGE_SCHEMAS[1].uid,
     allowComment: false,
     revocable: false,
