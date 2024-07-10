@@ -12,7 +12,6 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-// import { ethers } from "ethers";
 import { isAddress } from "viem";
 import { getBlock } from "viem/actions";
 import {
@@ -38,9 +37,9 @@ import { useNotify, useWindowSize } from "@/hooks";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { publicClient } from "@/lib/wallet/client";
+import { wagmiConfig } from "@/wagmi";
 
 import { submitAttest } from "../../lib/service/attest";
-import { wagmiConfig } from "@/wagmi";
 // import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
