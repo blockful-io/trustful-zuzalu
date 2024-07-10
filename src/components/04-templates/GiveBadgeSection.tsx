@@ -31,6 +31,9 @@ import {
   UserIcon,
   HandHeartIcon,
   HeartIcon,
+  TheFooterNavbar,
+  ArrowIcon,
+  ArrowIconVariant,
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
@@ -206,7 +209,23 @@ export const GiveBadgeSection = () => {
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                   </Flex>
-                  <TheFooterBadgeDetails />
+                  <Flex gap={4} className="w-full justify-between items-center">
+                    <Text>Continue</Text>
+                    <button
+                      className="flex rounded-full bg-[#37383A] justify-center items-center w-8 h-8"
+                      onClick={() =>
+                        setAddressStep(
+                          GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT,
+                        )
+                      }
+                    >
+                      <ArrowIcon
+                        variant={ArrowIconVariant.RIGHT}
+                        props={{ className: "text-[#F5FFFFB2]" }}
+                      />
+                    </button>
+                  </Flex>
+                  <TheFooterNavbar />
                 </Box>
               </>
             );
