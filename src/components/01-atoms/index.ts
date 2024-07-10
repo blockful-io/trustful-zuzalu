@@ -32,6 +32,5 @@ export * from "./InfoText";
 export * from "./QRCodeScanner";
 export * from "./SignMessage";
 export * from "./TheFooter";
-export * from "./TheFooterBadgeDetails";
 export * from "./TheFooterNavbar";
 export * from "./TheHeader";

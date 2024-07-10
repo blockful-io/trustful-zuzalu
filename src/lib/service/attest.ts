@@ -1,5 +1,5 @@
-import { getWalletClient, getPublicClient } from "@wagmi/core";
-import { encodeFunctionData } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { encodeFunctionData, type TransactionReceipt } from "viem";
 import {
   sendTransaction,
   estimateGas,
@@ -8,40 +8,37 @@ import {
 
 import { wagmiConfig } from "@/wagmi";
 
-import { publicClient, walletClient } from "../wallet/client";
+import { EAS_CONTRACT_OP } from "../client/constants";
+import { publicClient } from "../wallet/client";
+
+export interface AttestationRequestData {
+  recipient: `0x${string}`;
+  expirationTime: bigint;
+  revocable: boolean;
+  refUID: `0x${string}`;
+  data: `0x${string}`;
+  value: bigint;
+}
+
+export interface AttestationRequest {
+  schema: `0x${string}`;
+  data: AttestationRequestData;
+}
 
 export async function submitAttest(
-  schema: `0x${string}`,
-  recipient: `0x${string}`,
-  expirationTime: bigint,
-  revocable: boolean,
-  refUID: `0x${string}`,
-  data: `0x${string}`,
-  value: bigint,
-  // walletClient: any,x
-) {
-  const walletClient2 = await getWalletClient(wagmiConfig);
-  console.log("walletClient2", walletClient2);
+  from: `0x${string}`,
+  schemaUID: `0x${string}`,
+  attestationRequestData: AttestationRequestData,
+): Promise<TransactionReceipt | Error> {
+  const walletClient = await getWalletClient(wagmiConfig);
+  let gasLimit;
 
-  const publicClient2 = getPublicClient(wagmiConfig);
-  console.log("publicClient2", publicClient2);
-
-  const AttestationRequestData = {
-    recipient: recipient,
-    expirationTime: expirationTime,
-    revocable: revocable,
-    refUID: refUID,
-    data: data,
-    value: value,
+  const AttestationRequest: AttestationRequest = {
+    schema: schemaUID,
+    data: attestationRequestData,
   };
 
-  const AttestationRequest = {
-    schema: schema,
-    data: AttestationRequestData,
-  };
-
-  // refactor - get the ABI from the EAS.sol instead of the resolver.sol
-  const encodedData = encodeFunctionData({
+  const data = encodeFunctionData({
     abi: [
       {
         inputs: [
@@ -85,38 +82,34 @@ export async function submitAttest(
     args: [AttestationRequest],
   });
 
-  console.log("encodedData", encodedData);
-  console.log("value", value);
-  console.log("publicClient", publicClient);
-  console.log("walletClient", walletClient);
+  try {
+    gasLimit = estimateGas(publicClient, {
+      account: from as `0x${string}`,
+      to: EAS_CONTRACT_OP as `0x${string}`,
+      data: data,
+      value: attestationRequestData.value,
+    });
+  } catch (error) {
+    return Error("Error estimating gas.");
+  }
 
   try {
-    const gasLimit = estimateGas(publicClient, {
-      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
-      data: encodedData,
-      to: "0x4200000000000000000000000000000000000021",
-      value: value,
-    })
-      .then((gasLimit: any) => console.log("gasLimit", gasLimit))
-      .catch((error: any) => console.error("gasLimit,", error));
-
-    const transactionHash = await sendTransaction(walletClient2, {
-      data: encodedData,
-      account: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51",
-      to: "0x4200000000000000000000000000000000000021",
+    const transactionHash = await sendTransaction(walletClient, {
+      account: from as `0x${string}`,
+      to: EAS_CONTRACT_OP as `0x${string}`,
       gasLimit: gasLimit,
-      value: value,
+      data: data,
+      value: attestationRequestData.value,
       chain: walletClient.chain,
     });
 
-    const transactionReceipt = await waitForTransactionReceipt(publicClient, {
-      hash: transactionHash,
-    });
+    const transactionReceipt: TransactionReceipt =
+      await waitForTransactionReceipt(publicClient, {
+        hash: transactionHash,
+      });
 
     return transactionReceipt;
   } catch (error) {
-    alert("error submitting attestation request");
-    console.error(error);
-    throw new Error(String(error));
+    return Error("Error sending transaction.");
   }
 }

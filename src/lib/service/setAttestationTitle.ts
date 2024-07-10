@@ -1,6 +1,6 @@
 import { encodeFunctionData } from "viem";
 
-import { TRUSTFUL_SMART_CONTRACT_ADDRESS } from "../client/constants";
+import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
 import { publicClient } from "../wallet/wallet-config";
 
 export interface ConnetedWalletConfiguration {
@@ -36,17 +36,13 @@ export async function setAttestationTitle(
     }).estimateGas({
       account: configurations.walletClient.account as `0x${string}`,
       data: data,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
       value: msgValue,
     });
 
     const transactionHash = await configurations.walletClient.sendTransaction({
       data: data,
-      to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
+      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
       gasLimit: gasLimit,
       value: msgValue,
     });
