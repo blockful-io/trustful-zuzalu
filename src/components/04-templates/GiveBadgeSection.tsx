@@ -35,7 +35,7 @@ import {
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
 import { useNotify, useWindowSize } from "@/hooks";
-import { ZUZALU_EVENT_TITLES } from "@/lib/client/constants";
+import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { publicClient } from "@/lib/wallet/client";
@@ -70,6 +70,8 @@ export const GiveBadgeSection = () => {
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
+  const [selectedEvent, setSelectedEvent] = useState("");
+
   const client = usePublicClient({ config: wagmiConfig });
   console.log("client", client);
   useEffect(() => {
@@ -95,6 +97,11 @@ export const GiveBadgeSection = () => {
   //   hash: data,
   // });
   const { notifyError } = useNotify();
+
+  const handleSelectChange = (event: any) => {
+    const selectedValue = event.target.value;
+    setSelectedEvent(selectedValue);
+  };
 
   const handleTransfer = () => {
     const receiver = "0x4200000000000000000000000000000000000021";
@@ -257,9 +264,13 @@ export const GiveBadgeSection = () => {
                       placeholder="Select option"
                       className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
                       color="white"
+                      onChange={handleSelectChange}
                     >
-                      <option>ok</option>
-                      <option>o2</option>
+                      {ZUVILLAGE_BADGE_TITLES.map((title, index) => (
+                        <option key={index} value={title}>
+                          {title}
+                        </option>
+                      ))}
                     </Select>
                   </Card>
                   <Flex className="w-full flex-col">

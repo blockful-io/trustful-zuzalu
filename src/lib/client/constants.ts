@@ -57,7 +57,7 @@ export interface Schemas {
   schemaData?: string;
 }
 
-export const ZUZALU_SCHEMAS: Schemas[] = [
+export const ZUVILLAGE_SCHEMAS: Schemas[] = [
   {
     schemaName: "ATTEST_MANAGER",
     schemaUID:
@@ -84,15 +84,31 @@ export const ZUZALU_SCHEMAS: Schemas[] = [
   },
 ];
 
-export const ZUZALU_EVENT_TITLES = [
+export const ZUVILLAGE_BADGE_TITLES = [
+  {
+    title: "Give Manager Badge",
+    schemaUID: ZUVILLAGE_SCHEMAS[0].schemaUID,
+    allowComment: false,
+  },
+  {
+    title: "Check-in Villager",
+    schemaUID: ZUVILLAGE_SCHEMAS[1].schemaUID,
+    allowComment: false,
+  },
   {
     title: "Changed My Mind",
+    schemaUID: ZUVILLAGE_SCHEMAS[2].schemaUID,
+    allowComment: true,
   },
   {
     title: "Is a good person",
+    schemaUID: ZUVILLAGE_SCHEMAS[2].schemaUID,
+    allowComment: true,
   },
   {
     title: "Has a brilliant mind",
+    schemaUID: ZUVILLAGE_SCHEMAS[2].schemaUID,
+    allowComment: true,
   },
 ];
 
