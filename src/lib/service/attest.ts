@@ -5,7 +5,6 @@ import {
   estimateGas,
   waitForTransactionReceipt,
 } from "viem/actions";
-import { useAccount } from "wagmi";
 
 import { wagmiConfig } from "@/wagmi";
 
@@ -27,16 +26,12 @@ export interface AttestationRequest {
 }
 
 export async function submitAttest(
+  from: `0x${string}`,
   schemaUID: `0x${string}`,
   attestationRequestData: AttestationRequestData,
 ): Promise<TransactionReceipt | Error> {
-  const { address } = useAccount();
-  let gasLimit;
-
-  if (!address) {
-    return Error("No account connected. Please connect your wallet.");
-  }
   const walletClient = await getWalletClient(wagmiConfig);
+  let gasLimit;
 
   const AttestationRequest: AttestationRequest = {
     schema: schemaUID,
@@ -89,7 +84,7 @@ export async function submitAttest(
 
   try {
     gasLimit = estimateGas(publicClient, {
-      account: address as `0x${string}`,
+      account: from as `0x${string}`,
       to: TRUSTFUL_CONTRACT_ADDRESSES[walletClient.chain.id] as `0x${string}`,
       data: data,
       value: attestationRequestData.value,

@@ -13,7 +13,12 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
+import {
+  isAddress,
+  encodeAbiParameters,
+  parseAbiParameters,
+  type TransactionReceipt,
+} from "viem";
 import { useAccount } from "wagmi";
 
 import {
@@ -72,6 +77,8 @@ export const GiveBadgeSection = () => {
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
   const [commentBadge, setCommentBadge] = useState<string>();
+  const [transactionReceipt, setTrasactionReceipt] =
+    useState<TransactionReceipt>();
 
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
@@ -118,6 +125,14 @@ export const GiveBadgeSection = () => {
 
   // Submit attestation
   const handleAttest = async () => {
+    if (!address) {
+      notifyError({
+        title: "No account connected",
+        message: "Please connect your wallet.",
+      });
+      return;
+    }
+
     if (!badgeInputAddress) {
       notifyError({
         title: "Invalid Ethereum Address",
@@ -158,24 +173,35 @@ export const GiveBadgeSection = () => {
     ]);
 
     const attestationRequestData: AttestationRequestData = {
-      recipient: badgeInputAddress.address as `0x${string}`, //Temporary hardcoded
+      recipient: badgeInputAddress.address, //Temporary hardcoded
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:
-        "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
-      data: data as `0x${string}`,
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+      data: data,
       value: BigInt(0),
     };
 
-    try {
-      const transactionReceipt = await submitAttest(
-        inputBadge.uid as `0x${string}`,
-        attestationRequestData,
-      );
-      console.log("Transaction receipt:", transactionReceipt);
-    } catch (error) {
-      console.error("Failed to submit attest:", error);
+    const response = await submitAttest(
+      address,
+      inputBadge.uid,
+      attestationRequestData,
+    );
+
+    if (response instanceof Error) {
+      notifyError({
+        title: "Invalid Badge",
+        message: response.message,
+      });
+      return;
     }
+
+    setTrasactionReceipt(response);
+    notifySuccess({
+      title: "Success",
+      message: "Badge sent at transaction: " + response.transactionHash,
+    });
+    return;
   };
 
   const renderStepContent = (action: GiveBadgeAction) => {
