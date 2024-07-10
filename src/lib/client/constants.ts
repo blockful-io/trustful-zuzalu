@@ -84,5 +84,17 @@ export const ZUZALU_SCHEMAS: Schemas[] = [
   },
 ];
 
+export const ZUZALU_EVENT_TITLES = [
+  {
+    title: "Changed My Mind",
+  },
+  {
+    title: "Is a good person",
+  },
+  {
+    title: "Has a brilliant mind",
+  },
+];
+
 export const ALCHEMY_PUBLIC_RPC =
   "https://opt-mainnet.g.alchemy.com/v2/8G0MHGw9nt_PBkot5GcmxLNdQgRaW_DN";
