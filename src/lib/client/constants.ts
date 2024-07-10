@@ -84,7 +84,13 @@ export const ZUVILLAGE_SCHEMAS: Schemas[] = [
   },
 ];
 
-export const ZUVILLAGE_BADGE_TITLES = [
+export interface BadgeTitles {
+  title: string;
+  schemaUID: `0x${string}`;
+  allowComment: boolean;
+}
+
+export const ZUVILLAGE_BADGE_TITLES: BadgeTitles[] = [
   {
     title: "Give Manager Badge",
     schemaUID: ZUVILLAGE_SCHEMAS[0].schemaUID,
