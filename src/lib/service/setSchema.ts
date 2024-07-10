@@ -9,7 +9,7 @@ export interface ConnetedWalletConfiguration {
   chain: number;
 }
 
-export async function schemas(
+export async function setSchema(
   uid: `0x${string}`,
   roleId: `0x${string}`,
   action: Action,
