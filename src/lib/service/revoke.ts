@@ -8,70 +8,67 @@ export interface ConnetedWalletConfiguration {
   chain: number;
 }
 
-export async function submitRevoke(
-  uid: `0x${string}`,
+export async function revoke(
   schema: `0x${string}`,
-  time: bigint,
-  expirationTime: bigint,
-  refUID: `0x${string}`,
-  recipient: `0x${string}`,
-  attester: `0x${string}`,
-  revocable: boolean,
+  uid: `0x${string}`,
+  value: bigint,
   data: `0x${string}`,
   configurations: ConnetedWalletConfiguration,
-  msgValue: bigint,
 ) {
-  const attestation = {
-    uid,
-    schema,
-    time,
-    expirationTime,
-    revocationTime: 0n,
-    refUID,
-    recipient,
-    attester,
-    revocable,
-    data,
+  const RevocationRequestData = {
+    uid: uid,
+    data: data,
+    value: value,
   };
 
+  const RevocationRequest = {
+    schema: schema,
+    data: RevocationRequestData,
+  };
+
+  // refactor - get the ABI from the EAS.sol instead of the resolver.sol
   const encodedData = encodeFunctionData({
     abi: [
       {
-        type: "function",
-        name: "revoke",
         inputs: [
           {
-            name: "attestation",
-            type: "tuple",
-            internalType: "struct Attestation",
             components: [
-              { name: "uid", type: "bytes32", internalType: "bytes32" },
-              { name: "schema", type: "bytes32", internalType: "bytes32" },
-              { name: "time", type: "uint64", internalType: "uint64" },
               {
-                name: "expirationTime",
-                type: "uint64",
-                internalType: "uint64",
+                internalType: "bytes32",
+                name: "schema",
+                type: "bytes32",
               },
               {
-                name: "revocationTime",
-                type: "uint64",
-                internalType: "uint64",
+                components: [
+                  {
+                    internalType: "bytes32",
+                    name: "uid",
+                    type: "bytes32",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "value",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct RevocationRequestData",
+                name: "data",
+                type: "tuple",
               },
-              { name: "refUID", type: "bytes32", internalType: "bytes32" },
-              { name: "recipient", type: "address", internalType: "address" },
-              { name: "attester", type: "address", internalType: "address" },
-              { name: "revocable", type: "bool", internalType: "bool" },
-              { name: "data", type: "bytes", internalType: "bytes" },
             ],
+            internalType: "struct RevocationRequest",
+            name: "request",
+            type: "tuple",
           },
         ],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
+        name: "revoke",
+        outputs: [],
         stateMutability: "payable",
+        type: "function",
       },
     ],
 
-    args: [attestation],
+    args: [RevocationRequest],
   });
 
   try {
@@ -83,7 +80,7 @@ export async function submitRevoke(
       to: TRUSTFUL_SMART_CONTRACT_ADDRESS[
         configurations.chain
       ] as `0x${string}`,
-      value: msgValue,
+      value: value,
     });
 
     const transactionHash = await configurations.walletClient.sendTransaction({
@@ -92,7 +89,7 @@ export async function submitRevoke(
         configurations.chain
       ] as `0x${string}`,
       gasLimit: gasLimit,
-      value: msgValue,
+      value: value,
     });
 
     const transactionReceipt = await publicClient({
