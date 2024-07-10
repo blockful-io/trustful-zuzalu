@@ -16,8 +16,11 @@ import {
   HeartIcon,
   TheHeader,
 } from "@/components/01-atoms";
+import { useNotify } from "@/hooks";
 
 export const BadgeDetailsSection = () => {
+  const { notifyError, notifySuccess } = useNotify();
+
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
@@ -129,11 +132,27 @@ export const BadgeDetailsSection = () => {
         textAlign={"center"}
         className="px-6 py-4 bg-[#161617] w-full flex group border-t border-[#F5FFFF14] border-opacity-[8] gap-3"
       >
-        <Button className="w-full flex justify-center items-center gap-2 px-6 bg-lime-200 bg-opacity-10 text-[#B1EF42] rounded-lg">
+        <Button
+          className="w-full flex justify-center items-center gap-2 px-6 bg-lime-200 bg-opacity-10 text-[#B1EF42] rounded-lg"
+          onClick={() => {
+            notifyError({
+              title: "Badge Error",
+              message: "The badge has not been issued successfully",
+            });
+          }}
+        >
           <CloseIcon className="w-[14px] h-[14px]" />
           Deny
         </Button>
-        <Button className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg">
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          onClick={() => {
+            notifySuccess({
+              title: "Badge Issued",
+              message: "The badge has been issued successfully",
+            });
+          }}
+        >
           <CheckIcon className="w-[16px] h-[16px]" />
           Confirm
         </Button>

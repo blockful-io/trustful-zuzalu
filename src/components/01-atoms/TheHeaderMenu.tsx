@@ -10,6 +10,8 @@ import {
 
 export const TheHeaderMenu = () => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const closeMenu = () => setIsOpenMenu(false);
+
   return (
     <>
       <Menu>
@@ -29,7 +31,9 @@ export const TheHeaderMenu = () => {
           onClick={() => setIsOpenMenu(!isOpenMenu)}
         />
       </Menu>
-      {isOpenMenu && <DropdownProfile isOpenMenu />}
+      {isOpenMenu && (
+        <DropdownProfile isOpenMenu={isOpenMenu} onClose={closeMenu} />
+      )}
     </>
   );
 };
