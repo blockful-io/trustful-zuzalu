@@ -54,13 +54,14 @@ export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const { notifyError, notifySuccess } = useNotify();
+  const { sendTransaction } = useSendTransaction();
   const {
+    setQRCodeisOpen,
     action,
-    addressStep,
     handleActionChange,
+    addressStep,
     setAddressStep,
     badgeInputAddress,
-    setQRCodeisOpen,
     setBadgeInputAddress,
   } = useContext(QRCodeContext);
 
@@ -87,13 +88,6 @@ export const GiveBadgeSection = () => {
       });
     }
   }, [inputAddress]);
-
-  let badgeInput: string;
-  if (badgeInputAddress !== null && isAddress(badgeInputAddress.address)) {
-    badgeInput = badgeInputAddress.address;
-  }
-
-  const { sendTransaction } = useSendTransaction();
   // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
   //   hash: data,
   // });
