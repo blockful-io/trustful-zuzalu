@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 
 import {
@@ -11,7 +12,16 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
+// import { ethers } from "ethers";
 import { isAddress } from "viem";
+import { getBlock } from "viem/actions";
+import {
+  useAccount,
+  useClient,
+  usePublicClient,
+  useSendTransaction,
+  useWalletClient,
+} from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -24,9 +34,16 @@ import {
   HeartIcon,
 } from "@/components/01-atoms";
 import { QRCode } from "@/components/03-organisms";
-import { useWindowSize } from "@/hooks";
+import { useNotify, useWindowSize } from "@/hooks";
+import { ZUZALU_EVENT_TITLES } from "@/lib/client/constants";
 import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
+import { publicClient } from "@/lib/wallet/client";
+import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
+
+import { submitAttest } from "../../lib/service/attest";
+// import TransferNative from "../01-atoms/TransferNative";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -41,6 +58,7 @@ export enum GiveBadgeStepAddress {
 
 export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
+  const { address } = useAccount();
   const {
     action,
     addressStep,
@@ -52,6 +70,8 @@ export const GiveBadgeSection = () => {
   } = useContext(QRCodeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
+  const client = usePublicClient({ config: wagmiConfig });
+  console.log("client", client);
   useEffect(() => {
     return () => {
       handleActionChange(GiveBadgeAction.ADDRESS);
@@ -69,6 +89,72 @@ export const GiveBadgeSection = () => {
   if (badgeInputAddress !== null && isAddress(badgeInputAddress.address)) {
     badgeInput = badgeInputAddress.address;
   }
+
+  const { sendTransaction } = useSendTransaction();
+  // const { data: receipt, isLoading } = useWaitForTransactionReceipt({
+  //   hash: data,
+  // });
+  const { notifyError } = useNotify();
+
+  const handleTransfer = () => {
+    const receiver = "0x4200000000000000000000000000000000000021";
+    const amount = BigInt(0);
+    if (receiver.length === 0 || !isAddress(receiver)) {
+      return notifyError({
+        title: "Error:",
+        message: "The receiver address is not set!",
+      });
+    }
+
+    // if (parseFloat(amount) <= 0) {
+    //   return notifyError({
+    //     title: "Error:",
+    //     message: "The amount to send must be greater than 0.",
+    //   });
+    // }
+
+    sendTransaction({
+      to: receiver,
+      value: amount,
+      data: "0xf17325e70000000000000000000000000000000000000000000000000000000000000020d130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa000000000000000000000000000000000000000000000000000000000000004000000000000000000000000007231e0fd9f668d4aafae7a5d5f432b8e6e4fe5100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    });
+  };
+
+  const handleAttest = async () => {
+    console.log("blockNUmber PUBLIC CLIENT", publicClient);
+    const blockNumber = await getBlock(publicClient, { blockTag: "latest" });
+    console.log("bLOCKnUMBER", blockNumber);
+
+    const schema =
+      "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa"; //Temporary hardcoded
+
+    const attestationRequestData = {
+      recipient: "0x07231e0fd9F668d4aaFaE7A5D5f432B8E6e4Fe51" as `0x${string}`, //Temporary hardcoded
+      expirationTime: BigInt(0),
+      revocable: true,
+      refUID:
+        "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
+      data: "0x" as `0x${string}`,
+      value: BigInt(0),
+    };
+
+    try {
+      const transactionReceipt = await submitAttest(
+        schema,
+        attestationRequestData.recipient,
+        attestationRequestData.expirationTime,
+        attestationRequestData.revocable,
+        attestationRequestData.refUID,
+        attestationRequestData.data,
+        attestationRequestData.value,
+        // walletClient,
+        // publicClient,
+      );
+      console.log("Transaction receipt:", transactionReceipt);
+    } catch (error) {
+      console.error("Failed to submit attest:", error);
+    }
+  };
 
   const renderStepContent = (action: GiveBadgeAction) => {
     switch (action) {
@@ -139,7 +225,7 @@ export const GiveBadgeSection = () => {
                             Issued by
                           </Text>
                           <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                            crazy_monkey.eth
+                            {getEllipsedAddress(address)}
                           </Text>
                         </Flex>
                       </Flex>
@@ -154,7 +240,7 @@ export const GiveBadgeSection = () => {
                             Receiver
                           </Text>
                           <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
-                            my_user.eth
+                            {getEllipsedAddress(badgeInputAddress?.address)}
                           </Text>
                         </Flex>
                       </Flex>
@@ -164,8 +250,14 @@ export const GiveBadgeSection = () => {
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
                   >
-                    <Text className="flex">Badge</Text>
-                    <Select placeholder="Select option" className="flex">
+                    <Text className="text-slate-50 mb-2 text-sm font-medium font-['Inter'] leading-none">
+                      Select a Badge
+                    </Text>
+                    <Select
+                      placeholder="Select option"
+                      className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
+                      color="white"
+                    >
                       <option>ok</option>
                       <option>o2</option>
                     </Select>
@@ -186,9 +278,10 @@ export const GiveBadgeSection = () => {
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
                     className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
-                    onClick={() =>
-                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION)
-                    }
+                    onClick={() => {
+                      handleAttest();
+                      setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
+                    }}
                   >
                     Confirm
                   </Button>

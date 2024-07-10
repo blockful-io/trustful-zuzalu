@@ -17,7 +17,7 @@ import {
   TheHeader,
   TicketIcon,
 } from "@/components/01-atoms";
-import { collapsedAddress } from "@/utils/formatters";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export const CheckInSection = () => {
   const { Canvas } = useQRCode();
@@ -82,7 +82,9 @@ export const CheckInSection = () => {
                     }}
                   />
                   <Flex className="justify-center items-center gap-2">
-                    <Text>{chain.name + ":" + collapsedAddress(address)}</Text>
+                    <Text>
+                      {chain.name + ":" + getEllipsedAddress(address)}
+                    </Text>
                     <CopyToClipboardButton />
                   </Flex>
                 </>
