@@ -26,8 +26,8 @@ const useFetchEASData = (query: any, variables: any) => {
           {
             query,
             variables,
-            headers,
           },
+          { headers },
         );
         setData(result.data);
       } catch (err) {
