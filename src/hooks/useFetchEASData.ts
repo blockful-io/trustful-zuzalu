@@ -8,6 +8,10 @@ const useFetchEASData = (query: any, variables: any) => {
   const [error, setError] = useState(false);
   const [data, setData] = useState(null);
 
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
   useEffect(() => {
     if (loading) {
       return;
@@ -17,10 +21,14 @@ const useFetchEASData = (query: any, variables: any) => {
       try {
         setLoading(true);
         setError(false);
-        const result = await axios.post("YOUR_GRAPHQL_ENDPOINT", {
-          query,
-          variables,
-        });
+        const result = await axios.post(
+          "https://optimism.easscan.org/graphql",
+          {
+            query,
+            variables,
+            headers,
+          },
+        );
         setData(result.data);
       } catch (err) {
         setError(err as boolean);
