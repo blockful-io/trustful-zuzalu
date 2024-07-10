@@ -46,7 +46,8 @@ export const BadgeDetailsNavigation = ({
           setAction(GiveBadgeAction.ADDRESS);
           setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
         }}
-        className="cursor-pointer p-2"
+        className="cursor-pointer p-2 opacity-80"
+        color="white"
       >
         <CloseIcon />
       </Flex>
