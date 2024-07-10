@@ -39,6 +39,7 @@ import { QRCodeContext } from "@/lib/context/QRCodeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { publicClient } from "@/lib/wallet/client";
 import { getEllipsedAddress } from "@/utils/formatters";
+import { ZUZALU_EVENT_TITLES } from "@/lib/client/constants";
 import { wagmiConfig } from "@/wagmi";
 
 import { submitAttest } from "../../lib/service/attest";
