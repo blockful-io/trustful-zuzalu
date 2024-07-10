@@ -16,8 +16,8 @@ import {
   Textarea,
   Icon,
 } from "@chakra-ui/react";
-import { BeatLoader } from "react-spinners";
 import { useToast } from "@chakra-ui/react";
+import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
 
