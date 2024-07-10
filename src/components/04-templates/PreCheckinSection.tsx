@@ -1,10 +1,9 @@
-import { Box, Flex } from "@chakra-ui/react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 // import { useAccount } from "wagmi";
 
-import { TheHeader } from "@/components/01-atoms";
+import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 
 import useFetchEASData from "../../hooks/useFetchEASData";
 import { VILLAGER_QUERY } from "../../lib/client/schema_queries";
@@ -73,8 +72,6 @@ export const PreCheckinSection = () => {
         as="main"
         className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
         marginBottom="60px"
-      />
-      <TheFooterNavbar />
       >
         <Flex flexDirection={"column"} gap={2}>
           <Button onClick={() => router.push("my-badge")}>My Badges</Button>
@@ -91,6 +88,8 @@ export const PreCheckinSection = () => {
           )}
         </Flex>
       </Box>
+
+      <TheFooterNavbar />
     </Flex>
   );
 };

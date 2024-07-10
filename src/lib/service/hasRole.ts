@@ -39,19 +39,27 @@ export async function hasRole(
     args: [role, account],
   });
 
+  const abi = [
+    {
+      inputs: [
+        { internalType: "bytes32", name: "role", type: "bytes32" },
+        { internalType: "address", name: "account", type: "address" },
+      ],
+      name: "hasRole",
+      outputs: [{ internalType: "bool", name: "", type: "bool" }],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
+
   console.log("encodedData", encodedData);
   console.log("publicClient", publicClient);
   console.log("walletClient", walletClient);
 
   try {
-    const response = await publicClient({
-      //TODO: Refactor with correct function
-      chainId: configurations.chain,
-    }).readContract({
-      address: TRUSTFUL_SMART_CONTRACT_ADDRESS[
-        configurations.chain
-      ] as `0x${string}`,
-      abi: encodedData,
+    const response = await publicClient.readContract({
+      address: "0xF988953B76B92f2E15Ee5AFFd0c95925261809a9",
+      abi: abi,
       functionName: "schemas",
       args: [role, account],
     });
