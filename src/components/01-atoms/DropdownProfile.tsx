@@ -59,7 +59,7 @@ export const DropdownProfile = ({
           >
             <LogoutIcon className="w-6 h-6 text-[#F5FFFF80]" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight ">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight ">
                 Disconnect
               </Text>
             </Flex>
@@ -74,12 +74,12 @@ export const DropdownProfile = ({
             <Flex gap={3} alignItems={"center"}>
               <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
               <Flex>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                   Profile
                 </Text>
               </Flex>
             </Flex>
-            <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium font-['Inter'] uppercase leading-[13.20px] tracking-wide">
+            <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium  uppercase leading-[13.20px] tracking-wide">
               coming soon
             </Text>
           </Flex>

@@ -42,7 +42,7 @@ export const BadgeDetailsSection = () => {
               </Text>
             </Box>
             <Flex gap={2} className="items-center">
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 Jun 19th - 2:40pm
               </Text>
               <BadgeTagIcon status={BadgeStatus.PENDING} />
@@ -57,10 +57,10 @@ export const BadgeDetailsSection = () => {
             <Flex className="w-full flex-row p-4" gap={4}>
               <Avatar />
               <Flex flexDirection={"column"} justifyContent={"center"}>
-                <Text className="text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+                <Text className="text-slate-50 text-sm font-medium  leading-none">
                   Issued by
                 </Text>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                   crazy_monkey.eth
                 </Text>
               </Flex>
@@ -69,10 +69,10 @@ export const BadgeDetailsSection = () => {
             <Flex className="w-full flex-row p-4" gap={4}>
               <Avatar />
               <Flex flexDirection={"column"} justifyContent={"center"}>
-                <Text className="text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+                <Text className="text-slate-50 text-sm font-medium  leading-none">
                   Receiver
                 </Text>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                   my_user.eth
                 </Text>
               </Flex>
@@ -84,10 +84,10 @@ export const BadgeDetailsSection = () => {
           className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
         >
           <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+            <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Comment
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
               accumsan turpis vel enim eleifend ornare. In malesuada urna
               hendrerit leo aliquet, ut euismod elit suscipit.
@@ -99,26 +99,26 @@ export const BadgeDetailsSection = () => {
           className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
         >
           <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+            <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Attestation
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
               0x12312...1ED8
             </Text>
           </Flex>
           <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+            <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Transaction
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
               0x12312...1ED8
             </Text>
           </Flex>
           <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+            <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Scheme
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
               #159
             </Text>
           </Flex>

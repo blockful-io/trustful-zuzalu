@@ -296,7 +296,7 @@ export const GiveBadgeSection = () => {
                     <Flex className="gap-4 pb-4 justify-start items-center">
                       <UserIcon className="text-[#B1EF42]" />
                       <Input
-                        className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
+                        className="text-slate-50 text-base font-normal  leading-snug border-none"
                         placeholder="Insert address or ENS"
                         _placeholder={{ className: "text-slate-50 opacity-30" }}
                         focusBorderColor={"#F5FFFF1A"}
@@ -317,7 +317,7 @@ export const GiveBadgeSection = () => {
                     color="white"
                     className="w-full justify-between items-center"
                   >
-                    <Text className="text-slate-50 opacity-80 text-base font-normal font-['Inter'] leading-snug border-none">
+                    <Text className="text-slate-50 opacity-80 text-base font-normal  leading-snug border-none">
                       Continue
                     </Text>
                     <button
@@ -359,10 +359,10 @@ export const GiveBadgeSection = () => {
                           flexDirection={"column"}
                           justifyContent={"center"}
                         >
-                          <Text className="text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+                          <Text className="text-slate-50 text-sm font-medium  leading-none">
                             Issued by
                           </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                          <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                             {getEllipsedAddress(address)}
                           </Text>
                         </Flex>
@@ -374,10 +374,10 @@ export const GiveBadgeSection = () => {
                           flexDirection={"column"}
                           justifyContent={"center"}
                         >
-                          <Text className="text-slate-50 text-sm font-medium font-['Inter'] leading-none">
+                          <Text className="text-slate-50 text-sm font-medium  leading-none">
                             Receiver
                           </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                          <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                             {getEllipsedAddress(badgeInputAddress?.address)}
                           </Text>
                         </Flex>
@@ -388,12 +388,12 @@ export const GiveBadgeSection = () => {
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
                   >
-                    <Text className="text-slate-50 mb-2 text-sm font-medium font-['Inter'] leading-none">
+                    <Text className="text-slate-50 mb-2 text-sm font-medium  leading-none">
                       Select a Badge
                     </Text>
                     <Select
                       placeholder="Select option"
-                      className="flex text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight"
+                      className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight"
                       color="white"
                       onChange={handleBadgeSelectChange}
                     >
@@ -409,7 +409,7 @@ export const GiveBadgeSection = () => {
                       <Flex className="gap-4 pb-4 justify-start items-center">
                         <CommentIcon />
                         <Textarea
-                          className="text-slate-50 text-base font-normal font-['Inter'] leading-snug border-none"
+                          className="text-slate-50 text-base font-normal  leading-snug border-none"
                           placeholder="Share your experience!"
                           _placeholder={{
                             className: "text-slate-50 opacity-30",
@@ -465,22 +465,22 @@ export const GiveBadgeSection = () => {
                   <Flex className="flex-col">
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                         Receiver
                       </Text>
                       <Flex gap={2}>
-                        <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+                        <Text className="text-slate-50 text-sm font-normal  leading-tight">
                           {badgeInputAddress?.getEllipsedAddress()}
                         </Text>
                       </Flex>
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                         Badge
                       </Text>
                       <Flex gap={2}>
-                        <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+                        <Text className="text-slate-50 text-sm font-normal  leading-tight">
                           {inputBadge?.title}
                         </Text>
                       </Flex>
@@ -488,11 +488,11 @@ export const GiveBadgeSection = () => {
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     {commentBadge && (
                       <Flex className="py-4 gap-4 items-center">
-                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                           Comment
                         </Text>
                         <Flex gap={2}>
-                          <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+                          <Text className="text-slate-50 text-sm font-normal  leading-tight">
                             {commentBadge}
                           </Text>
                         </Flex>

@@ -34,7 +34,7 @@ export const BadgeDetailsNavigation = ({
         <ArrowIcon variant={ArrowIconVariant.LEFT} />
       </Flex>
       <Flex justifyContent={"center"} className="w-full">
-        <Text className="text-slate-50 text-sm font-medium font-['Inter'] uppercase leading-none tracking-wide">
+        <Text className="text-slate-50 text-sm font-medium  uppercase leading-none tracking-wide">
           BADGE DETAILS
         </Text>
       </Flex>
@@ -66,7 +66,7 @@ export const BadgeDetailsNavigation = ({
         />
       </Flex>
       <Flex justifyContent={"center"} className="w-full">
-        <Text className="text-slate-50 text-sm font-medium font-['Inter'] uppercase leading-none tracking-wide">
+        <Text className="text-slate-50 text-sm font-medium  uppercase leading-none tracking-wide">
           QR CODE SCANNER
         </Text>
       </Flex>
