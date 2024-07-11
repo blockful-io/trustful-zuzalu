@@ -8,7 +8,6 @@ export * from "./icons/CircleQuestion";
 export * from "./icons/CloseIcon";
 export * from "./icons/CommentIcon";
 export * from "./icons/CopyIcon";
-export * from "./icons/EthereumIcon";
 export * from "./icons/HeartIcon";
 export * from "./icons/LoadingIndicator";
 export * from "./icons/LogoutIcon";
