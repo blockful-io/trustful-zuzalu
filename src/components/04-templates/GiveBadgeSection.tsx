@@ -47,6 +47,7 @@ import {
   submitAttest,
   type AttestationRequestData,
 } from "../../lib/service/attest";
+import { hasRole } from "../../lib/service/hasRole";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -76,6 +77,7 @@ export const GiveBadgeSection = () => {
 
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
+  const [inputBadgeTitleList, setInputBadgeTitleList] = useState<string[]>();
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState("");
@@ -88,6 +90,19 @@ export const GiveBadgeSection = () => {
       setBadgeInputAddress(null);
     };
   }, []);
+
+  // Filters the badges based on the user's role. Single activation
+  useEffect(() => {
+    if (address && inputBadgeTitleList === undefined) {
+      const filteredBadges: string[] = [];
+      ZUVILLAGE_BADGE_TITLES.map(async (badge) => {
+        if (await hasRole(badge.allowedRole, address)) {
+          filteredBadges.push(badge.title);
+        }
+      });
+      setInputBadgeTitleList(filteredBadges);
+    }
+  }, [address]);
 
   // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
@@ -382,9 +397,9 @@ export const GiveBadgeSection = () => {
                       color="white"
                       onChange={handleBadgeSelectChange}
                     >
-                      {ZUVILLAGE_BADGE_TITLES.map((badge, index) => (
-                        <option key={index} value={badge.title}>
-                          {badge.title}
+                      {inputBadgeTitleList?.map((title, index) => (
+                        <option key={index} value={title}>
+                          {title}
                         </option>
                       ))}
                     </Select>
