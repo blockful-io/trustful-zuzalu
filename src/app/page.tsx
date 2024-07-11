@@ -9,5 +9,5 @@ export default function Home() {
   const { push } = useRouter();
 
   if (isConnected) push("/pre-checkin");
-  return <HomeSection />;
+  else return <HomeSection />;
 }

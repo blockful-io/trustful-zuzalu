@@ -7,7 +7,7 @@ export class EthereumAddress {
   public address: `0x${string}`;
 
   constructor(private add: string) {
-    if (!EthereumAddress.pattern.test(add)) {
+    if (!EthereumAddress.pattern.test(this.add)) {
       throw new Error(`Invalid Ethereum address: ${add}`);
     }
 

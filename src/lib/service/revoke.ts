@@ -1,102 +1,102 @@
-import { encodeFunctionData } from "viem";
+// import { encodeFunctionData } from "viem";
 
-import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
+// import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
+// import { publicClient } from "../wallet/wallet-config";
 
-export interface ConnetedWalletConfiguration {
-  walletClient: any;
-  chain: number;
-}
+// export interface ConnetedWalletConfiguration {
+//   walletClient: any;
+//   chain: number;
+// }
 
-export async function revoke(
-  schema: `0x${string}`,
-  uid: `0x${string}`,
-  value: bigint,
-  data: `0x${string}`,
-  configurations: ConnetedWalletConfiguration,
-) {
-  const RevocationRequestData = {
-    uid: uid,
-    data: data,
-    value: value,
-  };
+// export async function revoke(
+//   schema: `0x${string}`,
+//   uid: `0x${string}`,
+//   value: bigint,
+//   data: `0x${string}`,
+//   configurations: ConnetedWalletConfiguration,
+// ) {
+//   const RevocationRequestData = {
+//     uid: uid,
+//     data: data,
+//     value: value,
+//   };
 
-  const RevocationRequest = {
-    schema: schema,
-    data: RevocationRequestData,
-  };
+//   const RevocationRequest = {
+//     schema: schema,
+//     data: RevocationRequestData,
+//   };
 
-  // refactor - get the ABI from the EAS.sol instead of the resolver.sol
-  const encodedData = encodeFunctionData({
-    abi: [
-      {
-        inputs: [
-          {
-            components: [
-              {
-                internalType: "bytes32",
-                name: "schema",
-                type: "bytes32",
-              },
-              {
-                components: [
-                  {
-                    internalType: "bytes32",
-                    name: "uid",
-                    type: "bytes32",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct RevocationRequestData",
-                name: "data",
-                type: "tuple",
-              },
-            ],
-            internalType: "struct RevocationRequest",
-            name: "request",
-            type: "tuple",
-          },
-        ],
-        name: "revoke",
-        outputs: [],
-        stateMutability: "payable",
-        type: "function",
-      },
-    ],
+//   // refactor - get the ABI from the EAS.sol instead of the resolver.sol
+//   const encodedData = encodeFunctionData({
+//     abi: [
+//       {
+//         inputs: [
+//           {
+//             components: [
+//               {
+//                 internalType: "bytes32",
+//                 name: "schema",
+//                 type: "bytes32",
+//               },
+//               {
+//                 components: [
+//                   {
+//                     internalType: "bytes32",
+//                     name: "uid",
+//                     type: "bytes32",
+//                   },
+//                   {
+//                     internalType: "uint256",
+//                     name: "value",
+//                     type: "uint256",
+//                   },
+//                 ],
+//                 internalType: "struct RevocationRequestData",
+//                 name: "data",
+//                 type: "tuple",
+//               },
+//             ],
+//             internalType: "struct RevocationRequest",
+//             name: "request",
+//             type: "tuple",
+//           },
+//         ],
+//         name: "revoke",
+//         outputs: [],
+//         stateMutability: "payable",
+//         type: "function",
+//       },
+//     ],
 
-    args: [RevocationRequest],
-  });
+//     args: [RevocationRequest],
+//   });
 
-  try {
-    const gasLimit = await publicClient({
-      chainId: configurations.chain,
-    }).estimateGas({
-      account: configurations.walletClient.account as `0x${string}`,
-      data: encodedData,
-      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-      value: value,
-    });
+//   try {
+//     const gasLimit = await publicClient({
+//       chainId: configurations.chain,
+//     }).estimateGas({
+//       account: configurations.walletClient.account as `0x${string}`,
+//       data: encodedData,
+//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
+//       value: value,
+//     });
 
-    const transactionHash = await configurations.walletClient.sendTransaction({
-      data: encodedData,
-      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-      gasLimit: gasLimit,
-      value: value,
-    });
+//     const transactionHash = await configurations.walletClient.sendTransaction({
+//       data: encodedData,
+//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
+//       gasLimit: gasLimit,
+//       value: value,
+//     });
 
-    const transactionReceipt = await publicClient({
-      chainId: configurations.chain,
-    }).waitForTransactionReceipt({
-      hash: transactionHash,
-    });
+//     const transactionReceipt = await publicClient({
+//       chainId: configurations.chain,
+//     }).waitForTransactionReceipt({
+//       hash: transactionHash,
+//     });
 
-    return transactionReceipt;
-  } catch (error) {
-    console.error(error);
-    throw new Error(String(error));
-  }
-}
+//     return transactionReceipt;
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error(String(error));
+//   }
+// }

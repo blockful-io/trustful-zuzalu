@@ -1,11 +1,22 @@
+import { useContext } from "react";
+
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
 
 import { BadgeIcon, HeartIcon, LogoutIcon } from "@/components/01-atoms/";
+import { WalletContext } from "@/lib/context/WalletContext";
 
 export const TheFooterNavbar = () => {
   const params = useParams();
   const router = useRouter();
+  const { villagerAttestationCount } = useContext(WalletContext);
+
+  const option =
+    villagerAttestationCount === 0
+      ? "Check In"
+      : villagerAttestationCount === 1
+        ? "Check Out"
+        : "Thank You";
 
   return (
     <Box
@@ -54,7 +65,7 @@ export const TheFooterNavbar = () => {
           <Text
             className={`text-slate-50 ${params.slug == "check-out" ? "opacity-100" : "opacity-50"} text-sm font-medium  leading-none`}
           >
-            Check out
+            {option}
           </Text>
         </Box>
       </Flex>
