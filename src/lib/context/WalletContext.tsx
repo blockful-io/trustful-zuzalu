@@ -15,6 +15,7 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 
 import { ZUVILLAGE_SCHEMAS } from "../client/constants";
 import { VILLAGER_QUERY } from "../client/schemaQueries";
+import { useRouter } from "next/navigation";
 
 interface WalletContextProps {
   villagerAttestationCount: number;
@@ -46,10 +47,13 @@ export const WalletContextProvider = ({
   );
 
   const { address } = useAccount();
+  const { push } = useRouter();
   const { notifyError } = useNotify();
   useEffect(() => {
     if (address && villagerAttestationCount === 0) {
       handleQuery();
+    } else {
+      push("/");
     }
   }, [address]);
 
