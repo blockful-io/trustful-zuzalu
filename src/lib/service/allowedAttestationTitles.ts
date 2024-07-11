@@ -1,7 +1,7 @@
-import { encodeFunctionData } from "viem";
+import { readContract } from "viem/actions";
 
 import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
+import { publicClient } from "../wallet/client";
 
 export interface ConnetedWalletConfiguration {
   walletClient: any;
@@ -11,8 +11,8 @@ export interface ConnetedWalletConfiguration {
 export async function allowedAttestationTitles(
   attestationTitle: string,
   configurations: ConnetedWalletConfiguration,
-): Promise<boolean> {
-  const data = encodeFunctionData({
+): Promise<boolean | Error> {
+  const data = {
     abi: [
       {
         type: "function",
@@ -22,24 +22,22 @@ export async function allowedAttestationTitles(
         stateMutability: "view",
       },
     ],
-    args: [attestationTitle],
-  });
+  };
 
   try {
-    const response = await publicClient({
-      chainId: configurations.chain,
-    }).readContract({
+    const response = await readContract(publicClient, {
       address: TRUSTFUL_CONTRACT_ADDRESSES[
         configurations.chain
       ] as `0x${string}`,
-      abi: data,
+      abi: data.abi,
       functionName: "allowedAttestationTitles",
       args: [attestationTitle],
     });
 
-    return response;
+    if (response === typeof Boolean) return Error("Response should be boolean");
+
+    return response as boolean;
   } catch (error) {
-    console.error(error);
-    throw new Error(String(error));
+    return Error("Error when reading the contract");
   }
 }

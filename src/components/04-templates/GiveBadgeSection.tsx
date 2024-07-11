@@ -39,7 +39,7 @@ import {
   ZUVILLAGE_SCHEMAS,
 } from "@/lib/client/constants";
 import type { BadgeTitle } from "@/lib/client/constants";
-import { QRCodeContext } from "@/lib/context/QRCodeContext";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
 
@@ -73,7 +73,7 @@ export const GiveBadgeSection = () => {
     setAddressStep,
     badgeInputAddress,
     setBadgeInputAddress,
-  } = useContext(QRCodeContext);
+  } = useContext(GiveBadgeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();

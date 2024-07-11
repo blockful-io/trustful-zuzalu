@@ -7,7 +7,8 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-import { QRCodeContextProvider } from "@/lib/context/QRCodeContext";
+import { GiveBadgeContextProvider } from "@/lib/context/GiveBadgeContext";
+import { WalletContextProvider } from "@/lib/context/WalletContext";
 import { wagmiConfig } from "@/wagmi";
 
 export function Providers({ children }: Readonly<{ children: ReactNode }>) {
@@ -35,9 +36,11 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
                 accentColorForeground: "#161617",
               })}
             >
-              <QRCodeContextProvider>
-                {mounted && children}
-              </QRCodeContextProvider>
+              <WalletContextProvider>
+                <GiveBadgeContextProvider>
+                  {mounted && children}
+                </GiveBadgeContextProvider>
+              </WalletContextProvider>
             </RainbowKitProvider>
           </ChakraProvider>
         </CacheProvider>

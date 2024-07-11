@@ -33,7 +33,7 @@ export const BadgeCard = () => {
         background={"#F5FFFF0D"}
         border={2}
         onClick={() => {
-          router.push(`my-badge-1`); //TODO: Replace with dynamic route ID
+          router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
           console.log("Card Clicked go to Details of this Card");
         }}
       >
@@ -79,7 +79,7 @@ export const BadgeCard = () => {
         background={"#F5FFFF0D"}
         border={2}
         onClick={() => {
-          router.push(`my-badge-1`); //TODO: Replace with dynamic route ID
+          router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
           console.log("Card Clicked go to Details of this Card");
         }}
       >
