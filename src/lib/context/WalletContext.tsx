@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 
+import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
@@ -46,10 +47,13 @@ export const WalletContextProvider = ({
   );
 
   const { address } = useAccount();
+  const { push } = useRouter();
   const { notifyError } = useNotify();
   useEffect(() => {
     if (address && villagerAttestationCount === 0) {
       handleQuery();
+    } else {
+      push("/");
     }
   }, [address]);
 

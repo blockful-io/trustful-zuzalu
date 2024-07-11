@@ -9,6 +9,7 @@ import {
   Heading,
   Slide,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
@@ -21,6 +22,7 @@ export const DropdownProfile = ({
   onClose: () => void;
 }) => {
   const { disconnect } = useDisconnect();
+  const { push } = useRouter();
 
   return (
     <Slide
@@ -57,7 +59,10 @@ export const DropdownProfile = ({
             alignItems={"center"}
             flexDirection={"row"}
             p={4}
-            onClick={() => disconnect()}
+            onClick={() => {
+              disconnect();
+              push("/");
+            }}
           >
             <LogoutIcon className="w-6 h-6 text-[#F5FFFF80]" />
             <Flex gap={2} alignItems={"center"}>
