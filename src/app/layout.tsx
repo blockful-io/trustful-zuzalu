@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
 
-const open_sans = Open_Sans({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Trustful",
@@ -26,7 +26,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body className={open_sans.className}>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>

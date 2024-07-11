@@ -41,7 +41,7 @@ export const CheckoutSection = () => {
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
-              <Text className="text-center text-slate-50 text-base font-normal font-['Inter'] leading-snug">
+              <Text className="text-center text-slate-50 text-base font-normal  leading-snug">
                 To finish your session, please scan the QR code.
               </Text>
             </Flex>
@@ -61,7 +61,7 @@ export const CheckoutSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 What is the check out for?
               </Text>
             </Flex>
@@ -70,7 +70,7 @@ export const CheckoutSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 What this means?
               </Text>
             </Flex>
@@ -79,7 +79,7 @@ export const CheckoutSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 How to connect organizer?
               </Text>
             </Flex>

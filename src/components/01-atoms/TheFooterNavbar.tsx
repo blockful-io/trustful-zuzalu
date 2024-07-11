@@ -26,7 +26,7 @@ export const TheFooterNavbar = () => {
             className={`w-5 h-5 text-white ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"}`}
           />
           <Text
-            className={`text-slate-50 ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+            className={`text-slate-50 ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium  leading-none`}
           >
             My badges
           </Text>
@@ -39,7 +39,7 @@ export const TheFooterNavbar = () => {
             className={`w-5 h-5 text-white ${params.slug == "give-badge" ? " opacity-100" : "opacity-50"}`}
           />
           <Text
-            className={`text-slate-50 ${params.slug == "give-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+            className={`text-slate-50 ${params.slug == "give-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium  leading-none`}
           >
             Give badge
           </Text>
@@ -52,7 +52,7 @@ export const TheFooterNavbar = () => {
             className={`w-5 h-5 text-white ${params.slug == "check-out" ? "opacity-100" : "opacity-50"}`}
           />
           <Text
-            className={`text-slate-50 ${params.slug == "check-out" ? "opacity-100" : "opacity-50"} text-sm font-medium font-['Inter'] leading-none`}
+            className={`text-slate-50 ${params.slug == "check-out" ? "opacity-100" : "opacity-50"} text-sm font-medium  leading-none`}
           >
             Check out
           </Text>

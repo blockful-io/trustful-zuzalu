@@ -57,7 +57,7 @@ export const BadgeCard = () => {
           <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
             <CalendarIcon className="w-6 h-6" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                 Date
               </Text>
               <Text>Jun 19th - 3:32pm</Text>
@@ -66,7 +66,7 @@ export const BadgeCard = () => {
           <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
             <Avatar className="w-6 h-6" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                 Issued by
               </Text>
               <Text>lil_penguin.eth</Text>
@@ -103,7 +103,7 @@ export const BadgeCard = () => {
           <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
             <CalendarIcon className="w-6 h-6" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                 Date
               </Text>
               <Text>Jun 19th - 3:32pm</Text>
@@ -112,7 +112,7 @@ export const BadgeCard = () => {
           <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
             <Avatar className="w-6 h-6" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                 Issued by
               </Text>
               <Text>crazy_monkey.eth</Text>

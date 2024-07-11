@@ -57,7 +57,7 @@ export const CheckInSection = () => {
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
-              <Text className="text-center text-slate-50 text-base font-normal font-['Inter'] leading-snug">
+              <Text className="text-center text-slate-50 text-base font-normal  leading-snug">
                 To start, please scan the QR code below.
               </Text>
             </Flex>
@@ -100,7 +100,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 What Trustful is?
               </Text>
             </Flex>
@@ -109,7 +109,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 How it works in ZuGeorgia?
               </Text>
             </Flex>
@@ -118,7 +118,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal font-['Inter'] leading-tight">
+              <Text className="text-slate-50 text-sm font-normal  leading-tight">
                 What to do now
               </Text>
             </Flex>
