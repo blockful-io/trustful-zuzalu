@@ -94,7 +94,7 @@ export const GiveBadgeSection = () => {
   // Filters the badges based on the user's role. Single activation
   useEffect(() => {
     if (address && inputBadgeTitleList === undefined) {
-      let filteredBadges: string[] = [];
+      const filteredBadges: string[] = [];
       ZUVILLAGE_BADGE_TITLES.map(async (badge) => {
         if (await hasRole(badge.allowedRole, address)) {
           filteredBadges.push(badge.title);
