@@ -9,10 +9,10 @@ import {
   Heading,
   Slide,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
-import { useRouter } from "next/navigation";
 
 export const DropdownProfile = ({
   isOpenMenu,

@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 
+import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
@@ -15,7 +16,6 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 
 import { ZUVILLAGE_SCHEMAS } from "../client/constants";
 import { VILLAGER_QUERY } from "../client/schemaQueries";
-import { useRouter } from "next/navigation";
 
 interface WalletContextProps {
   villagerAttestationCount: number;
