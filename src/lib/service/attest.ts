@@ -83,7 +83,7 @@ export async function submitAttest(
   });
 
   try {
-    gasLimit = estimateGas(publicClient, {
+    gasLimit = await estimateGas(publicClient, {
       account: from as `0x${string}`,
       to: EAS_CONTRACT_OP as `0x${string}`,
       data: data,
