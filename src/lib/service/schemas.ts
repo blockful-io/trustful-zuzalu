@@ -1,6 +1,6 @@
 import { encodeFunctionData } from "viem";
 
-import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
+import { EAS_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/wallet-config";
 
 export interface ConnetedWalletConfiguration {
@@ -35,9 +35,7 @@ export async function schemas(
     const response = await publicClient({
       chainId: configurations.chain,
     }).readContract({
-      address: TRUSTFUL_CONTRACT_ADDRESSES[
-        configurations.chain
-      ] as `0x${string}`,
+      address: EAS_CONTRACT_OP[configurations.chain] as `0x${string}`,
       abi: data,
       functionName: "schemas",
       args: [uid, roleId],

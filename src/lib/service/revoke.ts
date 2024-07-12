@@ -1,6 +1,6 @@
 import { encodeFunctionData } from "viem";
 
-import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
+import { EAS_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/wallet-config";
 
 export interface ConnetedWalletConfiguration {
@@ -77,13 +77,13 @@ export async function revoke(
     }).estimateGas({
       account: configurations.walletClient.account as `0x${string}`,
       data: encodedData,
-      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
+      to: EAS_CONTRACT_OP[configurations.chain] as `0x${string}`,
       value: value,
     });
 
     const transactionHash = await configurations.walletClient.sendTransaction({
       data: encodedData,
-      to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
+      to: EAS_CONTRACT_OP[configurations.chain] as `0x${string}`,
       gasLimit: gasLimit,
       value: value,
     });
