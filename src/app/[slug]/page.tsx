@@ -9,7 +9,6 @@ import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
 import { PreCheckInSection } from "@/components/04-templates/PreCheckinSection";
 import { ShareSection } from "@/components/04-templates/ShareSection";
 
-
 export default function renderPage({
   params,
 }: {
