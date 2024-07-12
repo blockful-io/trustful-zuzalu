@@ -303,7 +303,7 @@ export const CheckoutSection = () => {
           >
             {checkInDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Checked-in at:
                   <br />
                   {getReadableData(Number(checkInDate))}
@@ -312,7 +312,7 @@ export const CheckoutSection = () => {
             )}
             {checkOutDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-cente text-slate-50 text-base font-normal leading-snug">
                   Checked-out at:
                   <br />
                   {getReadableData(Number(checkOutDate))}
@@ -321,14 +321,14 @@ export const CheckoutSection = () => {
             )}
             {!checkInDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Fetching check-in data...
                 </Text>
               </Flex>
             )}
             {villagerAttestationCount !== 2 && checkInDate && eventTime && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   You are with us for:
                   <br />
                   {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
@@ -341,7 +341,7 @@ export const CheckoutSection = () => {
               checkOutDate &&
               eventTime && (
                 <Flex className={"items-center"}>
-                  <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                  <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                     You stayed with us for:
                     <br />
                     {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
