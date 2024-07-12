@@ -1,7 +1,6 @@
-import { encodeFunctionData } from "viem";
-
-import { EAS_CONTRACT_OP } from "../client/constants";
-import { publicClient } from "../wallet/wallet-config";
+import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { publicClient } from "../wallet/client";
+import { readContract } from "viem/actions";
 
 export interface ConnetedWalletConfiguration {
   walletClient: any;
@@ -10,34 +9,32 @@ export interface ConnetedWalletConfiguration {
 
 export async function allowedAttestationTitles(
   attestationTitle: string,
-  configurations: ConnetedWalletConfiguration,
-): Promise<boolean> {
-  const data = encodeFunctionData({
+): Promise<boolean | Error> {
+  const data = {
     abi: [
       {
-        type: "function",
+        inputs: [{ internalType: "string", name: "title", type: "string" }],
         name: "allowedAttestationTitles",
-        inputs: [{ name: "title", type: "string", internalType: "string" }],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
+        outputs: [{ internalType: "bool", name: "", type: "bool" }],
         stateMutability: "view",
+        type: "function",
       },
     ],
     args: [attestationTitle],
-  });
+  };
 
   try {
-    const response = await publicClient({
-      chainId: configurations.chain,
-    }).readContract({
-      address: EAS_CONTRACT_OP[configurations.chain] as `0x${string}`,
-      abi: data,
+    const response = await readContract(publicClient, {
+      address: RESOLVER_CONTRACT_OP as `0x${string}`,
       functionName: "allowedAttestationTitles",
+      abi: data.abi,
       args: [attestationTitle],
     });
 
-    return response;
+    if (response === typeof Boolean) return Error("Response should be boolean");
+
+    return response as boolean;
   } catch (error) {
-    console.error(error);
-    throw new Error(String(error));
+    return Error("Error when reading the contract");
   }
 }
