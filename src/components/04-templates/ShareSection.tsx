@@ -1,25 +1,16 @@
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Text,
-  Flex,
-  Divider,
-} from "@chakra-ui/react";
+import { Box, Card, CardBody, CardHeader, Text, Flex } from "@chakra-ui/react";
 import { useQRCode } from "next-qrcode";
 import { useAccount } from "wagmi";
 
 import {
   CopyToClipboardButton,
-  CircleQuestion,
   TheFooterNavbar,
   TheHeader,
   TicketIcon,
 } from "@/components/01-atoms";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-export const CheckInSection = () => {
+export const ShareSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
 
@@ -52,12 +43,12 @@ export const CheckInSection = () => {
           >
             <Flex className={"items-center"}>
               <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                Check in ZuGeorgia
+                Share your profile
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                To start, please find a Manager to check you in.
+                Connect with your friends and attest your history!
               </Text>
             </Flex>
           </CardHeader>
@@ -94,37 +85,6 @@ export const CheckInSection = () => {
             </Flex>
           </CardBody>
         </Card>
-
-        <Flex flexDirection={"column"} className="w-full h-full items-center">
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal leading-tight">
-                What Trustful is?
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal leading-tight">
-                How it works in ZuGeorgia?
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal leading-tight">
-                What to do now
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-        </Flex>
       </Box>
       <TheFooterNavbar />
     </Flex>

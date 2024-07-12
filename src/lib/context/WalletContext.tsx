@@ -62,6 +62,7 @@ export const WalletContextProvider = ({
     if (villagerAttestationCount === 0) {
       push("/pre-checkin");
     }
+    console.log(villagerAttestationCount);
 
     if (villagerAttestationCount > 0) {
       push("/my-badge");

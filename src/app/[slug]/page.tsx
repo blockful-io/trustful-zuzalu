@@ -7,6 +7,7 @@ import { CheckOutSection } from "@/components/04-templates/CheckOutSection";
 import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
 import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
 import { PreCheckInSection } from "@/components/04-templates/PreCheckInSection";
+import { ShareSection } from "@/components/04-templates/ShareSection";
 
 export default function renderPage({
   params,
@@ -20,6 +21,8 @@ export default function renderPage({
       return <CheckInSection />;
     case "checkout":
       return <CheckOutSection />;
+    case "share":
+      return <ShareSection />;
     case "my-badge":
       return <MyBadgeSection />;
     case "my-badge-details":

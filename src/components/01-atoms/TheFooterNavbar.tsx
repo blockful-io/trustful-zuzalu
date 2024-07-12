@@ -3,7 +3,12 @@ import { useContext } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
 
-import { BadgeIcon, HeartIcon, LogoutIcon } from "@/components/01-atoms/";
+import {
+  BadgeIcon,
+  HeartIcon,
+  LogoutIcon,
+  QrCodeIcon,
+} from "@/components/01-atoms/";
 import { WalletContext } from "@/lib/context/WalletContext";
 
 export const TheFooterNavbar = () => {
@@ -33,7 +38,7 @@ export const TheFooterNavbar = () => {
       <Flex gap={4} className="w-full justify-center">
         {haveChecked && (
           <Box
-            className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
+            className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
             onClick={() => push("/my-badge")}
           >
             <BadgeIcon
@@ -48,7 +53,7 @@ export const TheFooterNavbar = () => {
         )}
         {haveChecked && (
           <Box
-            className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "give-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
+            className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "give-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
             onClick={() => push("/give-badge")}
           >
             <HeartIcon
@@ -61,18 +66,33 @@ export const TheFooterNavbar = () => {
             </Text>
           </Box>
         )}
+        {haveChecked && (
+          <Box
+            className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "share" ? "border-[#B1EF42]" : "border-transparent"}`}
+            onClick={() => push("/share")}
+          >
+            <QrCodeIcon
+              className={`w-5 h-5 text-white ${params.slug == "share" ? "opacity-100" : "opacity-50"}`}
+            />
+            <Text
+              className={`text-slate-50 ${params.slug == "share" ? "opacity-100" : "opacity-50"} text-sm font-medium leading-none`}
+            >
+              Share
+            </Text>
+          </Box>
+        )}
         <Box
-          className={`flex flex-col justify-center items-center py-3 gap-2 border-t ${params.slug == "check-out" ? "border-[#B1EF42]" : "border-transparent"}`}
+          className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "checkout" || params.slug == "checkin" ? "border-[#B1EF42]" : "border-transparent"}`}
           onClick={() => {
             if (canCheckIn === "Check In") push("/checkin");
             if (canCheckIn === "Check Out") push("/checkout");
           }}
         >
           <LogoutIcon
-            className={`w-5 h-5 text-white ${params.slug == "check-out" ? "opacity-100" : "opacity-50"}`}
+            className={`w-5 h-5 text-white ${params.slug == "checkout" || params.slug == "checkin" ? "opacity-100" : "opacity-50"}`}
           />
           <Text
-            className={`text-slate-50 ${params.slug == "check-out" ? "opacity-100" : "opacity-50"} text-sm font-medium leading-none`}
+            className={`text-slate-50 ${params.slug == "checkout" || params.slug == "checkin" ? "opacity-100" : "opacity-50"} text-sm font-medium leading-none`}
           >
             {canCheckIn}
           </Text>
