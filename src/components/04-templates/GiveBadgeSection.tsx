@@ -303,6 +303,7 @@ export const GiveBadgeSection = () => {
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <QrCodeIcon
+                        className="text-[#B1EF42]"
                         onClick={() => {
                           setQRCodeisOpen(true);
                           handleActionChange(GiveBadgeAction.QR_CODE);
