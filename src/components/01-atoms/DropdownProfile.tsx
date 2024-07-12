@@ -29,7 +29,9 @@ export const DropdownProfile = ({
       <div
         className={
           `fixed left-0 top-0 w-full h-full z-50 backdrop-blur-sm transition-all duration-300 cursor-default` +
-          (isOpenMenu ? "opacity-100 inset-0 " : "opacity-0 z-[-1]")
+          (isOpenMenu
+            ? "opacity-100 inset-0 cursor-default"
+            : "opacity-0 z-[-1]")
         }
         role="button"
         onClick={onClose}
