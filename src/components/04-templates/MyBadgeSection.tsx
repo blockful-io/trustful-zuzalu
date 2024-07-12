@@ -81,7 +81,7 @@ export const MyBadgeSection: React.FC = () => {
         OR: [
           {
             schemaId: {
-              equals: ZUVILLAGE_SCHEMAS[2].uid,
+              equals: ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid,
             },
             recipient: {
               equals: address,
@@ -89,7 +89,7 @@ export const MyBadgeSection: React.FC = () => {
           },
           {
             schemaId: {
-              equals: ZUVILLAGE_SCHEMAS[1].uid,
+              equals: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid,
             },
             recipient: {
               equals: address,
@@ -97,7 +97,7 @@ export const MyBadgeSection: React.FC = () => {
           },
           {
             schemaId: {
-              equals: ZUVILLAGE_SCHEMAS[0].uid,
+              equals: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
             },
             recipient: {
               equals: address,
