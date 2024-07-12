@@ -5,7 +5,6 @@ export const ThankYouIcon = (props: SVGProps<SVGSVGElement>) => {
     <svg
       {...props}
       id="Capa_1"
-      enable-background="new 0 0 511.999 511.999"
       height="512"
       viewBox="0 0 511.999 511.999"
       width="512"

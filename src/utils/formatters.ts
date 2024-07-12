@@ -52,6 +52,5 @@ export const formatTimeDifference = (
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  // Formata a string de saída
   return [String(days), String(hours), String(minutes), String(seconds)];
 };
