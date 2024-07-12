@@ -270,6 +270,7 @@ export const GiveBadgeSection = () => {
 
     setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
     setLoading(false);
+    setText("");
     setInputAddress("");
 
     return;
@@ -507,9 +508,11 @@ export const GiveBadgeSection = () => {
                               cursor: "not-allowed",
                             }}
                             disabled={true}
-                          >
-                            {commentBadge}
-                          </Textarea>
+                            value={commentBadge}
+                            rows={commentBadge.length > 50 ? 3 : 1}
+                            minH="unset"
+                            resize="none"
+                          ></Textarea>
                         </Flex>
                       </Flex>
                     )}

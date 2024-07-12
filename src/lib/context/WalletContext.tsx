@@ -65,9 +65,9 @@ export const WalletContextProvider = ({
       push("/pre-checkin");
     }
 
-    if (villagerAttestationCount && villagerAttestationCount > 0) {
-      push("/my-badge");
-    }
+    // if (villagerAttestationCount && villagerAttestationCount > 0) {
+    //   push("/my-badge");
+    // }
   }, [villagerAttestationCount]);
 
   const handleQuery = async () => {

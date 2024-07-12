@@ -48,7 +48,8 @@ export const CheckOutSection = () => {
   const { push } = useRouter();
   const { notifyError } = useNotify();
 
-  const { villagerAttestationCount } = useContext(WalletContext);
+  const { villagerAttestationCount, setVillagerAttestationCount } =
+    useContext(WalletContext);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
@@ -150,6 +151,7 @@ export const CheckOutSection = () => {
     });
 
     setLoading(false);
+    setVillagerAttestationCount(2);
     return;
   };
 
