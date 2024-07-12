@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { readContract } from "viem/actions";
 
 import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // file = Html5QrcodePlugin.jsx
 import { useEffect } from "react";
 

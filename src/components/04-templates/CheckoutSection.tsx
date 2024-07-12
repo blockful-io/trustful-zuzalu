@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
