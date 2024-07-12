@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 import { WalletContext } from "@/lib/context/WalletContext";
 
-export const PreCheckInSection = () => {
+export const PreCheckinSection = () => {
   const { push } = useRouter();
 
   const { villagerAttestationCount } = useContext(WalletContext);

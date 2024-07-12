@@ -43,7 +43,7 @@ import {
   getReadableData,
 } from "@/utils/formatters";
 
-export const CheckOutSection = () => {
+export const CheckoutSection = () => {
   const { address } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
