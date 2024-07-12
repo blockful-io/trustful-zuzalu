@@ -25,7 +25,6 @@ export * from "./BadgeCard";
 export * from "./BadgeDetailsNavigation";
 export * from "./CopyToClipboardButton";
 export * from "./CreatedByBlockful";
-export * from "./DarkModeButton";
 export * from "./DropdownProfile";
 export * from "./InfoText";
 export * from "./QRCodeScanner";
