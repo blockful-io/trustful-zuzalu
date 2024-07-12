@@ -14,7 +14,7 @@ import { publicClient } from "../wallet/client";
 export async function allowedSchemas(
   uid: `0x${string}`,
   roleId: `0x${string}`,
-): Promise<Boolean | Error> {
+): Promise<boolean | Error> {
   const data = {
     abi: [
       {
