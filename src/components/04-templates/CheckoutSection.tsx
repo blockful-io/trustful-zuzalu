@@ -57,7 +57,7 @@ export const CheckOutSection = () => {
   const [checkInDate, setCheckInDate] = useState<number | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<number | null>(null);
   const [eventTime, setEventTime] = useState<string[] | null>(null);
-  const [EASTxId, setEASTxId] = useState<`0x${string}` | null>(null);
+  const [checkInTxId, setCheckInTxId] = useState<`0x${string}` | null>(null);
 
   useEffect(() => {
     if (address) {
@@ -76,7 +76,7 @@ export const CheckOutSection = () => {
       return;
     }
 
-    if (!EASTxId) {
+    if (!checkInTxId) {
       setLoading(false);
       notifyError({
         title: "Could not find Check-in Badge",
@@ -97,7 +97,7 @@ export const CheckOutSection = () => {
       recipient: address,
       expirationTime: BigInt(0),
       revocable: false,
-      refUID: EASTxId,
+      refUID: checkInTxId,
       data: data,
       value: BigInt(0),
     };
@@ -181,6 +181,11 @@ export const CheckOutSection = () => {
           equals: address,
         },
       },
+      orderBy: [
+        {
+          timeCreated: "asc",
+        },
+      ],
     };
 
     const { response, success } = await fetchEASData(
@@ -214,10 +219,13 @@ export const CheckOutSection = () => {
       return;
     }
 
+    // Loop through the attestations to find the check-in and check-out timestamps
+    for (let i = 0; i < response.data.data.attestations.length; i++) {}
+
     // If the user has checked in, the attestation will return a length of 1
     const id = response.data.data.attestations[0].id;
     const timeCreated = response.data.data.attestations[0].timeCreated;
-    setEASTxId(id);
+    setCheckInTxId(id);
     setCheckInDate(timeCreated);
 
     // If the user has checked out, the attestation will return a length of 2
@@ -353,7 +361,7 @@ export const CheckOutSection = () => {
           {!checkOutDate && (
             <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
           )}
-          {checkOutDate && (
+          {!checkOutDate && (
             <Box
               gap={6}
               display={"flex"}
