@@ -8,7 +8,7 @@ import {
   GiveBadgeAction,
   GiveBadgeStepAddress,
 } from "@/components/04-templates";
-import { QRCodeContext } from "@/lib/context/QRCodeContext";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 
 export const BadgeDetailsNavigation = ({
   isDetail = false,
@@ -19,7 +19,7 @@ export const BadgeDetailsNavigation = ({
   isFeedback?: boolean;
   isQRCode?: boolean;
 }) => {
-  const { setAddressStep, setAction } = useContext(QRCodeContext);
+  const { setAddressStep, setAction } = useContext(GiveBadgeContext);
 
   return !isDetail && !isFeedback && !isQRCode ? (
     <Box className="w-full flex items-center p-4">

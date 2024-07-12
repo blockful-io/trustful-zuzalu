@@ -14,7 +14,7 @@ import {
 
 import { EthereumAddress } from "../shared/types";
 
-interface QRCodeContextProps {
+interface GiveBadgeContextProps {
   badgeInputAddress: EthereumAddress | null;
   setBadgeInputAddress: Dispatch<SetStateAction<EthereumAddress | null>>;
   action: GiveBadgeAction;
@@ -26,7 +26,7 @@ interface QRCodeContextProps {
   QRCodeIsOpen: boolean;
 }
 
-const defaultContextValue: QRCodeContextProps = {
+const defaultContextValue: GiveBadgeContextProps = {
   badgeInputAddress: null,
   setBadgeInputAddress: () => {},
   action: GiveBadgeAction.ADDRESS,
@@ -38,10 +38,10 @@ const defaultContextValue: QRCodeContextProps = {
   QRCodeIsOpen: false,
 };
 
-export const QRCodeContext =
-  createContext<QRCodeContextProps>(defaultContextValue);
+export const GiveBadgeContext =
+  createContext<GiveBadgeContextProps>(defaultContextValue);
 
-export const QRCodeContextProvider = ({
+export const GiveBadgeContextProvider = ({
   children,
 }: {
   children: ReactNode;
@@ -60,7 +60,7 @@ export const QRCodeContextProvider = ({
     setAction(newAction);
   };
 
-  const QRCodeContextData = useMemo(
+  const GiveBadgeContextData = useMemo(
     () => ({
       badgeInputAddress,
       setBadgeInputAddress,
@@ -76,17 +76,17 @@ export const QRCodeContextProvider = ({
   );
 
   return (
-    <QRCodeContext.Provider value={QRCodeContextData}>
+    <GiveBadgeContext.Provider value={GiveBadgeContextData}>
       {children}
-    </QRCodeContext.Provider>
+    </GiveBadgeContext.Provider>
   );
 };
 
-export const useQRCodeContext = () => {
-  const context = React.useContext(QRCodeContext);
+export const useGiveBadgeContext = () => {
+  const context = React.useContext(GiveBadgeContext);
   if (context === undefined) {
     throw new Error(
-      "useQRCodeContext must be used within a QRCodeContextProvider",
+      "useGiveBadgeContext must be used within a GiveBadgeContextProvider",
     );
   }
   return context;

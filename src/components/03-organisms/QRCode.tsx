@@ -12,12 +12,12 @@ import {
   GiveBadgeAction,
   GiveBadgeStepAddress,
 } from "@/components/04-templates";
-import { QRCodeContext } from "@/lib/context/QRCodeContext";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 
 export const QRCode = () => {
   const { setBadgeInputAddress, badgeInputAddress, setAddressStep, setAction } =
-    useContext(QRCodeContext);
+    useContext(GiveBadgeContext);
   const [QRCodeIsOpen, setQRCodeisOpen] = useState<boolean>(true);
   const currentInputAddress = badgeInputAddress;
   const onNewScanResult = (decodedText: string) => {

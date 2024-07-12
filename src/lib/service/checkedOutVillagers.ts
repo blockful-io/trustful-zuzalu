@@ -3,10 +3,10 @@ import { readContract } from "viem/actions";
 import { RESOLVER_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
-export interface ConnetedWalletConfiguration {
-  walletClient: any;
-  chain: number;
-}
+// export interface ConnetedWalletConfiguration {
+//   walletClient: any;
+//   chain: number;
+// }
 
 export async function checkedOutVillagers(
   villagerAddress: `0x${string}`,

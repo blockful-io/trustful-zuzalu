@@ -3,10 +3,11 @@
 import { HomeSection } from "@/components/04-templates";
 import { BadgeDetailsSection } from "@/components/04-templates/BadgeDetailsSection";
 import { CheckInSection } from "@/components/04-templates/CheckInSection";
-import { CheckoutSection } from "@/components/04-templates/CheckoutSection";
+import { CheckOutSection } from "@/components/04-templates/CheckOutSection";
 import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
 import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
-import { PreCheckinSection } from "@/components/04-templates/PreCheckinSection";
+import { PreCheckInSection } from "@/components/04-templates/PreCheckInSection";
+import { ShareSection } from "@/components/04-templates/ShareSection";
 
 export default function renderPage({
   params,
@@ -15,19 +16,19 @@ export default function renderPage({
 }) {
   switch (params.slug) {
     case "pre-checkin":
-      return <PreCheckinSection />;
-    case "check-in":
+      return <PreCheckInSection />;
+    case "checkin":
       return <CheckInSection />;
+    case "checkout":
+      return <CheckOutSection />;
+    case "share":
+      return <ShareSection />;
     case "my-badge":
       return <MyBadgeSection />;
-    case "my-badge-1": // TO DO: replace with dynamic id
+    case "my-badge-details":
       return <BadgeDetailsSection />;
     case "give-badge":
       return <GiveBadgeSection />;
-    // case "give-badge-address": // TO DO: replace with /give-badge/address
-    //   return <GiveBadgeSection />;
-    case "check-out":
-      return <CheckoutSection />;
     default:
       return <HomeSection />;
   }

@@ -9,6 +9,7 @@ import {
   Heading,
   Slide,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
@@ -21,6 +22,7 @@ export const DropdownProfile = ({
   onClose: () => void;
 }) => {
   const { disconnect } = useDisconnect();
+  const { push } = useRouter();
 
   return (
     <Slide
@@ -40,6 +42,8 @@ export const DropdownProfile = ({
           display={"flex"}
           alignItems={"center"}
           justifyContent={"space-between"}
+          color="white"
+          opacity={0.7}
         >
           <Flex gap={4} className={"items-center"}>
             <Heading size="md">Profile options</Heading>
@@ -55,11 +59,14 @@ export const DropdownProfile = ({
             alignItems={"center"}
             flexDirection={"row"}
             p={4}
-            onClick={() => disconnect()}
+            onClick={() => {
+              disconnect();
+              push("/");
+            }}
           >
             <LogoutIcon className="w-6 h-6 text-[#F5FFFF80]" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight ">
+              <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight ">
                 Disconnect
               </Text>
             </Flex>
@@ -74,12 +81,12 @@ export const DropdownProfile = ({
             <Flex gap={3} alignItems={"center"}>
               <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
               <Flex>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   Profile
                 </Text>
               </Flex>
             </Flex>
-            <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium  uppercase leading-[13.20px] tracking-wide">
+            <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">
               coming soon
             </Text>
           </Flex>

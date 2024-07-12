@@ -33,7 +33,7 @@ export const BadgeCard = () => {
         background={"#F5FFFF0D"}
         border={2}
         onClick={() => {
-          router.push(`my-badge-1`); //TODO: Replace with dynamic route ID
+          router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
           console.log("Card Clicked go to Details of this Card");
         }}
       >
@@ -79,7 +79,7 @@ export const BadgeCard = () => {
         background={"#F5FFFF0D"}
         border={2}
         onClick={() => {
-          router.push(`my-badge-1`); //TODO: Replace with dynamic route ID
+          router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
           console.log("Card Clicked go to Details of this Card");
         }}
       >
@@ -112,7 +112,7 @@ export const BadgeCard = () => {
           <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
             <Avatar className="w-6 h-6" />
             <Flex gap={2} alignItems={"center"}>
-              <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+              <Text className="text-slate-50 opacity-70 mb-1 text-sm font-normal  leading-tight">
                 Issued by
               </Text>
               <Text>crazy_monkey.eth</Text>

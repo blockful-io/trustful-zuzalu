@@ -27,7 +27,9 @@ export const TheHeaderMenu = () => {
               />
             </Flex>
           }
-          className="bg-[#F5FFFF14] bg-opacity-[8]"
+          className="bg-[#F5FFFF00] px-1"
+          _hover={{ bg: "#B1EF42D9" }}
+          _active={{ bg: "#B1EF42D9" }}
           onClick={() => setIsOpenMenu(!isOpenMenu)}
         />
       </Menu>
