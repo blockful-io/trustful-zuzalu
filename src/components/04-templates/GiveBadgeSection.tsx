@@ -39,8 +39,9 @@ import { useNotify, useWindowSize } from "@/hooks";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
+  ROLES,
+  type BadgeTitle,
 } from "@/lib/client/constants";
-import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
@@ -82,7 +83,7 @@ export const GiveBadgeSection = () => {
   const [inputBadgeTitleList, setInputBadgeTitleList] = useState<string[]>();
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState<string>("");
 
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
