@@ -28,7 +28,7 @@ import { useAccount } from "wagmi";
 
 import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
-import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
+import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
 import { VILLAGER_QUERY } from "@/lib/client/schemaQueries";
 import { WalletContext } from "@/lib/context/WalletContext";
 import {
@@ -36,6 +36,7 @@ import {
   type AttestationRequestData,
 } from "@/lib/service/attest";
 import { fetchEASData } from "@/lib/service/fetchEASData";
+import { hasRole } from "@/lib/service/hasRole";
 import {
   formatTimeDifference,
   getEllipsedAddress,
@@ -53,8 +54,8 @@ export const CheckOutSection = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
-  const [checkInDate, setCheckInDate] = useState<string | null>(null);
-  const [checkOutDate, setCheckOutDate] = useState<string | null>(null);
+  const [checkInDate, setCheckInDate] = useState<number | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<number | null>(null);
   const [eventTime, setEventTime] = useState<string[] | null>(null);
   const [EASTxId, setEASTxId] = useState<`0x${string}` | null>(null);
 
@@ -116,6 +117,15 @@ export const CheckOutSection = () => {
       return;
     }
 
+    if (response.status !== "success") {
+      setLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
     // TODO: Move to useNotify to create a notifySuccessWithLink function
     toast({
       position: "top-right",
@@ -150,8 +160,13 @@ export const CheckOutSection = () => {
       ),
     });
 
+    const now = Date.now();
+    if (checkInDate) {
+      setEventTime(formatTimeDifference(checkInDate, Number(now) / 1000));
+    }
+    handleThankYou();
     setLoading(false);
-    setVillagerAttestationCount(2);
+    onClose();
     return;
   };
 
@@ -189,6 +204,7 @@ export const CheckOutSection = () => {
       return;
     }
 
+    // If the user has not checked in, redirect to pre-checkin page
     if (response.data.data.attestations.length === 0) {
       notifyError({
         title: "You have not checked in",
@@ -198,14 +214,16 @@ export const CheckOutSection = () => {
       return;
     }
 
+    // If the user has checked in, the attestation will return a length of 1
     const id = response.data.data.attestations[0].id;
     const timeCreated = response.data.data.attestations[0].timeCreated;
     setEASTxId(id);
-    setCheckInDate(getReadableData(Number(timeCreated)));
+    setCheckInDate(timeCreated);
 
+    // If the user has checked out, the attestation will return a length of 2
     if (response.data.data.attestations.length > 1) {
       const timeEnded = response.data.data.attestations[1].timeCreated;
-      setCheckOutDate(getReadableData(Number(timeEnded)));
+      setCheckOutDate(timeEnded);
       setEventTime(
         formatTimeDifference(Number(timeCreated), Number(timeEnded)),
       );
@@ -213,6 +231,22 @@ export const CheckOutSection = () => {
       setEventTime(formatTimeDifference(Number(timeCreated)));
     }
   };
+
+  const handleThankYou = async () => {
+    if (!address) {
+      setLoading(false);
+      notifyError({
+        title: "No account connected",
+        message: "Please connect your wallet.",
+      });
+      return;
+    }
+    const isVillager = await hasRole(ROLES.VILLAGER, address);
+    if (!isVillager) {
+      setVillagerAttestationCount(2);
+    }
+  };
+
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
@@ -240,20 +274,18 @@ export const CheckOutSection = () => {
           >
             <Flex className={"items-center"}>
               <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                {villagerAttestationCount === 2
-                  ? `Thank You!`
-                  : `Check out of ZuVillage Georgia`}
+                {checkOutDate ? `Thank You!` : `Check out of ZuVillage Georgia`}
               </Text>
             </Flex>
             <Flex className={"items-center"}>
-              {villagerAttestationCount !== 2 && (
+              {!checkOutDate && (
                 <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Are you sure you want to check out?
                   <br />
                   This proccess is irreversible.
                 </Text>
               )}
-              {villagerAttestationCount === 2 && (
+              {checkOutDate && (
                 <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   For being a cherished member of ZuVillage Georgia.
                 </Text>
@@ -274,7 +306,7 @@ export const CheckOutSection = () => {
                 <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
                   Checked-in at:
                   <br />
-                  {checkInDate}
+                  {getReadableData(Number(checkInDate))}
                 </Text>
               </Flex>
             )}
@@ -283,7 +315,7 @@ export const CheckOutSection = () => {
                 <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
                   Checked-out at:
                   <br />
-                  {checkOutDate}
+                  {getReadableData(Number(checkOutDate))}
                 </Text>
               </Flex>
             )}
@@ -304,21 +336,24 @@ export const CheckOutSection = () => {
                 </Text>
               </Flex>
             )}
-            {villagerAttestationCount === 2 && eventTime && (
-              <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
-                  You stayed with us for:
-                  <br />
-                  {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                  minutes
-                </Text>
-              </Flex>
-            )}
+            {villagerAttestationCount === 2 &&
+              checkInDate &&
+              checkOutDate &&
+              eventTime && (
+                <Flex className={"items-center"}>
+                  <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                    You stayed with us for:
+                    <br />
+                    {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
+                    minutes
+                  </Text>
+                </Flex>
+              )}
           </Box>
-          {villagerAttestationCount === 1 && (
+          {!checkOutDate && (
             <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
           )}
-          {villagerAttestationCount === 1 && (
+          {checkOutDate && (
             <Box
               gap={6}
               display={"flex"}

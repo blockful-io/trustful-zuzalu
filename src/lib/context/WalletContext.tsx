@@ -1,11 +1,11 @@
 import React, {
   createContext,
   useState,
-  useMemo,
   type ReactNode,
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useContext,
 } from "react";
 
 import { useRouter } from "next/navigation";
@@ -40,13 +40,18 @@ export const WalletContextProvider = ({
     number | null
   >(null);
 
-  const WalletContextData = useMemo(
-    () => ({
+  const [walletContextData, setWalletContextData] =
+    useState<WalletContextProps>({
       villagerAttestationCount,
       setVillagerAttestationCount,
-    }),
-    [villagerAttestationCount],
-  );
+    });
+
+  useEffect(() => {
+    setWalletContextData({
+      villagerAttestationCount,
+      setVillagerAttestationCount,
+    });
+  }, [villagerAttestationCount]);
 
   const { address } = useAccount();
   const { push } = useRouter();
@@ -107,14 +112,14 @@ export const WalletContextProvider = ({
   };
 
   return (
-    <WalletContext.Provider value={WalletContextData}>
+    <WalletContext.Provider value={walletContextData}>
       {children}
     </WalletContext.Provider>
   );
 };
 
 export const useWalletContext = () => {
-  const context = React.useContext(WalletContext);
+  const context = useContext(WalletContext);
   if (context === undefined) {
     throw new Error(
       "useWalletContext must be used within a WalletContextProvider",

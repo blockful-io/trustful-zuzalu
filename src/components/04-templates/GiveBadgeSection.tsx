@@ -38,7 +38,7 @@ import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
 } from "@/lib/client/constants";
-import type { BadgeTitle } from "@/lib/client/constants";
+import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
@@ -150,7 +150,7 @@ export const GiveBadgeSection = () => {
   // Changes the continue arrow color based on the status of a valid input address
   const iconColor =
     inputAddress && isAddress(inputAddress)
-      ? "text-[#FFFFFF]"
+      ? "text-[#000000  ]"
       : "text-[#F5FFFFB2]";
   const iconBg =
     inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
@@ -189,9 +189,30 @@ export const GiveBadgeSection = () => {
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.data;
       encodeArgs = ["Manager"];
+      const isManager = await hasRole(ROLES.MANAGER, badgeInputAddress.address);
+      if (isManager) {
+        setLoading(false);
+        notifyError({
+          title: "Address is already a Manager",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
       encodeArgs = ["Check-in"];
+      const isVillager = await hasRole(
+        ROLES.VILLAGER,
+        badgeInputAddress.address,
+      );
+      if (isVillager) {
+        setLoading(false);
+        notifyError({
+          title: "Address already checked-in",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
@@ -230,6 +251,15 @@ export const GiveBadgeSection = () => {
       notifyError({
         title: "Transaction Rejected",
         message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
       });
       return;
     }

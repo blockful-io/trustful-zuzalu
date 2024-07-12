@@ -34,7 +34,6 @@ export const BadgeCard = () => {
         border={2}
         onClick={() => {
           router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
-          console.log("Card Clicked go to Details of this Card");
         }}
       >
         <CardHeader
@@ -80,7 +79,6 @@ export const BadgeCard = () => {
         border={2}
         onClick={() => {
           router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
-          console.log("Card Clicked go to Details of this Card");
         }}
       >
         <CardHeader
