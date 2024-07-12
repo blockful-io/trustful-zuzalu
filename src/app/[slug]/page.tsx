@@ -3,11 +3,12 @@
 import { HomeSection } from "@/components/04-templates";
 import { BadgeDetailsSection } from "@/components/04-templates/BadgeDetailsSection";
 import { CheckInSection } from "@/components/04-templates/CheckInSection";
-import { CheckOutSection } from "@/components/04-templates/CheckOutSection";
+import { CheckOutSection } from "@/components/04-templates/CheckoutSection";
 import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
 import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
-import { PreCheckInSection } from "@/components/04-templates/PreCheckInSection";
+import { PreCheckInSection } from "@/components/04-templates/PreCheckinSection";
 import { ShareSection } from "@/components/04-templates/ShareSection";
+
 
 export default function renderPage({
   params,
