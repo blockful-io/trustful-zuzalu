@@ -57,7 +57,7 @@ export const CheckOutSection = () => {
   const [checkInDate, setCheckInDate] = useState<number | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<number | null>(null);
   const [eventTime, setEventTime] = useState<string[] | null>(null);
-  const [EASTxId, setEASTxId] = useState<`0x${string}` | null>(null);
+  const [checkInTxId, setCheckInTxId] = useState<`0x${string}` | null>(null);
 
   useEffect(() => {
     if (address) {
@@ -76,7 +76,7 @@ export const CheckOutSection = () => {
       return;
     }
 
-    if (!EASTxId) {
+    if (!checkInTxId) {
       setLoading(false);
       notifyError({
         title: "Could not find Check-in Badge",
@@ -97,7 +97,7 @@ export const CheckOutSection = () => {
       recipient: address,
       expirationTime: BigInt(0),
       revocable: false,
-      refUID: EASTxId,
+      refUID: checkInTxId,
       data: data,
       value: BigInt(0),
     };
@@ -162,7 +162,8 @@ export const CheckOutSection = () => {
 
     const now = Date.now();
     if (checkInDate) {
-      setEventTime(formatTimeDifference(checkInDate, Number(now) / 1000));
+      setCheckOutDate(now);
+      setEventTime(formatTimeDifference(checkInDate, now / 1000));
     }
     handleThankYou();
     setLoading(false);
@@ -181,6 +182,11 @@ export const CheckOutSection = () => {
           equals: address,
         },
       },
+      orderBy: [
+        {
+          timeCreated: "asc",
+        },
+      ],
     };
 
     const { response, success } = await fetchEASData(
@@ -214,10 +220,13 @@ export const CheckOutSection = () => {
       return;
     }
 
+    // Loop through the attestations to find the check-in and check-out timestamps
+    for (let i = 0; i < response.data.data.attestations.length; i++) {}
+
     // If the user has checked in, the attestation will return a length of 1
     const id = response.data.data.attestations[0].id;
     const timeCreated = response.data.data.attestations[0].timeCreated;
-    setEASTxId(id);
+    setCheckInTxId(id);
     setCheckInDate(timeCreated);
 
     // If the user has checked out, the attestation will return a length of 2
@@ -270,22 +279,30 @@ export const CheckOutSection = () => {
             justifyContent={"space-between"}
             flexDirection={"column"}
             p={0}
-            pb={4}
           >
             <Flex className={"items-center"}>
-              <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                {checkOutDate ? `Thank You!` : `Check out of ZuVillage Georgia`}
-              </Text>
+              {villagerAttestationCount === 1 && (
+                <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                  Check out of
+                  <br />
+                  ZuVillage Georgia
+                </Text>
+              )}
+              {villagerAttestationCount === 2 && (
+                <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                  Thank You!
+                </Text>
+              )}
             </Flex>
             <Flex className={"items-center"}>
-              {!checkOutDate && (
-                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+              {villagerAttestationCount === 1 && (
+                <Text className="text-center py-4 text-slate-50 text-base font-normal leading-snug">
                   Are you sure you want to check out?
                   <br />
                   This proccess is irreversible.
                 </Text>
               )}
-              {checkOutDate && (
+              {villagerAttestationCount === 2 && (
                 <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   For being a cherished member of ZuVillage Georgia.
                 </Text>
@@ -350,10 +367,10 @@ export const CheckOutSection = () => {
                 </Flex>
               )}
           </Box>
-          {!checkOutDate && (
+          {villagerAttestationCount === 1 && (
             <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
           )}
-          {checkOutDate && (
+          {villagerAttestationCount === 1 && (
             <Box
               gap={6}
               display={"flex"}
