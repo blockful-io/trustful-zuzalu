@@ -8,6 +8,6 @@ export default function Home() {
   const { isConnected } = useAccount();
   const { push } = useRouter();
 
-  if (isConnected) push("/pre-checkin");
+  if (isConnected) push("/my-badge");
   else return <HomeSection />;
 }

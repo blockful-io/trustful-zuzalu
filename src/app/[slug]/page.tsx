@@ -2,9 +2,11 @@
 
 import { HomeSection } from "@/components/04-templates";
 import { BadgeDetailsSection } from "@/components/04-templates/BadgeDetailsSection";
+import { CheckInSection } from "@/components/04-templates/CheckInSection";
+import { CheckOutSection } from "@/components/04-templates/CheckOutSection";
 import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
 import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
-import { PreCheckinSection } from "@/components/04-templates/PreCheckinSection";
+import { PreCheckInSection } from "@/components/04-templates/PreCheckInSection";
 
 export default function renderPage({
   params,
@@ -13,7 +15,11 @@ export default function renderPage({
 }) {
   switch (params.slug) {
     case "pre-checkin":
-      return <PreCheckinSection />;
+      return <PreCheckInSection />;
+    case "checkin":
+      return <CheckInSection />;
+    case "checkout":
+      return <CheckOutSection />;
     case "my-badge":
       return <MyBadgeSection />;
     case "my-badge-details":
