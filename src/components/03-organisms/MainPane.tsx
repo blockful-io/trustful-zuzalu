@@ -4,6 +4,7 @@ import { type FC } from "react";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Space_Grotesk } from "next/font/google";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
@@ -145,7 +146,7 @@ export const MainPane: FC = () => {
                               }}
                             >
                               {chain.iconUrl && (
-                                <img
+                                <Image
                                   alt={chain.name ?? "Chain icon"}
                                   src={chain.iconUrl}
                                   style={{ width: 12, height: 12 }}

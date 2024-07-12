@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -43,7 +44,7 @@ import {
   getReadableData,
 } from "@/utils/formatters";
 
-export const CheckOutSection = () => {
+export const CheckoutSection = () => {
   const { address } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
@@ -320,7 +321,7 @@ export const CheckOutSection = () => {
           >
             {checkInDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Checked-in at:
                   <br />
                   {getReadableData(Number(checkInDate))}
@@ -329,7 +330,7 @@ export const CheckOutSection = () => {
             )}
             {checkOutDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-cente text-slate-50 text-base font-normal leading-snug">
                   Checked-out at:
                   <br />
                   {getReadableData(Number(checkOutDate))}
@@ -338,14 +339,14 @@ export const CheckOutSection = () => {
             )}
             {!checkInDate && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Fetching check-in data...
                 </Text>
               </Flex>
             )}
             {villagerAttestationCount !== 2 && checkInDate && eventTime && (
               <Flex className={"items-center"}>
-                <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   You are with us for:
                   <br />
                   {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
@@ -358,7 +359,7 @@ export const CheckOutSection = () => {
               checkOutDate &&
               eventTime && (
                 <Flex className={"items-center"}>
-                  <Text className="text-center text-white text-slate-50 text-base font-normal leading-snug">
+                  <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                     You stayed with us for:
                     <br />
                     {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
