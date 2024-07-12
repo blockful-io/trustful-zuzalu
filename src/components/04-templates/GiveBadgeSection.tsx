@@ -186,14 +186,14 @@ export const GiveBadgeSection = () => {
 
     let encodeParam = "";
     let encodeArgs: string[] = [];
-    if (inputBadge.uid === ZUVILLAGE_SCHEMAS[0].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[0].data;
+    if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.data;
       encodeArgs = ["Manager"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[1].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[1].data;
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
       encodeArgs = ["Check-in"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[2].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[2].data;
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
     } else {
       setLoading(false);
@@ -210,7 +210,7 @@ export const GiveBadgeSection = () => {
     );
 
     const attestationRequestData: AttestationRequestData = {
-      recipient: badgeInputAddress.address, //Temporary hardcoded
+      recipient: badgeInputAddress.address,
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:

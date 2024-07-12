@@ -11,6 +11,7 @@ $attestationsWhere2: AttestationWhereInput) {
 export const VILLAGER_QUERY = `query Attestations($where: AttestationWhereInput) {
   attestations(where: $where) {
     id
+    timeCreated
   }
 }`;
 
