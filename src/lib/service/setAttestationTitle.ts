@@ -1,61 +1,69 @@
-// import { encodeFunctionData } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { encodeFunctionData, type TransactionReceipt } from "viem";
+import {
+  sendTransaction,
+  estimateGas,
+  waitForTransactionReceipt,
+} from "viem/actions";
 
-// import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
-// import { publicClient } from "../wallet/wallet-config";
+import { wagmiConfig } from "@/wagmi";
 
-// export interface ConnetedWalletConfiguration {
-//   walletClient: any;
-//   chain: number;
-// }
+import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { publicClient } from "../wallet/client";
 
-// export async function setAttestationTitle(
-//   title: string,
-//   isValid: boolean,
-//   configurations: ConnetedWalletConfiguration,
-//   msgValue: bigint,
-// ): Promise<string> {
-//   const data = encodeFunctionData({
-//     abi: [
-//       {
-//         type: "function",
-//         name: "setAttestationTitle",
-//         inputs: [
-//           { name: "title", type: "string", internalType: "string" },
-//           { name: "isValid", type: "bool", internalType: "bool" },
-//         ],
-//         outputs: [],
-//         stateMutability: "nonpayable",
-//       },
-//     ],
-//     args: [title, isValid],
-//   });
+export async function setAttestationTitle(
+  from: `0x${string}`,
+  title: string,
+  isValid: boolean,
+  value: bigint,
+): Promise<TransactionReceipt | Error> {
+  const walletClient = await getWalletClient(wagmiConfig);
+  let gasLimit;
 
-//   try {
-//     const gasLimit = await publicClient({
-//       chainId: configurations.chain,
-//     }).estimateGas({
-//       account: configurations.walletClient.account as `0x${string}`,
-//       data: data,
-//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-//       value: msgValue,
-//     });
+  const data = encodeFunctionData({
+    abi: [
+      {
+        inputs: [
+          { internalType: "string", name: "title", type: "string" },
+          { internalType: "bool", name: "isValid", type: "bool" },
+        ],
+        name: "setAttestationTitle",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
+    args: [title, isValid],
+  });
 
-//     const transactionHash = await configurations.walletClient.sendTransaction({
-//       data: data,
-//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-//       gasLimit: gasLimit,
-//       value: msgValue,
-//     });
+  try {
+    gasLimit = estimateGas(publicClient, {
+      account: from as `0x${string}`,
+      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      data: data,
+      value: value,
+    });
+  } catch (error) {
+    return Error("Error estimating gas.");
+  }
 
-//     const transactionReceipt = await publicClient({
-//       chainId: configurations.chain,
-//     }).waitForTransactionReceipt({
-//       hash: transactionHash,
-//     });
+  try {
+    const transactionHash = await sendTransaction(walletClient, {
+      account: from as `0x${string}`,
+      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      gasLimit: gasLimit,
+      data: data,
+      value: value,
+      chain: walletClient.chain,
+    });
 
-//     return transactionReceipt;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error(String(error));
-//   }
-// }
+    const transactionReceipt: TransactionReceipt =
+      await waitForTransactionReceipt(publicClient, {
+        hash: transactionHash,
+      });
+
+    return transactionReceipt;
+  } catch (error) {
+    return Error("Error sending transaction.");
+  }
+}

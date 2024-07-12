@@ -1,66 +1,74 @@
-// import { encodeFunctionData } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { encodeFunctionData, type TransactionReceipt } from "viem";
+import {
+  sendTransaction,
+  estimateGas,
+  waitForTransactionReceipt,
+} from "viem/actions";
 
-// import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
-// import { Action } from "../shared/types";
-// import { publicClient } from "../wallet/wallet-config";
+import { wagmiConfig } from "@/wagmi";
 
-// export interface ConnetedWalletConfiguration {
-//   walletClient: any;
-//   chain: number;
-// }
+import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { Action } from "../shared/types";
+import { publicClient } from "../wallet/client";
 
-// export async function setSchema(
-//   uid: `0x${string}`,
-//   roleId: `0x${string}`,
-//   action: Action,
-//   configurations: ConnetedWalletConfiguration,
-//   msgValue: bigint,
-// ): Promise<string> {
-//   const actionAsBigInt = BigInt(action);
+export async function setSchema(
+  from: `0x${string}`,
+  uid: `0x${string}`,
+  roleId: `0x${string}`,
+  action: Action,
 
-//   const data = encodeFunctionData({
-//     abi: [
-//       {
-//         type: "function",
-//         name: "setSchema",
-//         inputs: [
-//           { name: "uid", type: "bytes32", internalType: "bytes32" },
-//           { name: "roleId", type: "bytes32", internalType: "bytes32" },
-//           { name: "action", type: "uint256", internalType: "uint256" },
-//         ],
-//         outputs: [],
-//         stateMutability: "nonpayable",
-//       },
-//     ],
-//     args: [uid, roleId, actionAsBigInt],
-//   });
+  msgValue: bigint,
+): Promise<TransactionReceipt | Error> {
+  const actionAsBigInt = BigInt(action);
+  const walletClient = await getWalletClient(wagmiConfig);
+  let gasLimit;
 
-//   try {
-//     const gasLimit = await publicClient({
-//       chainId: configurations.chain,
-//     }).estimateGas({
-//       account: configurations.walletClient.account as `0x${string}`,
-//       data: data,
-//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-//       value: msgValue,
-//     });
+  const data = encodeFunctionData({
+    abi: [
+      {
+        inputs: [
+          { internalType: "bytes32", name: "uid", type: "bytes32" },
+          { internalType: "bytes32", name: "roleId", type: "bytes32" },
+          { internalType: "uint256", name: "action", type: "uint256" },
+        ],
+        name: "setSchema",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
+    args: [uid, roleId, actionAsBigInt],
+  });
 
-//     const transactionHash = await configurations.walletClient.sendTransaction({
-//       data: data,
-//       to: TRUSTFUL_CONTRACT_ADDRESSES[configurations.chain] as `0x${string}`,
-//       gasLimit: gasLimit,
-//       value: msgValue,
-//     });
+  try {
+    gasLimit = estimateGas(publicClient, {
+      account: from as `0x${string}`,
+      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      data: data,
+      value: msgValue,
+    });
+  } catch (error) {
+    return Error("Error estimating gas.");
+  }
 
-//     const transactionReceipt = await publicClient({
-//       chainId: configurations.chain,
-//     }).waitForTransactionReceipt({
-//       hash: transactionHash,
-//     });
+  try {
+    const transactionHash = await sendTransaction(walletClient, {
+      account: from as `0x${string}`,
+      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      gasLimit: gasLimit,
+      data: data,
+      value: msgValue,
+      chain: walletClient.chain,
+    });
 
-//     return transactionReceipt;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error(String(error));
-//   }
-// }
+    const transactionReceipt: TransactionReceipt =
+      await waitForTransactionReceipt(publicClient, {
+        hash: transactionHash,
+      });
+
+    return transactionReceipt;
+  } catch (error) {
+    return Error("Error sending transaction.");
+  }
+}
