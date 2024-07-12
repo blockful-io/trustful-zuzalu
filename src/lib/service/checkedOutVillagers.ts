@@ -1,6 +1,7 @@
+import { readContract } from "viem/actions";
+
 import { RESOLVER_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/client";
-import { readContract } from "viem/actions";
 
 export interface ConnetedWalletConfiguration {
   walletClient: any;
