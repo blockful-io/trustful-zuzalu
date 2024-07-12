@@ -1,19 +1,6 @@
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Text,
-  Flex,
-  Divider,
-} from "@chakra-ui/react";
+import { Box, Card, CardHeader, Text, Flex, Button } from "@chakra-ui/react";
 
-import {
-  CircleQuestion,
-  QRCodeLargeIcon,
-  TheFooterNavbar,
-  TheHeader,
-} from "@/components/01-atoms";
+import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 
 export const CheckOutSection = () => {
   return (
@@ -42,55 +29,39 @@ export const CheckOutSection = () => {
           >
             <Flex className={"items-center"}>
               <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                Check out ZuGeorgia
+                Check out of ZuGeorgia
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <Text className="text-center text-slate-50 text-base font-normal  leading-snug">
-                To finish your session, please scan the QR code.
+                Are you sure you want to check out?
+                <br />
+                This proccess is irreversible.
               </Text>
             </Flex>
           </CardHeader>
-          <CardBody display={"flex"} flexDirection={"column"} p={0}>
-            <Flex
-              alignItems={"center"}
-              justifyContent={"center"}
-              flexDirection={"row"}
+          <Box className="px-6 py-4 sm:px-[60px] w-full">
+            <Button
+              className="w-full px-6 py-4 bg-[#ef4343] text-white rounded-lg"
+              _hover={{ bg: "#ef4343" }}
+              _active={{ bg: "#ef4343" }}
+              // isLoading={loading}
+              // onClick={() => {
+              //   setLoading(true);
+              //   handleAttest();
+              // }}
+              // TODO ->
+              // open Modal
+              // fetch check-in time
+              // calculate total time in event
+              // display button to confirm
+              // send transaction
+              // display thank you message
             >
-              <QRCodeLargeIcon />
-            </Flex>
-          </CardBody>
+              Confirm
+            </Button>
+          </Box>
         </Card>
-        <Flex flexDirection={"column"} className="w-full h-full items-center">
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
-                What is the check out for?
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
-                What this means?
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-          <Flex className="w-full flex-row py-3" gap={4}>
-            <CircleQuestion />
-            <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
-                How to connect organizer?
-              </Text>
-            </Flex>
-          </Flex>
-          <Divider className="border-slate-50 opacity-10 w-full" />
-        </Flex>
       </Box>
       <TheFooterNavbar />
     </Flex>
