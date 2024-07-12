@@ -14,6 +14,5 @@ export default function Home() {
   const { villagerAttestationCount } = useContext(WalletContext);
 
   if (isConnected && villagerAttestationCount === 0) push("/pre-checkin");
-  if (isConnected && villagerAttestationCount > 0) push("/my-badge");
   else return <HomeSection />;
 }

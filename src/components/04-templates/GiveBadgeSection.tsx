@@ -38,7 +38,7 @@ import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
 } from "@/lib/client/constants";
-import type { BadgeTitle } from "@/lib/client/constants";
+import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
@@ -150,7 +150,7 @@ export const GiveBadgeSection = () => {
   // Changes the continue arrow color based on the status of a valid input address
   const iconColor =
     inputAddress && isAddress(inputAddress)
-      ? "text-[#FFFFFF]"
+      ? "text-[#000000  ]"
       : "text-[#F5FFFFB2]";
   const iconBg =
     inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
@@ -186,14 +186,35 @@ export const GiveBadgeSection = () => {
 
     let encodeParam = "";
     let encodeArgs: string[] = [];
-    if (inputBadge.uid === ZUVILLAGE_SCHEMAS[0].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[0].data;
+    if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.data;
       encodeArgs = ["Manager"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[1].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[1].data;
+      const isManager = await hasRole(ROLES.MANAGER, badgeInputAddress.address);
+      if (isManager) {
+        setLoading(false);
+        notifyError({
+          title: "Address is already a Manager",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
       encodeArgs = ["Check-in"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[2].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[2].data;
+      const isVillager = await hasRole(
+        ROLES.VILLAGER,
+        badgeInputAddress.address,
+      );
+      if (isVillager) {
+        setLoading(false);
+        notifyError({
+          title: "Address already checked-in",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
     } else {
       setLoading(false);
@@ -210,7 +231,7 @@ export const GiveBadgeSection = () => {
     );
 
     const attestationRequestData: AttestationRequestData = {
-      recipient: badgeInputAddress.address, //Temporary hardcoded
+      recipient: badgeInputAddress.address,
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:
@@ -230,6 +251,15 @@ export const GiveBadgeSection = () => {
       notifyError({
         title: "Transaction Rejected",
         message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
       });
       return;
     }
@@ -270,6 +300,7 @@ export const GiveBadgeSection = () => {
 
     setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
     setLoading(false);
+    setText("");
     setInputAddress("");
 
     return;
@@ -303,6 +334,7 @@ export const GiveBadgeSection = () => {
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <QrCodeIcon
+                        className="text-[#B1EF42]"
                         onClick={() => {
                           setQRCodeisOpen(true);
                           handleActionChange(GiveBadgeAction.QR_CODE);
@@ -506,9 +538,11 @@ export const GiveBadgeSection = () => {
                               cursor: "not-allowed",
                             }}
                             disabled={true}
-                          >
-                            {commentBadge}
-                          </Textarea>
+                            value={commentBadge}
+                            rows={commentBadge.length > 50 ? 3 : 1}
+                            minH="unset"
+                            resize="none"
+                          ></Textarea>
                         </Flex>
                       </Flex>
                     )}
