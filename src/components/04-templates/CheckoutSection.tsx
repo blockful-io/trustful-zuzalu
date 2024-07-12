@@ -134,7 +134,7 @@ export const CheckOutSection = () => {
           <Box>
             <Text fontWeight="bold">Success.</Text>
             <Text>
-              Badge sent at tx:{" "}
+              Check-out at tx:{" "}
               <Link
                 href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
                 isExternal
