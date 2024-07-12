@@ -1,10 +1,15 @@
 "use client";
 
-import { HomeSection } from "@/components/04-templates";
-import { BadgeDetailsSection } from "@/components/04-templates/BadgeDetailsSection";
-import { GiveBadgeSection } from "@/components/04-templates/GiveBadgeSection";
-import { MyBadgeSection } from "@/components/04-templates/MyBadgeSection";
-import { PreCheckinSection } from "@/components/04-templates/PreCheckinSection";
+import {
+  HomeSection,
+  BadgeDetailsSection,
+  CheckInSection,
+  CheckoutSection,
+  GiveBadgeSection,
+  MyBadgeSection,
+  PreCheckinSection,
+  ShareSection,
+} from "@/components/04-templates/";
 
 export default function renderPage({
   params,
@@ -14,6 +19,12 @@ export default function renderPage({
   switch (params.slug) {
     case "pre-checkin":
       return <PreCheckinSection />;
+    case "checkin":
+      return <CheckInSection />;
+    case "checkout":
+      return <CheckoutSection />;
+    case "share":
+      return <ShareSection />;
     case "my-badge":
       return <MyBadgeSection />;
     case "my-badge-details":

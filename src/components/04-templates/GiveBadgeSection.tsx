@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useState } from "react";
 
@@ -38,7 +40,7 @@ import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
 } from "@/lib/client/constants";
-import type { BadgeTitle } from "@/lib/client/constants";
+import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
@@ -150,7 +152,7 @@ export const GiveBadgeSection = () => {
   // Changes the continue arrow color based on the status of a valid input address
   const iconColor =
     inputAddress && isAddress(inputAddress)
-      ? "text-[#FFFFFF]"
+      ? "text-[#000000  ]"
       : "text-[#F5FFFFB2]";
   const iconBg =
     inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
@@ -186,14 +188,35 @@ export const GiveBadgeSection = () => {
 
     let encodeParam = "";
     let encodeArgs: string[] = [];
-    if (inputBadge.uid === ZUVILLAGE_SCHEMAS[0].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[0].data;
+    if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.data;
       encodeArgs = ["Manager"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[1].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[1].data;
+      const isManager = await hasRole(ROLES.MANAGER, badgeInputAddress.address);
+      if (isManager) {
+        setLoading(false);
+        notifyError({
+          title: "Address is already a Manager",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
       encodeArgs = ["Check-in"];
-    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS[2].uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS[2].data;
+      const isVillager = await hasRole(
+        ROLES.VILLAGER,
+        badgeInputAddress.address,
+      );
+      if (isVillager) {
+        setLoading(false);
+        notifyError({
+          title: "Address already checked-in",
+          message: "Address already have this badge.",
+        });
+        return;
+      }
+    } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
+      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
     } else {
       setLoading(false);
@@ -210,7 +233,7 @@ export const GiveBadgeSection = () => {
     );
 
     const attestationRequestData: AttestationRequestData = {
-      recipient: badgeInputAddress.address, //Temporary hardcoded
+      recipient: badgeInputAddress.address,
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:
@@ -230,6 +253,15 @@ export const GiveBadgeSection = () => {
       notifyError({
         title: "Transaction Rejected",
         message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
       });
       return;
     }
@@ -270,7 +302,7 @@ export const GiveBadgeSection = () => {
 
     setAddressStep(GiveBadgeStepAddress.CONFIRMATION);
     setLoading(false);
-    setBadgeInputAddress(null);
+    setText("");
     setInputAddress("");
 
     return;
@@ -296,7 +328,7 @@ export const GiveBadgeSection = () => {
                     <Flex className="gap-4 pb-4 justify-start items-center">
                       <UserIcon className="text-[#B1EF42]" />
                       <Input
-                        className="text-slate-50 text-base font-normal  leading-snug border-none"
+                        className="text-slate-50 text-base font-normal leading-snug border-none"
                         placeholder="Insert address or ENS"
                         _placeholder={{ className: "text-slate-50 opacity-30" }}
                         focusBorderColor={"#F5FFFF1A"}
@@ -304,6 +336,7 @@ export const GiveBadgeSection = () => {
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <QrCodeIcon
+                        className="text-[#B1EF42]"
                         onClick={() => {
                           setQRCodeisOpen(true);
                           handleActionChange(GiveBadgeAction.QR_CODE);
@@ -317,7 +350,7 @@ export const GiveBadgeSection = () => {
                     color="white"
                     className="w-full justify-between items-center"
                   >
-                    <Text className="text-slate-50 opacity-80 text-base font-normal  leading-snug border-none">
+                    <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
                       Continue
                     </Text>
                     <button
@@ -359,10 +392,10 @@ export const GiveBadgeSection = () => {
                           flexDirection={"column"}
                           justifyContent={"center"}
                         >
-                          <Text className="text-slate-50 text-sm font-medium  leading-none">
+                          <Text className="text-slate-50 text-sm font-medium leading-none">
                             Issued by
                           </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                          <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                             {getEllipsedAddress(address)}
                           </Text>
                         </Flex>
@@ -374,10 +407,10 @@ export const GiveBadgeSection = () => {
                           flexDirection={"column"}
                           justifyContent={"center"}
                         >
-                          <Text className="text-slate-50 text-sm font-medium  leading-none">
+                          <Text className="text-slate-50 text-sm font-medium leading-none">
                             Receiver
                           </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                          <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                             {getEllipsedAddress(badgeInputAddress?.address)}
                           </Text>
                         </Flex>
@@ -388,12 +421,12 @@ export const GiveBadgeSection = () => {
                     background={"#F5FFFF0D"}
                     className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
                   >
-                    <Text className="text-slate-50 mb-2 text-sm font-medium  leading-none">
+                    <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
                       Select a Badge
                     </Text>
                     <Select
                       placeholder="Select option"
-                      className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight"
+                      className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
                       color="white"
                       onChange={handleBadgeSelectChange}
                     >
@@ -409,7 +442,7 @@ export const GiveBadgeSection = () => {
                       <Flex className="gap-4 pb-4 justify-start items-center">
                         <CommentIcon />
                         <Textarea
-                          className="text-slate-50 text-base font-normal  leading-snug border-none"
+                          className="text-slate-50 text-base font-normal leading-snug border-none"
                           placeholder="Share your experience!"
                           _placeholder={{
                             className: "text-slate-50 opacity-30",
@@ -454,7 +487,7 @@ export const GiveBadgeSection = () => {
                   className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
                   gap={8}
                 >
-                  <Flex className="flex justify-center items-center px-1 py-1.5 bg-slate-50 bg-opacity-5 rounded-[100px]  w-[100px] h-[100px]">
+                  <Flex className="flex justify-center items-center px-1 py-1.5 bg-slate-50 bg-opacity-5 rounded-[100px] w-[100px] h-[100px]">
                     <HandHeartIcon className="z-10 text-[#B1EF42]" />
                   </Flex>
                   <Flex>
@@ -465,22 +498,28 @@ export const GiveBadgeSection = () => {
                   <Flex className="flex-col">
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                         Receiver
                       </Text>
                       <Flex gap={2}>
-                        <Text className="text-slate-50 text-sm font-normal  leading-tight">
+                        <Text
+                          color="white"
+                          className="pl-4 text-slate-50 text-sm font-normal leading-tight"
+                        >
                           {badgeInputAddress?.getEllipsedAddress()}
                         </Text>
                       </Flex>
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                         Badge
                       </Text>
                       <Flex gap={2}>
-                        <Text className="text-slate-50 text-sm font-normal  leading-tight">
+                        <Text
+                          color="white"
+                          className="pl-[16px] text-slate-50 text-sm font-normal leading-tight"
+                        >
                           {inputBadge?.title}
                         </Text>
                       </Flex>
@@ -488,13 +527,24 @@ export const GiveBadgeSection = () => {
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     {commentBadge && (
                       <Flex className="py-4 gap-4 items-center">
-                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                           Comment
                         </Text>
-                        <Flex gap={2}>
-                          <Text className="text-slate-50 text-sm font-normal  leading-tight">
-                            {commentBadge}
-                          </Text>
+                        <Flex gap={2} className="w-full">
+                          <Textarea
+                            color="white"
+                            className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                            readOnly={true}
+                            _readOnly={{
+                              opacity: 1,
+                              cursor: "not-allowed",
+                            }}
+                            disabled={true}
+                            value={commentBadge}
+                            rows={commentBadge.length > 50 ? 3 : 1}
+                            minH="unset"
+                            resize="none"
+                          ></Textarea>
                         </Flex>
                       </Flex>
                     )}
