@@ -33,12 +33,7 @@ export const CheckInSection = () => {
         className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center"
         gap={6}
       >
-        <Card
-          className="px-8 py-6 relative"
-          background={"#212223"}
-          border={2}
-          gap={8}
-        >
+        <Card className="px-8 py-6 relative" background={"#212223"} border={2}>
           <Flex className="absolute left-1/2 top-1 -translate-x-1/2 -translate-y-1/2 border dark:border-[#161617] border-[#707572] bg-[#F6F6F6] dark:bg-[#212322] rounded-full w-[72px] h-[72px] flex items-center justify-center">
             <TicketIcon />
           </Flex>
@@ -57,8 +52,8 @@ export const CheckInSection = () => {
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
-              <Text className="text-center text-slate-50 text-base font-normal  leading-snug">
-                To start, please scan the QR code below.
+              <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                To start, please find a Manager to check you in.
               </Text>
             </Flex>
           </CardHeader>
@@ -81,10 +76,11 @@ export const CheckInSection = () => {
                       },
                     }}
                   />
-                  <Flex className="justify-center items-center gap-2">
-                    <Text>
-                      {chain.name + ":" + getEllipsedAddress(address)}
-                    </Text>
+                  <Flex
+                    color="white"
+                    className="justify-center items-center gap-2"
+                  >
+                    <Text>{getEllipsedAddress(address)}</Text>
                     <CopyToClipboardButton />
                   </Flex>
                 </>
@@ -100,7 +96,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
+              <Text className="text-slate-50 text-sm font-normal leading-tight">
                 What Trustful is?
               </Text>
             </Flex>
@@ -109,7 +105,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
+              <Text className="text-slate-50 text-sm font-normal leading-tight">
                 How it works in ZuGeorgia?
               </Text>
             </Flex>
@@ -118,7 +114,7 @@ export const CheckInSection = () => {
           <Flex className="w-full flex-row py-3" gap={4}>
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
+              <Text className="text-slate-50 text-sm font-normal leading-tight">
                 What to do now
               </Text>
             </Flex>

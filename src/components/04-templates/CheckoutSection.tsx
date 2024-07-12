@@ -15,7 +15,7 @@ import {
   TheHeader,
 } from "@/components/01-atoms";
 
-export const CheckoutSection = () => {
+export const CheckOutSection = () => {
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />

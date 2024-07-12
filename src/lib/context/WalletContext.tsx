@@ -49,6 +49,7 @@ export const WalletContextProvider = ({
   const { address } = useAccount();
   const { push } = useRouter();
   const { notifyError } = useNotify();
+
   useEffect(() => {
     if (address && villagerAttestationCount === 0) {
       handleQuery();
@@ -56,6 +57,16 @@ export const WalletContextProvider = ({
       push("/");
     }
   }, [address]);
+
+  useEffect(() => {
+    if (villagerAttestationCount === 0) {
+      push("/pre-checkin");
+    }
+
+    if (villagerAttestationCount > 0) {
+      push("/my-badge");
+    }
+  }, [villagerAttestationCount]);
 
   const handleQuery = async () => {
     const queryVariables = {
