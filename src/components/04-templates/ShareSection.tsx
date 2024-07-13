@@ -1,18 +1,38 @@
-import { Box, Card, CardBody, CardHeader, Text, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  CardHeader,
+  Text,
+  Flex,
+  Link,
+} from "@chakra-ui/react";
 import { useQRCode } from "next-qrcode";
 import { useAccount } from "wagmi";
 
 import {
   CopyToClipboardButton,
+  BlockfulLogo,
   TheFooterNavbar,
   TheHeader,
   TicketIcon,
 } from "@/components/01-atoms";
+import { useUrl } from "@/hooks/useURL";
 import { getEllipsedAddress } from "@/utils/formatters";
 
 export const ShareSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
+  const url = useUrl();
+  let prefixToGiveBadge: string = "http://localhost:3000/give-badge";
+  if (url) {
+    if (url.hostname === "localhost") {
+      prefixToGiveBadge = "http://localhost:3000/give-badge";
+    } else if (url.hostname === "trustful") {
+      prefixToGiveBadge = "https://trustful.vercel.app/give-badge";
+    }
+  }
+  const linkToGiveBadgeAddress = `${prefixToGiveBadge}?address=${address}`;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
@@ -61,7 +81,7 @@ export const ShareSection = () => {
               {address && chain ? (
                 <>
                   <Canvas
-                    text={address}
+                    text={linkToGiveBadgeAddress}
                     options={{
                       errorCorrectionLevel: "M",
                       width: 250,
@@ -85,6 +105,14 @@ export const ShareSection = () => {
             </Flex>
           </CardBody>
         </Card>
+        <Link href="https://www.blockful.io" isExternal>
+          <Flex direction={"column"} gap={2}>
+            <p className="text-xs font-medium leading-3 uppercase tracking-wider text-gray-200 opacity-50 text-center">
+              Created by
+            </p>
+            <BlockfulLogo />
+          </Flex>
+        </Link>
       </Box>
       <TheFooterNavbar />
     </Flex>

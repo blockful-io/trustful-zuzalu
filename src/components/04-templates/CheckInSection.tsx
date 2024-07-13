@@ -19,7 +19,7 @@ import {
 } from "@/components/01-atoms";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-export const CheckInSection = () => {
+export const CheckinSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
 
@@ -37,6 +37,7 @@ export const CheckInSection = () => {
           className="px-8 py-6 mt-6 relative"
           background={"#212223"}
           border={2}
+          borderRadius={16}
         >
           <Flex className="absolute left-1/2 top-1 -translate-x-1/2 -translate-y-1/2 border dark:border-[#161617] border-[#707572] bg-[#F6F6F6] dark:bg-[#212322] rounded-full w-[72px] h-[72px] flex items-center justify-center">
             <TicketIcon />
@@ -52,7 +53,7 @@ export const CheckInSection = () => {
           >
             <Flex className={"items-center"}>
               <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                Check in ZuGeorgia
+                Check in ZuVillage Georgia
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
@@ -110,7 +111,7 @@ export const CheckInSection = () => {
             <CircleQuestion />
             <Flex flexDirection={"column"} justifyContent={"center"}>
               <Text className="text-slate-50 text-sm font-normal leading-tight">
-                How it works in ZuGeorgia?
+                How it works in ZuVillage?
               </Text>
             </Flex>
           </Flex>

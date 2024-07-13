@@ -1,9 +1,11 @@
 // components/MainPane.tsx
 import { type FC } from "react";
 
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Space_Grotesk } from "next/font/google";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 import { CreatedByBlockful } from "@/components/01-atoms";
@@ -15,6 +17,7 @@ const grotesk = Space_Grotesk({ subsets: ["latin"] });
 export const MainPane: FC = () => {
   const { isConnected } = useAccount();
   const { isMobile } = useWindowSize();
+  const { push } = useRouter();
 
   return (
     <Box className={styles.container}>
@@ -31,6 +34,27 @@ export const MainPane: FC = () => {
           made easy
         </Heading>
       </Flex>
+      {isConnected && (
+        <>
+          <Box
+            gap={6}
+            display={"flex"}
+            alignItems={"left"}
+            justifyContent={"left"}
+            flex={1}
+            className="py-4"
+          >
+            <Button
+              className="px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
+              _hover={{ bg: "#B1EF42" }}
+              _active={{ bg: "#B1EF42" }}
+              onClick={() => push("/my-badge")}
+            >
+              Go to dApp
+            </Button>
+          </Box>
+        </>
+      )}
       <Flex className={styles.content}>
         {!isConnected && isMobile && (
           <ConnectButton.Custom>
@@ -122,7 +146,7 @@ export const MainPane: FC = () => {
                               }}
                             >
                               {chain.iconUrl && (
-                                <img
+                                <Image
                                   alt={chain.name ?? "Chain icon"}
                                   src={chain.iconUrl}
                                   style={{ width: 12, height: 12 }}

@@ -8,9 +8,11 @@ $attestationsWhere2: AttestationWhereInput) {
   }
 }`;
 
-export const VILLAGER_QUERY = `query Attestations($where: AttestationWhereInput) {
-  attestations(where: $where) {
+export const VILLAGER_QUERY = `query Query($where: AttestationWhereInput, $orderBy: [AttestationOrderByWithRelationInput!]) {
+  attestations(where: $where, orderBy: $orderBy) {
+    data
     id
+    timeCreated
   }
 }`;
 
@@ -21,6 +23,15 @@ $attestationsWhere2: AttestationWhereInput) {
     attestations(where: $attestationsWhere2) {
       data
     }
+  }
+}`;
+
+export const BADGE_QUERY = `query Query($where: AttestationWhereInput) {
+  attestations(where: $where) {
+    id
+    decodedDataJson
+    timeCreated
+    attester
   }
 }`;
 

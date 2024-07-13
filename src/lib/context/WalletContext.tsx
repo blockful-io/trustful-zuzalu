@@ -1,11 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   createContext,
   useState,
-  useMemo,
   type ReactNode,
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useContext,
 } from "react";
 
 import { useRouter } from "next/navigation";
@@ -18,12 +19,12 @@ import { ZUVILLAGE_SCHEMAS } from "../client/constants";
 import { VILLAGER_QUERY } from "../client/schemaQueries";
 
 interface WalletContextProps {
-  villagerAttestationCount: number;
-  setVillagerAttestationCount: Dispatch<SetStateAction<number>>;
+  villagerAttestationCount: number | null;
+  setVillagerAttestationCount: Dispatch<SetStateAction<number | null>>;
 }
 
 const defaultContextValue: WalletContextProps = {
-  villagerAttestationCount: 0,
+  villagerAttestationCount: null,
   setVillagerAttestationCount: () => {},
 };
 
@@ -35,23 +36,30 @@ export const WalletContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [villagerAttestationCount, setVillagerAttestationCount] =
-    useState<number>(0);
+  // Using 3 as a default value, meaning no operation has been done yet
+  const [villagerAttestationCount, setVillagerAttestationCount] = useState<
+    number | null
+  >(null);
 
-  const WalletContextData = useMemo(
-    () => ({
+  const [walletContextData, setWalletContextData] =
+    useState<WalletContextProps>({
       villagerAttestationCount,
       setVillagerAttestationCount,
-    }),
-    [villagerAttestationCount],
-  );
+    });
+
+  useEffect(() => {
+    setWalletContextData({
+      villagerAttestationCount,
+      setVillagerAttestationCount,
+    });
+  }, [villagerAttestationCount]);
 
   const { address } = useAccount();
   const { push } = useRouter();
   const { notifyError } = useNotify();
 
   useEffect(() => {
-    if (address && villagerAttestationCount === 0) {
+    if (address && villagerAttestationCount === null) {
       handleQuery();
     } else {
       push("/");
@@ -62,18 +70,17 @@ export const WalletContextProvider = ({
     if (villagerAttestationCount === 0) {
       push("/pre-checkin");
     }
-    console.log(villagerAttestationCount);
 
-    if (villagerAttestationCount > 0) {
-      push("/my-badge");
-    }
+    // if (villagerAttestationCount && villagerAttestationCount > 0) {
+    //   push("/my-badge");
+    // }
   }, [villagerAttestationCount]);
 
   const handleQuery = async () => {
     const queryVariables = {
       where: {
         schemaId: {
-          equals: ZUVILLAGE_SCHEMAS[1].uid,
+          equals: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid,
         },
         recipient: {
           equals: address,
@@ -106,14 +113,14 @@ export const WalletContextProvider = ({
   };
 
   return (
-    <WalletContext.Provider value={WalletContextData}>
+    <WalletContext.Provider value={walletContextData}>
       {children}
     </WalletContext.Provider>
   );
 };
 
 export const useWalletContext = () => {
-  const context = React.useContext(WalletContext);
+  const context = useContext(WalletContext);
   if (context === undefined) {
     throw new Error(
       "useWalletContext must be used within a WalletContextProvider",

@@ -38,7 +38,7 @@ export const BadgeDetailsSection = () => {
           <Flex flexDirection={"column"} className="w-full">
             <Box>
               <Text className="text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                Check In ZuGeorgia
+                Check In ZuVillage Georgia
               </Text>
             </Box>
             <Flex gap={2} className="items-center">
