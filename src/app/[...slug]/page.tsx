@@ -3,7 +3,7 @@
 import {
   HomeSection,
   BadgeDetailsSection,
-  CheckInSection,
+  CheckinSection,
   CheckoutSection,
   GiveBadgeSection,
   MyBadgeSection,
@@ -19,7 +19,7 @@ export default function renderPage({ params }: { params: { slug: [string] } }) {
     case "pre-checkin":
       return <PreCheckinSection />;
     case "checkin":
-      return <CheckInSection />;
+      return <CheckinSection />;
     case "checkout":
       return <CheckoutSection />;
     case "share":

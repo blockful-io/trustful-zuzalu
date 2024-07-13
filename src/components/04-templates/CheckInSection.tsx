@@ -19,7 +19,7 @@ import {
 } from "@/components/01-atoms";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-export const CheckInSection = () => {
+export const CheckinSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
 

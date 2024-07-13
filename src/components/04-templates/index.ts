@@ -1,4 +1,4 @@
-export * from "./CheckInSection";
+export * from "./CheckinSection";
 export * from "./GiveBadgeSection";
 export * from "./HomeSection";
 export * from "./PreCheckinSection";
