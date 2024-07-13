@@ -1,7 +1,7 @@
 export const EAS_CONTRACT_OP = "0x4200000000000000000000000000000000000021";
 
 export const RESOLVER_CONTRACT_OP =
-  "0xF988953B76B92f2E15Ee5AFFd0c95925261809a9";
+  "0x4c385Bf95BbcF34fbDf3320b363a4eb0799886Cc";
 
 export enum ROLES {
   ROOT = "0x79e553c6f53701daa99614646285e66adb98ff0fcc1ef165dd2718e5c873bee6",
@@ -13,37 +13,33 @@ export interface Schemas {
   uid: `0x${string}`;
   data: string;
   revocable: boolean;
-  allowedRole: `0x${string}`;
+  allowedRole: string[];
 }
 
 export const ZUVILLAGE_SCHEMAS: { [key: string]: Schemas } = {
   ATTEST_MANAGER: {
-    uid: "0xd130b9591f22bb9653f125ed00ff2d7d88b41d64acfd962365b42fe720c295aa",
+    uid: "0x7e84e2b90ff7e288a3ba134d64c35c3d093624ccff1d84a4a60a556c19fb27da",
     data: "string role",
     revocable: true,
-    allowedRole:
-      "0x79e553c6f53701daa99614646285e66adb98ff0fcc1ef165dd2718e5c873bee6",
+    allowedRole: [ROLES.ROOT],
   },
   ATTEST_VILLAGER: {
-    uid: "0xcb74f95269512c5cb95c9f854a8ec8fe015d453f1bbff52d83ffd894dfec1883",
+    uid: "0x2b85bd1271fc0ca2c23f162bd7726688a4cc1f8ef57bbe2b8c4b24c2d6c3f1ee",
     data: "string status",
     revocable: false,
-    allowedRole:
-      "0x241ecf16d79d0f8dbfb92cbc07fe17840425976cf0667f022fe9877caa831b08",
+    allowedRole: [ROLES.MANAGER, ROLES.VILLAGER],
   },
   ATTEST_EVENT: {
-    uid: "0x157df2f42e66b3dc2fd354354cb3d678789b258a8aa5a5493d6c3b75ab003a69",
+    uid: "0xce1a0c6a7e3412f5cb2c36a8148510944131aada27d9cf98b789f4fd42cf1bee",
     data: "string title,string comment",
     revocable: false,
-    allowedRole:
-      "0x7e8ac59880745312f8754f56b69cccc1c6b2112d567ccf50e4e6dc2e39a7c67a",
+    allowedRole: [ROLES.VILLAGER],
   },
   ATTEST_RESPONSE: {
-    uid: "0x440a07d9a96ab2f16f2e983582f5331bd80c7c9033d57c784c052619b868a9c2",
+    uid: "0x121dafbe9211e471f0d73e35f489e7e936f451ce858e7f74ea0fe48c9b702fdb",
     data: "bool status",
     revocable: true,
-    allowedRole:
-      "0x7e8ac59880745312f8754f56b69cccc1c6b2112d567ccf50e4e6dc2e39a7c67a",
+    allowedRole: [ROLES.VILLAGER],
   },
 };
 
@@ -53,7 +49,7 @@ export interface BadgeTitle {
   allowComment: boolean;
   revocable: boolean;
   data: string;
-  allowedRole: `0x${string}`;
+  allowedRole: string[];
 }
 
 export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
@@ -74,7 +70,15 @@ export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
     allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.allowedRole,
   },
   {
-    title: "Changed My Mind",
+    title: "Check-out",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid,
+    allowComment: false,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.allowedRole,
+  },
+  {
+    title: "Changed my mind",
     uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
     allowComment: true,
     revocable: false,
@@ -82,7 +86,7 @@ export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
     allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
   },
   {
-    title: "Is a good person",
+    title: "Disagreed with somebody on stage",
     uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
     allowComment: true,
     revocable: false,
@@ -90,7 +94,96 @@ export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
     allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
   },
   {
-    title: "Has a brilliant mind",
+    title: "Created session on Zuzalu city",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Wrote on Zuzagora",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Voted on significant poll",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Early contributor",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Volunteered",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Started a new club",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Hosted a discussion",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Friend from past Zu Events",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Showed me a cool tech",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Showed me around town",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+  {
+    title: "Good laughs",
+    uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+    allowComment: true,
+    revocable: false,
+    data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+    allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+  },
+
+  {
+    title: "Good talk",
     uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
     allowComment: true,
     revocable: false,
