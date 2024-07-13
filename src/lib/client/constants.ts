@@ -93,7 +93,7 @@ export const ZUVILLAGE_SCHEMAS: { [key: string]: Schemas } = {
   },
   ATTEST_RESPONSE: {
     uid: "0x440a07d9a96ab2f16f2e983582f5331bd80c7c9033d57c784c052619b868a9c2",
-    data: "string status",
+    data: "bool status",
     revocable: true,
     allowedRole:
       "0x7e8ac59880745312f8754f56b69cccc1c6b2112d567ccf50e4e6dc2e39a7c67a",

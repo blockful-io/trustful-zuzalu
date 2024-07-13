@@ -1,6 +1,14 @@
 // BadgeContext.tsx
-import React, { createContext, useContext, useState, useMemo, type ReactNode, type Dispatch, type SetStateAction } from 'react';
-
+import type { BadgeStatus } from "@/components/01-atoms";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  type ReactNode,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 interface Schema {
   index: string;
@@ -11,14 +19,13 @@ interface Schema {
 interface Badge {
   id: string;
   title: string;
-  status: string;
+  status: BadgeStatus;
   comment: string;
   timeCreated: number;
   attester: string;
   recipient: string;
   txid: string;
   schema: Schema;
-
 }
 
 interface BadgeContextType {
@@ -37,7 +44,9 @@ interface BadgeProviderProps {
   children: ReactNode;
 }
 
-export const BadgeContextProvider: React.FC<BadgeProviderProps> = ({ children }) => {
+export const BadgeContextProvider: React.FC<BadgeProviderProps> = ({
+  children,
+}) => {
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
 
   const BadgeContextData = useMemo(
@@ -45,7 +54,7 @@ export const BadgeContextProvider: React.FC<BadgeProviderProps> = ({ children })
       selectedBadge,
       setSelectedBadge,
     }),
-    [selectedBadge]
+    [selectedBadge],
   );
 
   return (
@@ -58,7 +67,7 @@ export const BadgeContextProvider: React.FC<BadgeProviderProps> = ({ children })
 export const useBadge = (): BadgeContextType => {
   const context = useContext(BadgeContext);
   if (context === undefined) {
-    throw new Error('useBadge must be used within a BadgeProvider');
+    throw new Error("useBadge must be used within a BadgeProvider");
   }
   return context;
 };

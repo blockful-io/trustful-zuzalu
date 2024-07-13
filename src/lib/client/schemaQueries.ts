@@ -35,6 +35,7 @@ export const BADGE_QUERY = `query Query($where: AttestationWhereInput) {
     attester
     recipient
     txid
+    refUID
     schema {
       index
       id

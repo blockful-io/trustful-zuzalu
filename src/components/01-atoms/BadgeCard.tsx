@@ -19,8 +19,8 @@ import {
   CalendarIcon,
   HeartIcon,
 } from "@/components/01-atoms";
-import { getEllipsedAddress } from "@/utils/formatters";
 import { useBadge } from "@/lib/context/BadgeContext";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 interface Schema {
   index: string;
@@ -30,7 +30,7 @@ interface Schema {
 interface BadgeData {
   id: string;
   title: string;
-  status: string;
+  status: BadgeStatus;
   comment: string;
   timeCreated: number;
   attester: string;
@@ -60,8 +60,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           border={2}
           onClick={() => {
             setSelectedBadge(badge);
-            router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
-            console.log("Card Clicked go to Details of this Card");
+            router.push(`my-badge-details`); 
           }}
         >
           <CardHeader
@@ -79,7 +78,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
-              <BadgeTagIcon status={BadgeStatus.PENDING} />
+              <BadgeTagIcon status={badge.status} />
               <ArrowIcon variant={ArrowIconVariant.RIGHT} />
             </Flex>
           </CardHeader>

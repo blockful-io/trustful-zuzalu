@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
@@ -12,7 +13,6 @@ import {
   Link,
   Divider,
 } from "@chakra-ui/react";
-
 import { useToast } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
@@ -27,10 +27,9 @@ import {
   TheHeader,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
+import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
 import { getEllipsedAddress } from "@/utils/formatters";
-
-import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 
 import {
   submitAttest,
@@ -38,13 +37,13 @@ import {
 } from "../../lib/service/attest";
 
 export const BadgeDetailsSection = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [confirmed, setConfirmed] = useState<boolean|null>(null); // Novo estado para confirmar
-  const { notifyError, notifySuccess } = useNotify();
+  const [loadingConfirm, setLoadingConfirm] = useState<boolean>(false);
+  const [loadingDeny, setLoadingDeny] = useState<boolean>(false);
+  const [confirmed, setConfirmed] = useState<boolean | null>(null); 
+  const { notifyError } = useNotify();
   const { selectedBadge } = useBadge();
   const { address } = useAccount();
   const toast = useToast();
-  console.log(selectedBadge);
 
   if (!selectedBadge) {
     return <div>Badge não encontrado.</div>;
@@ -53,19 +52,18 @@ export const BadgeDetailsSection = () => {
   // Submit attestation
   const handleAttest = async (isConfirm: boolean) => {
     if (!address) {
-      setLoading(false);
+      setLoadingConfirm(false);
+      setLoadingDeny(false);
       notifyError({
         title: "No account connected",
         message: "Please connect your wallet.",
       });
       return;
     }
-    console.log("cheguei aqui");
     const data = encodeAbiParameters(
       parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
       [isConfirm],
     );
-    
     const attestationRequestData: AttestationRequestData = {
       recipient: selectedBadge.attester as `0x${string}`,
       expirationTime: BigInt(0),
@@ -74,16 +72,16 @@ export const BadgeDetailsSection = () => {
       data: data,
       value: BigInt(0),
     };
-    console.log("attestationRequestData", attestationRequestData);
+
     const response = await submitAttest(
       address,
       ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
       attestationRequestData,
     );
 
-    console.log("response", response);
     if (response instanceof Error) {
-      setLoading(false);
+      setLoadingConfirm(false);
+      setLoadingDeny(false);
       notifyError({
         title: "Transaction Rejected",
         message: response.message,
@@ -92,7 +90,8 @@ export const BadgeDetailsSection = () => {
     }
 
     if (response.status !== "success") {
-      setLoading(false);
+      setLoadingConfirm(false);
+      setLoadingDeny(false);
       notifyError({
         title: "Transaction Rejected",
         message: "Contract execution reverted.",
@@ -136,15 +135,18 @@ export const BadgeDetailsSection = () => {
         </Box>
       ),
     });
-    
-    setLoading(false);
+
+    setLoadingConfirm(false);
+    setLoadingDeny(false);
     return;
   };
-  const badgeStatus = confirmed === null 
-  ? BadgeStatus.PENDING 
-  : confirmed 
-    ? BadgeStatus.CONFIRMED 
-    : BadgeStatus.REJECTED;
+  const badgeStatus = confirmed === null && selectedBadge.status === null
+  ? BadgeStatus.PENDING
+  : confirmed === true
+    ? BadgeStatus.CONFIRMED
+    : confirmed === false
+      ? BadgeStatus.REJECTED
+      : selectedBadge.status;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
@@ -153,8 +155,8 @@ export const BadgeDetailsSection = () => {
       <Box
         flex={1}
         as="main"
-        px={{ base: 6, sm: "60px" }} // Aplica px-6 em telas pequenas e px-[60px] em telas maiores
-        py={{ base: 2, sm: "20px" }} // Aplica py-6 em telas pequenas e py-[20px] em telas maiores
+        px={{ base: 6, sm: "60px" }} 
+        py={{ base: 2, sm: "20px" }} 
         className="justify-center flex items-center flex-col"
         gap={6}
       >
@@ -249,7 +251,8 @@ export const BadgeDetailsSection = () => {
           </Flex>
         </Card>
       </Box>
-      {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid && confirmed === null ? (
+      {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
+      confirmed === null && selectedBadge.status === BadgeStatus.PENDING ? (
         <Box
           as="footer"
           position="fixed"
@@ -260,12 +263,12 @@ export const BadgeDetailsSection = () => {
         >
           <Button
             className="w-full flex justify-center items-center gap-2 px-6 bg-lime-200 bg-opacity-10 text-[#B1EF42] rounded-lg"
-            _hover={{ bg: "#B1EF42" }}
-            _active={{ bg: "#B1EF42" }}
-            isLoading={loading}
+            _hover={{ bg: "#B1EF42", color: "#161617" }}
+            _active={{ bg: "#B1EF42", color: "#161617" }}
+            isLoading={loadingDeny}
             spinner={<BeatLoader size={8} color="white" />}
             onClick={() => {
-              setLoading(false);
+              setLoadingDeny(true);
               handleAttest(false);
             }}
           >
@@ -276,10 +279,10 @@ export const BadgeDetailsSection = () => {
             className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
             _hover={{ bg: "#B1EF42" }}
             _active={{ bg: "#B1EF42" }}
-            isLoading={loading}
+            isLoading={loadingConfirm}
             spinner={<BeatLoader size={8} color="white" />}
             onClick={() => {
-              setLoading(true);
+              setLoadingConfirm(true);
               handleAttest(true);
             }}
           >
