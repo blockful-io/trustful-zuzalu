@@ -19,6 +19,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useParams, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -39,17 +40,17 @@ import { useNotify, useWindowSize } from "@/hooks";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
+  ROLES,
+  type BadgeTitle,
 } from "@/lib/client/constants";
-import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
-import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
-
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
-import { hasRole } from "../../lib/service/hasRole";
+  hasRole,
+} from "@/lib/service";
+import { EthereumAddress } from "@/lib/shared/types";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -82,8 +83,26 @@ export const GiveBadgeSection = () => {
   const [inputBadgeTitleList, setInputBadgeTitleList] = useState<string[]>();
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState<string>("");
 
+  const searchParams = useSearchParams();
+  const addressShared = searchParams.get("address");
+
+  // Checks if the shared-address is valid and sets it to the inputAddress
+  useEffect(() => {
+    if (addressShared && isAddress(addressShared)) {
+      setInputAddress(addressShared);
+    }
+  }, [addressShared]);
+
+  const param = useParams();
+  console.log("param,", param);
+
+  if (param.slug[0] === "my-badge") {
+    alert("Address is valid");
+    console.log("Address is valid");
+    setInputAddress(param.slug[1]);
+  }
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
@@ -115,6 +134,13 @@ export const GiveBadgeSection = () => {
 
   // Do not allow invalid Ethereum addresses to move into the next step
   const handleInputAddressChange = () => {
+    if (!inputAddress || !isAddress(inputAddress)) {
+      notifyError({
+        title: "Field is empty",
+        message: "Please provide a valid Ethereum address.",
+      });
+      return;
+    }
     if (inputAddress && !isAddress(inputAddress)) {
       notifyError({
         title: "Invalid Ethereum Address",

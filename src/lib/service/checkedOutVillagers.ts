@@ -1,47 +1,38 @@
-// import { encodeFunctionData } from "viem";
+import { readContract } from "viem/actions";
 
-// import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
-// import { publicClient } from "../wallet/wallet-config";
+import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { publicClient } from "../wallet/client";
 
-// export interface ConnetedWalletConfiguration {
-//   walletClient: any;
-//   chain: number;
-// }
+export async function checkedOutVillagers(
+  villagerAddress: `0x${string}`,
+): Promise<boolean | Error> {
+  const data = {
+    abi: [
+      {
+        inputs: [
+          { internalType: "address", name: "villager", type: "address" },
+        ],
+        name: "checkedOutVillagers",
+        outputs: [{ internalType: "bool", name: "", type: "bool" }],
+        stateMutability: "view",
+        type: "function",
+      },
+    ],
+    args: [villagerAddress],
+  };
 
-// export async function checkedOutVillagers(
-//   villagerAddress: `0x${string}`,
-//   configurations: ConnetedWalletConfiguration,
-// ): Promise<boolean> {
-//   const data = encodeFunctionData({
-//     abi: [
-//       {
-//         type: "function",
-//         name: "checkedOutVillagers",
-//         inputs: [
-//           { name: "villager", type: "address", internalType: "address" },
-//         ],
-//         outputs: [{ name: "", type: "bool", internalType: "bool" }],
-//         stateMutability: "view",
-//       },
-//     ],
-//     args: [villagerAddress],
-//   });
+  try {
+    const response = await readContract(publicClient, {
+      address: RESOLVER_CONTRACT_OP as `0x${string}`,
+      functionName: "checkedOutVillagers",
+      abi: data.abi,
+      args: [villagerAddress],
+    });
 
-//   try {
-//     const response = await publicClient({
-//       chainId: configurations.chain,
-//     }).readContract({
-//       address: TRUSTFUL_CONTRACT_ADDRESSES[
-//         configurations.chain
-//       ] as `0x${string}`,
-//       abi: data,
-//       functionName: "checkedOutVillagers",
-//       args: [villagerAddress],
-//     });
+    if (response === typeof Boolean) return Error("Response should be boolean");
 
-//     return response;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error(String(error));
-//   }
-// }
+    return response as boolean;
+  } catch (error) {
+    return Error("Error when reading the contract");
+  }
+}

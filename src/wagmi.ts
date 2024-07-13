@@ -32,10 +32,6 @@ import {
   bscTestnet,
 } from "wagmi/chains";
 
-import linea_logo from "../public/img/linea_logo.png";
-import lineaTesnet_logo from "../public/img/lineaTesnet_logo.png";
-import zksync_logo from "../public/img/zksync_logo.svg";
-
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
 if (!walletConnectProjectId) {
@@ -62,14 +58,6 @@ const connectors = connectorsForWallets(
   ],
   { appName: "Next-Web3-Boilerplate", projectId: walletConnectProjectId },
 );
-
-// Fix missing icons
-const customZkSyncSepoliaTestnet = {
-  ...zkSyncSepoliaTestnet,
-  iconUrl: zksync_logo.src,
-};
-const customLinea = { ...linea, iconUrl: linea_logo.src };
-const customLineaTestnet = { ...lineaTestnet, iconUrl: lineaTesnet_logo.src };
 
 const transports: Record<number, Transport> = {
   [mainnet.id]: http(),
@@ -105,10 +93,7 @@ export const wagmiConfig = createConfig({
     optimismGoerli,
     arbitrum,
     arbitrumGoerli,
-    customLinea,
-    customLineaTestnet,
     zkSync,
-    customZkSyncSepoliaTestnet,
     base,
     baseGoerli,
     bsc,
