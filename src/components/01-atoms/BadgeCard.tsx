@@ -19,15 +19,24 @@ import {
   CalendarIcon,
   HeartIcon,
 } from "@/components/01-atoms";
+import { useBadge } from "@/lib/context/BadgeContext";
 import { getEllipsedAddress } from "@/utils/formatters";
+
+interface Schema {
+  index: string;
+  id: string;
+}
 
 interface BadgeData {
   id: string;
   title: string;
-  status: string;
+  status: BadgeStatus;
   comment: string;
   timeCreated: number;
   attester: string;
+  recipient: string;
+  txid: string;
+  schema: Schema;
 }
 
 interface BadgeCardProps {
@@ -36,6 +45,8 @@ interface BadgeCardProps {
 
 export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
   const router = useRouter();
+  const { setSelectedBadge } = useBadge();
+
   return (
     <SimpleGrid
       spacing={4}
@@ -48,8 +59,8 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           background={"#F5FFFF0D"}
           border={2}
           onClick={() => {
-            router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
-            console.log("Card Clicked go to Details of this Card");
+            setSelectedBadge(badge);
+            router.push(`my-badge-details`); 
           }}
         >
           <CardHeader
@@ -67,7 +78,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
               </Text>
             </Flex>
             <Flex className={"items-center"} gap={2}>
-              <BadgeTagIcon status={BadgeStatus.PENDING} />
+              <BadgeTagIcon status={badge.status} />
               <ArrowIcon variant={ArrowIconVariant.RIGHT} />
             </Flex>
           </CardHeader>

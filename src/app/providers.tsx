@@ -7,6 +7,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
+import { BadgeContextProvider } from "@/lib/context/BadgeContext";
 import { GiveBadgeContextProvider } from "@/lib/context/GiveBadgeContext";
 import { WalletContextProvider } from "@/lib/context/WalletContext";
 import { wagmiConfig } from "@/wagmi";
@@ -38,7 +39,9 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
             >
               <WalletContextProvider>
                 <GiveBadgeContextProvider>
-                  {mounted && children}
+                  <BadgeContextProvider>
+                    {mounted && children}
+                  </BadgeContextProvider>
                 </GiveBadgeContextProvider>
               </WalletContextProvider>
             </RainbowKitProvider>
