@@ -33,6 +33,8 @@ export const DropdownProfile = ({
 
   const [isRoot, setIsRoot] = useState<boolean>(false);
 
+  //TODO: Need Refadtoring.The `admin` page is delayed to display
+  //Checks if the user has the `Manager` badge
   useEffect(() => {
     if (address) {
       const checkUserRole = async () => {
