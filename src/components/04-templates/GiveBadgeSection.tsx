@@ -124,6 +124,13 @@ export const GiveBadgeSection = () => {
 
   // Do not allow invalid Ethereum addresses to move into the next step
   const handleInputAddressChange = () => {
+    if (!inputAddress || !isAddress(inputAddress)) {
+      notifyError({
+        title: "Field is empty",
+        message: "Please provide a valid Ethereum address.",
+      });
+      return;
+    }
     if (inputAddress && !isAddress(inputAddress)) {
       notifyError({
         title: "Invalid Ethereum Address",
