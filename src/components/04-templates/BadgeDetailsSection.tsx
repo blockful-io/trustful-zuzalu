@@ -12,6 +12,7 @@ import {
   Icon,
   Link,
   Divider,
+  Textarea,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
@@ -39,7 +40,7 @@ import {
 export const BadgeDetailsSection = () => {
   const [loadingConfirm, setLoadingConfirm] = useState<boolean>(false);
   const [loadingDeny, setLoadingDeny] = useState<boolean>(false);
-  const [confirmed, setConfirmed] = useState<boolean | null>(null); 
+  const [confirmed, setConfirmed] = useState<boolean | null>(null);
   const { notifyError } = useNotify();
   const { selectedBadge } = useBadge();
   const { address } = useAccount();
@@ -140,29 +141,34 @@ export const BadgeDetailsSection = () => {
     setLoadingDeny(false);
     return;
   };
-  const badgeStatus = confirmed === null && selectedBadge.status === null
-  ? BadgeStatus.PENDING
-  : confirmed === true
-    ? BadgeStatus.CONFIRMED
-    : confirmed === false
-      ? BadgeStatus.REJECTED
-      : selectedBadge.status;
+  const badgeStatus =
+    confirmed === null && selectedBadge.status === null
+      ? BadgeStatus.PENDING
+      : confirmed === true
+        ? BadgeStatus.CONFIRMED
+        : confirmed === false
+          ? BadgeStatus.REJECTED
+          : selectedBadge.status;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
       <TheHeader />
       <BadgeDetailsNavigation isDetail={true} />
       <Box
-        flex={1}
+        flex={0}
         as="main"
-        px={{ base: 6, sm: "60px" }} 
-        py={{ base: 2, sm: "20px" }} 
+        px={{ base: 6, sm: "60px" }}
+        py={{ base: 2, sm: "20px" }}
         className="justify-center flex items-center flex-col"
         gap={6}
       >
         <Flex gap={4} className="w-full h-full items-top">
-          <Flex py="10px">
-            <HeartIcon className="w-6 h-6 opacity-50 text-slate-50" />
+          <Flex
+            className="flex items-center justify-center"
+            py="6px"
+            px={"20px"}
+          >
+            <HeartIcon className="w-8 h-8 opacity-50 text-slate-50" />
           </Flex>
           <Flex flexDirection={"column"} className="w-full">
             <Box>
@@ -171,7 +177,7 @@ export const BadgeDetailsSection = () => {
               </Text>
             </Box>
             <Flex gap={2} className="items-center">
-              <Text className="text-slate-50 text-sm font-normal  leading-tight">
+              <Text className="text-slate-50 text-sm font-normal leading-tight">
                 {new Date(selectedBadge.timeCreated * 1000).toLocaleString()}
               </Text>
               <BadgeTagIcon status={badgeStatus} />
@@ -185,11 +191,11 @@ export const BadgeDetailsSection = () => {
           <Flex flexDirection={"column"} className="w-full items-center">
             <Flex className="w-full flex-row p-4" gap={4}>
               <Avatar />
-              <Flex flexDirection={"column"} justifyContent={"center"}>
+              <Flex flexDirection={"column"} gap={2} justifyContent={"center"}>
                 <Text className="text-slate-50 text-sm font-medium  leading-none">
                   Issued by
                 </Text>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   {getEllipsedAddress(selectedBadge.attester as `0x${string}`)}
                 </Text>
               </Flex>
@@ -197,11 +203,11 @@ export const BadgeDetailsSection = () => {
             <Divider className="border-slate-50 opacity-10 w-full" />
             <Flex className="w-full flex-row p-4" gap={4}>
               <Avatar />
-              <Flex flexDirection={"column"} justifyContent={"center"}>
+              <Flex flexDirection={"column"} gap={2} justifyContent={"center"}>
                 <Text className="text-slate-50 text-sm font-medium  leading-none">
                   Receiver
                 </Text>
-                <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   {getEllipsedAddress(selectedBadge.recipient as `0x${string}`)}
                 </Text>
               </Flex>
@@ -213,12 +219,23 @@ export const BadgeDetailsSection = () => {
           className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
         >
           <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium  leading-none">
+            <Text className="flex text-slate-50 text-sm font-medium leading-none">
               Comment
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
-              {getEllipsedAddress(selectedBadge.comment as `0x${string}`)}
-            </Text>
+            <Textarea
+              color="white"
+              className="px-0 opacity-70 disabled text-slate-50 text-sm font-normal border-none leading-tight"
+              readOnly={true}
+              _readOnly={{
+                opacity: 0.7,
+                cursor: "not-allowed",
+              }}
+              disabled={true}
+              value={selectedBadge.comment}
+              rows={selectedBadge.comment.length > 50 ? 3 : 1}
+              minH="unset"
+              resize="none"
+            ></Textarea>
           </Flex>
         </Card>
         <Card
@@ -229,7 +246,7 @@ export const BadgeDetailsSection = () => {
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Attestation
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
               {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
             </Text>
           </Flex>
@@ -237,7 +254,7 @@ export const BadgeDetailsSection = () => {
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Transaction
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
               {getEllipsedAddress(selectedBadge.txid as `0x${string}`)}
             </Text>
           </Flex>
@@ -245,14 +262,15 @@ export const BadgeDetailsSection = () => {
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Scheme
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal  leading-tight">
+            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
               #{selectedBadge.schema.index}
             </Text>
           </Flex>
         </Card>
       </Box>
       {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
-      confirmed === null && selectedBadge.status === BadgeStatus.PENDING ? (
+      confirmed === null &&
+      selectedBadge.status === BadgeStatus.PENDING ? (
         <Box
           as="footer"
           position="fixed"
