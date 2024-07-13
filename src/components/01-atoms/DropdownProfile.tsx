@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Card,
@@ -13,6 +14,9 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
+import { hasRole } from "../../lib/service/hasRole";
+import { useAccount } from "wagmi";
+import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -23,6 +27,31 @@ export const DropdownProfile = ({
 }) => {
   const { disconnect } = useDisconnect();
   const { push } = useRouter();
+  const { address } = useAccount();
+
+  const [isRoot, setIsRoot] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (address) {
+      const checkUserRole = async () => {
+        let isAdminRole = false;
+        for (const badge of ZUVILLAGE_BADGE_TITLES) {
+          if (badge.title === "Manager") {
+            const hasManagerRole = await hasRole(badge.allowedRole, address);
+            console.log("hasManagerRole", hasManagerRole);
+            if (hasManagerRole) {
+              isAdminRole = true;
+              break;
+            }
+          }
+        }
+        console.log("adminRole", isAdminRole);
+        setIsRoot(isAdminRole);
+        console.log("isRoot", isRoot);
+      };
+      checkUserRole();
+    }
+  }, [address]);
 
   return (
     <>
@@ -81,6 +110,25 @@ export const DropdownProfile = ({
                 </Text>
               </Flex>
             </Flex>
+            {isRoot && (
+              <Flex
+                gap={4}
+                alignItems={"center"}
+                flexDirection={"row"}
+                p={4}
+                onClick={() => {
+                  //admin();
+                  push("/");
+                }}
+              >
+                {/*<adminIcon className="w-6 h-6 text-[#F5FFFF80]" />*/}
+                <Flex gap={2} alignItems={"center"}>
+                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight ">
+                    Admin
+                  </Text>
+                </Flex>
+              </Flex>
+            )}
             <Flex
               gap={4}
               alignItems={"center"}

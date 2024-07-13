@@ -9,6 +9,7 @@ import {
   MyBadgeSection,
   PreCheckinSection,
   ShareSection,
+  //AdminSection,
 } from "@/components/04-templates/";
 
 export default function renderPage({
@@ -31,6 +32,8 @@ export default function renderPage({
       return <BadgeDetailsSection />;
     case "give-badge":
       return <GiveBadgeSection />;
+    // case "admin":
+    //   return <AdminSection />;
     default:
       return <HomeSection />;
   }
