@@ -22,7 +22,9 @@ import { getEllipsedAddress } from "@/utils/formatters";
 export const ShareSection = () => {
   const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
+  const prefixToGiveBadge = "localhost:3000/give-badge";
 
+  console.log(`${prefixToGiveBadge}/${address}`);
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
       <TheHeader />
@@ -70,7 +72,7 @@ export const ShareSection = () => {
               {address && chain ? (
                 <>
                   <Canvas
-                    text={address}
+                    text={`${prefixToGiveBadge}/${address}`}
                     options={{
                       errorCorrectionLevel: "M",
                       width: 250,

@@ -19,6 +19,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -43,14 +44,13 @@ import {
   type BadgeTitle,
 } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
-import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
-
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
-import { hasRole } from "../../lib/service/hasRole";
+  hasRole,
+} from "@/lib/service";
+import { EthereumAddress } from "@/lib/shared/types";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -85,6 +85,14 @@ export const GiveBadgeSection = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
 
+  const param = useParams();
+  console.log("param,", param);
+
+  if (param.slug[0] === "my-badge") {
+    alert("Address is valid");
+    console.log("Address is valid");
+    setInputAddress(param.slug[1]);
+  }
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
