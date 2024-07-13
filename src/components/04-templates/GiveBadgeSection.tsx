@@ -419,6 +419,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">
@@ -434,6 +435,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">

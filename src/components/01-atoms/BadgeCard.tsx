@@ -60,7 +60,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           border={2}
           onClick={() => {
             setSelectedBadge(badge);
-            router.push(`my-badge-details`); 
+            router.push(`my-badge-details`);
           }}
         >
           <CardHeader
