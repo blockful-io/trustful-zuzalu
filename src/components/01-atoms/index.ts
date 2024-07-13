@@ -16,7 +16,6 @@ export * from "./icons/HandHeartIcon";
 export * from "./icons/LogoutIcon";
 export * from "./icons/QrCodeIcon";
 export * from "./icons/QRCodeLargeIcon";
-export * from "./icons/QrCodeLogo";
 export * from "./icons/ThankYouIcon";
 export * from "./icons/TicketIcon";
 export * from "./icons/TrustfulIcon";
