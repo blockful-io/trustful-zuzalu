@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Card,
@@ -12,11 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 
 import { LogoutIcon, UserIcon } from "@/components/01-atoms";
-import { hasRole } from "../../lib/service/hasRole";
-import { useAccount } from "wagmi";
 import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
+
+import { hasRole } from "../../lib/service/hasRole";
 
 export const DropdownProfile = ({
   isOpenMenu,
