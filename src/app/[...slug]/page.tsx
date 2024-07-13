@@ -12,9 +12,6 @@ import {
 } from "@/components/04-templates/";
 
 export default function renderPage({ params }: { params: { slug: [string] } }) {
-  // console.log("params", params);
-  // console.log("params", params.slug[0]);
-
   switch (params.slug[0]) {
     case "pre-checkin":
       return <PreCheckinSection />;

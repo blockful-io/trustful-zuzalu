@@ -19,7 +19,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -84,6 +84,16 @@ export const GiveBadgeSection = () => {
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
+
+  const searchParams = useSearchParams();
+  const addressShared = searchParams.get("address");
+
+  // Checks if the shared-address is valid and sets it to the inputAddress
+  useEffect(() => {
+    if (addressShared && isAddress(addressShared)) {
+      setInputAddress(addressShared);
+    }
+  }, [addressShared]);
 
   const param = useParams();
   console.log("param,", param);
