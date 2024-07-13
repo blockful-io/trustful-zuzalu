@@ -10,6 +10,8 @@ import {
 } from "@/components/04-templates";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 
+import { useRouter } from "next/navigation";
+
 export const BadgeDetailsNavigation = ({
   isDetail = false,
   isFeedback = false,
@@ -20,32 +22,51 @@ export const BadgeDetailsNavigation = ({
   isQRCode?: boolean;
 }) => {
   const { setAddressStep, setAction } = useContext(GiveBadgeContext);
+  const router= useRouter();
+  const handleBack = () => {
+      setAction(GiveBadgeAction.ADDRESS);
+      setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+  };
 
-  return !isDetail && !isFeedback && !isQRCode ? (
+  if (isDetail) {
+    return (
+      <Box className="w-full flex items-center p-4" onClick={() => {
+        router.push(`my-badge`); 
+      }}>
+        <Flex
+          className="cursor-pointer p-2 opacity-80"
+          color="white"
+        >
+          <ArrowIcon variant={ArrowIconVariant.LEFT} />
+        </Flex>
+        <Flex justifyContent={"center"} className="w-full">
+        <Text className="text-slate-50 text-sm font-medium uppercase leading-none tracking-wide">
+          BADGE DETAILS
+        </Text>
+      </Flex>
+      </Box>
+    );
+  }
+
+  return !isFeedback && !isQRCode ? (
     <Box className="w-full flex items-center p-4">
       <Flex
-        onClick={() => {
-          setAction(GiveBadgeAction.ADDRESS);
-          setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
-        }}
+        onClick={handleBack}
         className="cursor-pointer p-2 opacity-80"
         color="white"
       >
         <ArrowIcon variant={ArrowIconVariant.LEFT} />
       </Flex>
       <Flex justifyContent={"center"} className="w-full">
-        <Text className="text-slate-50 text-sm font-medium  uppercase leading-none tracking-wide">
+        <Text className="text-slate-50 text-sm font-medium uppercase leading-none tracking-wide">
           BADGE DETAILS
         </Text>
       </Flex>
     </Box>
-  ) : isFeedback && !isDetail ? (
+  ) : isFeedback ? (
     <Box className="w-full flex items-center p-4">
       <Flex
-        onClick={() => {
-          setAction(GiveBadgeAction.ADDRESS);
-          setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
-        }}
+        onClick={handleBack}
         className="cursor-pointer p-2 opacity-80"
         color="white"
       >
@@ -58,15 +79,12 @@ export const BadgeDetailsNavigation = ({
         <ArrowIcon
           variant={ArrowIconVariant.LEFT}
           props={{
-            onClick: () => {
-              setAction(GiveBadgeAction.ADDRESS);
-              setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
-            },
+            onClick: handleBack,
           }}
         />
       </Flex>
       <Flex justifyContent={"center"} className="w-full">
-        <Text className="text-slate-50 text-sm font-medium  uppercase leading-none tracking-wide">
+        <Text className="text-slate-50 text-sm font-medium uppercase leading-none tracking-wide">
           QR CODE SCANNER
         </Text>
       </Flex>

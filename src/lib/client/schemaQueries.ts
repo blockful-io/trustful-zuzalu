@@ -29,9 +29,16 @@ $attestationsWhere2: AttestationWhereInput) {
 export const BADGE_QUERY = `query Query($where: AttestationWhereInput) {
   attestations(where: $where) {
     id
+    data
     decodedDataJson
     timeCreated
     attester
+    recipient
+    txid
+    schema {
+      index
+      id
+    }
   }
 }`;
 

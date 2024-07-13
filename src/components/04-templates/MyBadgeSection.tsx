@@ -9,11 +9,19 @@ import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { BADGE_QUERY } from "@/lib/client/schemaQueries";
 import { fetchEASData } from "@/lib/service/fetchEASData";
 
+interface Schema {
+  index: string;
+  id: string;
+}
+
 interface Attestation {
   decodedDataJson: string;
   timeCreated: number;
   attester: string;
   id: string;
+  recipient: string;
+  txid: string;
+  schema: Schema;
 }
 
 interface BadgeData {
@@ -23,6 +31,9 @@ interface BadgeData {
   comment: string;
   timeCreated: number;
   attester: string;
+  recipient: string;
+  txid: string;
+  schema: Schema;
 }
 
 export const MyBadgeSection: React.FC = () => {
@@ -67,6 +78,9 @@ export const MyBadgeSection: React.FC = () => {
             comment,
             timeCreated: attestation.timeCreated,
             attester: attestation.attester,
+            recipient: attestation.recipient,
+            txid: attestation.txid,
+            schema: attestation.schema
           };
         });
 

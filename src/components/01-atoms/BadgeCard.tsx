@@ -20,6 +20,12 @@ import {
   HeartIcon,
 } from "@/components/01-atoms";
 import { getEllipsedAddress } from "@/utils/formatters";
+import { useBadge } from "@/lib/context/BadgeContext";
+
+interface Schema {
+  index: string;
+  id: string;
+}
 
 interface BadgeData {
   id: string;
@@ -28,6 +34,9 @@ interface BadgeData {
   comment: string;
   timeCreated: number;
   attester: string;
+  recipient: string;
+  txid: string;
+  schema: Schema;
 }
 
 interface BadgeCardProps {
@@ -36,6 +45,8 @@ interface BadgeCardProps {
 
 export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
   const router = useRouter();
+  const { setSelectedBadge } = useBadge();
+
   return (
     <SimpleGrid
       spacing={4}
@@ -48,6 +59,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           background={"#F5FFFF0D"}
           border={2}
           onClick={() => {
+            setSelectedBadge(badge);
             router.push(`my-badge-details`); //TODO: Replace with dynamic route ID
             console.log("Card Clicked go to Details of this Card");
           }}
