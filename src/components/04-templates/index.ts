@@ -1,5 +1,5 @@
 export * from "./BadgeDetailsSection";
-export * from "./CheckinSection";
+export * from "./CheckInSection";
 export * from "./CheckoutSection";
 export * from "./GiveBadgeSection";
 export * from "./HomeSection";
