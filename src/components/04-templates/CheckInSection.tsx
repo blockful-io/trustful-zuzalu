@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   Box,
   Card,
@@ -8,9 +9,7 @@ import {
   Flex,
   Divider,
   Collapse,
-  List,
   ListItem,
-  ListIcon,
   UnorderedList,
 } from "@chakra-ui/react";
 import { useQRCode } from "next-qrcode";

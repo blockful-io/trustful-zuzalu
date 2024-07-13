@@ -40,16 +40,15 @@ export const DropdownProfile = ({
         for (const badge of ZUVILLAGE_BADGE_TITLES) {
           if (badge.title === "Manager") {
             const hasManagerRole = await hasRole(badge.allowedRole, address);
-            console.log("hasManagerRole", hasManagerRole);
+
             if (hasManagerRole) {
               isAdminRole = true;
               break;
             }
           }
         }
-        console.log("adminRole", isAdminRole);
+
         setIsRoot(isAdminRole);
-        console.log("isRoot", isRoot);
       };
       checkUserRole();
     }
@@ -121,8 +120,7 @@ export const DropdownProfile = ({
                 flexDirection={"row"}
                 p={4}
                 onClick={() => {
-                  //admin();
-                  push("/");
+                  push("/admin");
                 }}
               >
                 {/*<adminIcon className="w-6 h-6 text-[#F5FFFF80]" />*/}
