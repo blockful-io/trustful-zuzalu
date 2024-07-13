@@ -26,6 +26,15 @@ $attestationsWhere2: AttestationWhereInput) {
   }
 }`;
 
+export const BADGE_QUERY = `query Query($where: AttestationWhereInput) {
+  attestations(where: $where) {
+    id
+    decodedDataJson
+    timeCreated
+    attester
+  }
+}`;
+
 //MODIFY
 export const ATTEST_RESPONSE_QUERY = `query Query($where: SchemaWhereUniqueInput!, 
 $attestationsWhere2: AttestationWhereInput) {
