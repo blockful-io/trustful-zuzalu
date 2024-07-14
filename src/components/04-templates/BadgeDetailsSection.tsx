@@ -25,6 +25,7 @@ import {
   BadgeTagIcon,
   HeartIcon,
   TheHeader,
+  CopyToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
@@ -244,25 +245,44 @@ export const BadgeDetailsSection = () => {
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Attestation
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-              {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
-            </Text>
+            <Flex color="white" className="gap-2">
+              <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
+              </Text>
+
+              <CopyToClipboardButton
+                label={selectedBadge.id}
+                isUserAddress={false}
+              />
+            </Flex>
           </Flex>
           <Flex flexDirection={"column"} gap={2} p={4}>
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Transaction
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-              {getEllipsedAddress(selectedBadge.txid as `0x${string}`)}
-            </Text>
+            <Flex color="white" className="gap-2">
+              <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                {getEllipsedAddress(selectedBadge.txid as `0x${string}`)}
+              </Text>
+              <CopyToClipboardButton
+                label={selectedBadge.txid}
+                isUserAddress={false}
+              />
+            </Flex>
           </Flex>
           <Flex flexDirection={"column"} gap={2} p={4}>
             <Text className="flex text-slate-50 text-sm font-medium  leading-none">
               Scheme
             </Text>
-            <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-              #{selectedBadge.schema.index}
-            </Text>
+            <Flex color="white" className="gap-2">
+              <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                #{selectedBadge.schema.index}
+              </Text>
+              <CopyToClipboardButton
+                label={selectedBadge.schema.index}
+                isUserAddress={false}
+              />
+            </Flex>
           </Flex>
         </Card>
       </Box>

@@ -76,7 +76,7 @@ export const CheckinSection = () => {
                     className="justify-center items-center gap-2"
                   >
                     <Text>{getEllipsedAddress(address)}</Text>
-                    <CopyToClipboardButton />
+                    <CopyToClipboardButton isUserAddress />
                   </Flex>
                 </>
               ) : (

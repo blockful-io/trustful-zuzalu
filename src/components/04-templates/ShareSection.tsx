@@ -74,7 +74,7 @@ export const ShareSection = () => {
                     className="justify-center items-center gap-2"
                   >
                     <Text>{getEllipsedAddress(address)}</Text>
-                    <CopyToClipboardButton />
+                    <CopyToClipboardButton isUserAddress />
                   </Flex>
                 </>
               ) : (
