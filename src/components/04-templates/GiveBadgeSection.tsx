@@ -99,16 +99,6 @@ export const GiveBadgeSection = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
 
-  const searchParams = useSearchParams();
-  const addressShared = searchParams.get("address");
-
-  const param = useParams();
-
-  if (param.slug[0] === "my-badges") {
-    alert("Address is valid");
-    setInputAddress(param.slug[1]);
-  }
-
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
@@ -118,9 +108,17 @@ export const GiveBadgeSection = () => {
     };
   }, []);
 
+  const searchParams = useSearchParams();
+  const addressShared = searchParams.get("address");
+  const param = useParams();
+
   // Checks if the shared-address is valid and sets it to the inputAddress
   useEffect(() => {
-    if (addressShared && isAddress(addressShared)) {
+    if (
+      addressShared &&
+      isAddress(addressShared) &&
+      param.slug[0] === "give-badge"
+    ) {
       setInputAddress(addressShared);
     }
   }, [addressShared]);
