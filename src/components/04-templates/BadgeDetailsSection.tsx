@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { CheckIcon, CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
@@ -30,12 +29,11 @@ import {
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
-import { getEllipsedAddress } from "@/utils/formatters";
-
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
+} from "@/lib/service/attest";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export const BadgeDetailsSection = () => {
   const [loadingConfirm, setLoadingConfirm] = useState<boolean>(false);
