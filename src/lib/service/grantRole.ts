@@ -13,9 +13,9 @@ import { publicClient } from "../wallet/client";
 
 export async function grantRole(
   from: `0x${string}`,
-  title: string,
-  isValid: boolean,
-  value: bigint,
+  role: `0x${string}`,
+  account: `0x${string}`,
+  msgValue: bigint,
 ): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
@@ -33,7 +33,7 @@ export async function grantRole(
         type: "function",
       },
     ],
-    args: [title, isValid],
+    args: [role, account],
   });
 
   try {
@@ -41,7 +41,7 @@ export async function grantRole(
       account: from as `0x${string}`,
       to: RESOLVER_CONTRACT_OP as `0x${string}`,
       data: data,
-      value: value,
+      value: msgValue,
     });
   } catch (error) {
     return Error("Error estimating gas.");
@@ -53,7 +53,7 @@ export async function grantRole(
       to: RESOLVER_CONTRACT_OP as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
-      value: value,
+      value: msgValue,
       chain: walletClient.chain,
     });
 
