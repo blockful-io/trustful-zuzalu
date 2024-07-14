@@ -11,11 +11,9 @@ import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 export const BadgeDetailsNavigation = ({
   isDetail = false,
   isFeedback = false,
-  isQRCode = false,
 }: {
   isDetail?: boolean;
   isFeedback?: boolean;
-  isQRCode?: boolean;
 }) => {
   const { setAddressStep } = useContext(GiveBadgeContext);
   const router = useRouter();
@@ -43,7 +41,7 @@ export const BadgeDetailsNavigation = ({
     );
   }
 
-  return !isFeedback && !isQRCode ? (
+  return !isFeedback ? (
     <Box className="w-full flex items-center p-4">
       <Flex
         onClick={handleBack}
@@ -66,22 +64,6 @@ export const BadgeDetailsNavigation = ({
         color="white"
       >
         <CloseIcon />
-      </Flex>
-    </Box>
-  ) : isQRCode ? (
-    <Box className="w-full flex items-center p-4">
-      <Flex className="cursor-pointer p-2">
-        <ArrowIcon
-          variant={ArrowIconVariant.LEFT}
-          props={{
-            onClick: handleBack,
-          }}
-        />
-      </Flex>
-      <Flex justifyContent={"center"} className="w-full">
-        <Text className="text-slate-50 text-sm font-medium uppercase leading-none tracking-wide">
-          QR CODE SCANNER
-        </Text>
       </Flex>
     </Box>
   ) : null;
