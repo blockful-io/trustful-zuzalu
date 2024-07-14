@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
 
-import { LogoutIcon, UserIcon } from "@/components/01-atoms";
+import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
 import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
 
 import { hasRole } from "../../lib/service/hasRole";
@@ -90,7 +90,7 @@ export const DropdownProfile = ({
             opacity={0.7}
           >
             <Flex gap={4} className={"items-center"}>
-              <Heading size="md">Profile options</Heading>
+              <Heading size="md">Options</Heading>
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <CloseIcon onClick={onClose} />
@@ -125,7 +125,7 @@ export const DropdownProfile = ({
                   push("/admin");
                 }}
               >
-                {/*<adminIcon className="w-6 h-6 text-[#F5FFFF80]" />*/}
+                <AdminIcon className="w-6 h-6 text-[#F5FFFF80]" />
                 <Flex gap={2} alignItems={"center"}>
                   <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight ">
                     Admin
