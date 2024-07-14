@@ -29,8 +29,6 @@ export async function checkedOutVillagers(
       args: [villagerAddress],
     });
 
-    if (response === typeof Boolean) return Error("Response should be boolean");
-
     return response as boolean;
   } catch (error) {
     return Error("Error when reading the contract");

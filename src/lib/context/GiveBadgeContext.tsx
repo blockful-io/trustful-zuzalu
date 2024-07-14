@@ -12,8 +12,8 @@ import { useAccount } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
 import { useNotify } from "@/hooks";
-import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
-import { hasRole } from "@/lib/service";
+import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
+import { hasRole, getAllAttestationTitles } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
 
 interface GiveBadgeContextProps {
@@ -90,20 +90,36 @@ export const GiveBadgeContextProvider = ({
       return;
     }
 
-    const filteredBadges: string[] = [];
-    const promises = ZUVILLAGE_BADGE_TITLES.map(async (badge) => {
-      const allowedRoles = badge.allowedRole;
-      // There is attestations that can be emitted by more than one role
-      for (let i = 0; i < allowedRoles.length; i++) {
-        // Check if connected account has the role to give the badge
-        if (await hasRole(badge.allowedRole[i] as `0x${string}`, address)) {
-          filteredBadges.push(badge.title);
-          break;
-        }
-      }
-    });
+    const filteredBadges: string[] | Error = await getAllAttestationTitles();
 
-    await Promise.all(promises);
+    if (filteredBadges instanceof Error || !filteredBadges) {
+      notifyError({
+        title: "Error Read Contract",
+        message: "Error while reading badge titles from the blockchain.",
+      });
+      return;
+    }
+
+    if (
+      await hasRole(
+        ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.allowedRole[0] as `0x${string}`,
+        address,
+      )
+    ) {
+      filteredBadges.push("Manager");
+    }
+
+    if (
+      await hasRole(
+        ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.allowedRole[0] as `0x${string}`,
+        address,
+      )
+    ) {
+      filteredBadges.push("Check-in");
+      filteredBadges.push("Check-out");
+    }
+
+    await Promise.all(filteredBadges);
     setInputBadgeTitleList(filteredBadges.sort());
   };
 
