@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     url: "https://github.com/blockful-io/trustful-zuzalu",
   },
   icons: "favicon.ico",
-  manifest: "site.webmanifest",
 };
 
 export default function RootLayout({
