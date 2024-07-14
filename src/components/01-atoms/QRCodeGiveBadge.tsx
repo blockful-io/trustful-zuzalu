@@ -17,7 +17,6 @@ export const QRCodeGiveBadge = () => {
     }
   }
   const linkToGiveBadgeAddress = `${prefixToGiveBadge}?address=${address}`;
-  console.log("linkToGiveBadgeAddress", linkToGiveBadgeAddress);
 
   return (
     <Canvas

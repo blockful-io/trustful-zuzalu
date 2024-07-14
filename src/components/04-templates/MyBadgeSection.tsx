@@ -77,15 +77,14 @@ export const MyBadgeSection: React.FC = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const responseAttestBadges: Attestation[] = await handleQuery(false, null, null);
+    const responseAttestBadges: Attestation[] = await handleQuery(
+      false,
+      null,
+      null,
+    );
     if (responseAttestBadges) {
-      console.log("responseAttestBadges",responseAttestBadges);
-      // Mapa de refUIDs para status
       const decodedData: BadgeData[] = responseAttestBadges
-        .filter(
-          (attestation: Attestation) => 
-            attestation.decodedDataJson
-        )
+        .filter((attestation: Attestation) => attestation.decodedDataJson)
         .map(async (attestation: Attestation) => {
           const parsedJson = JSON.parse(attestation.decodedDataJson);
           let title = parsedJson.find((item: any) => item.name === "title")
@@ -93,7 +92,7 @@ export const MyBadgeSection: React.FC = () => {
           if (!title) {
             title = parsedJson.find((item: any) => item.name === "status")
               ?.value.value;
-            
+
             if (!title) {
               title = parsedJson.find((item: any) => item.name === "role")
                 ?.value.value;
@@ -103,33 +102,43 @@ export const MyBadgeSection: React.FC = () => {
             (item: any) => item.name === "comment",
           )?.value.value;
           let badgeStatus = BadgeStatus.PENDING;
-          let responseId = null
-          const responseAttestResponse: Attestation[] = await handleQuery(true, attestation.attester, attestation.id);
+          let responseId = null;
+          const responseAttestResponse: Attestation[] = await handleQuery(
+            true,
+            attestation.attester,
+            attestation.id,
+          );
           if (responseAttestResponse.length > 0) {
-            console.log("responseAttestResponse",responseAttestResponse);
-            const lastItem = responseAttestResponse.reduce((oldest, item) => {
-              return item.timeCreated < oldest.timeCreated ? item : oldest;
-            }, responseAttestResponse[0]);
-            console.log("lastItem",lastItem);
-
+            responseAttestResponse.sort(
+              (a, b) => b.timeCreated - a.timeCreated,
+            );
+            const lastItem = responseAttestResponse[0];
             const parsedJson = JSON.parse(lastItem.decodedDataJson);
             const status = parsedJson.find(
               (item: any) => item.name === "status",
             )?.value.value;
-            const revoked = attestation.revoked;
+            const revoked = lastItem.revoked;
             responseId = lastItem.id;
             if (!revoked && !status) {
               badgeStatus = BadgeStatus.REJECTED;
             } else if (!revoked && status) {
               badgeStatus = BadgeStatus.CONFIRMED;
+            } else {
+              badgeStatus = BadgeStatus.PENDING;
             }
-          }else if(attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
-            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid && !attestation.revoked ){
-              badgeStatus = BadgeStatus.CONFIRMED;  
-          } else if(attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid && attestation.revoked ){
-            badgeStatus = BadgeStatus.REJECTED;  
+          } else if (
+            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
+            (attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
+              !attestation.revoked)
+          ) {
+            badgeStatus = BadgeStatus.CONFIRMED;
+          } else if (
+            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
+            attestation.revoked
+          ) {
+            badgeStatus = BadgeStatus.REJECTED;
           }
-    
+
           return {
             id: attestation.id,
             title,
@@ -141,19 +150,20 @@ export const MyBadgeSection: React.FC = () => {
             schema: attestation.schema,
             status: badgeStatus,
             revoked: attestation.revoked,
-            responseId: responseId
+            responseId: responseId,
           };
-        }
-      );
+        });
 
-     
       setBadgeData(await Promise.all(decodedData));
     }
     setLoading(false);
   };
-  
 
-  const handleQuery = async (isAttestResponse : boolean, recipient : string | null, attestation: string | null) => {
+  const handleQuery = async (
+    isAttestResponse: boolean,
+    recipient: string | null,
+    attestation: string | null,
+  ) => {
     let queryVariables = {};
     queryVariables = {
       where: {
@@ -181,16 +191,16 @@ export const MyBadgeSection: React.FC = () => {
             recipient: {
               equals: address,
             },
-           
           },
         ],
       },
-      orderBy: {
-        timeCreated: "desc",
-      },
+      orderBy: [
+        {
+          timeCreated: "desc",
+        },
+      ],
     };
-    if(isAttestResponse){
-
+    if (isAttestResponse) {
       queryVariables = {
         where: {
           schemaId: {
@@ -200,15 +210,16 @@ export const MyBadgeSection: React.FC = () => {
             equals: recipient,
           },
           refUID: {
-            equals: attestation
-          }
+            equals: attestation,
+          },
         },
-        orderBy: {
-          timeCreated: "desc",
-        },
+        orderBy: [
+          {
+            timeCreated: "desc",
+          },
+        ],
       };
     }
-
 
     try {
       const { response } = await fetchEASData(BADGE_QUERY, queryVariables);
