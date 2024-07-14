@@ -15,6 +15,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -31,15 +32,18 @@ import {
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
+import { WalletContext } from "@/lib/context/WalletContext";
 import { getEllipsedAddress } from "@/utils/formatters";
 
 import {
   submitAttest,
   type AttestationRequestData,
 } from "../../lib/service/attest";
-import { color } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { WalletContext } from "@/lib/context/WalletContext";
+
+import {
+  revoke,
+  type RevocationRequestData,
+} from "../../lib/service/revoke";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -64,16 +68,16 @@ export const BadgeDetailsSection = () => {
   const [loadingDeny, setLoadingDeny] = useState<boolean>(false);
   const [confirmed, setConfirmed] = useState<boolean | null>(null);
 
-  // Submit attestation
-  const handleAttest = async (isConfirm: boolean) => {
+  const canProcessAttestation = () => {
     if (!selectedBadge) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
       notifyError({
-        title: "No selected badges",
-        message: "No badges found for this account.",
+        title: "No badge selected",
+        message: "Please select a badge.",
       });
-      return;
+      
+      return false;
     }
 
     if (!address) {
@@ -83,27 +87,15 @@ export const BadgeDetailsSection = () => {
         title: "No account connected",
         message: "Please connect your wallet.",
       });
-      return;
+      return false;
     }
-    const data = encodeAbiParameters(
-      parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
-      [isConfirm],
-    );
-    const attestationRequestData: AttestationRequestData = {
-      recipient: selectedBadge.attester as `0x${string}`,
-      expirationTime: BigInt(0),
-      revocable: true,
-      refUID: selectedBadge.id as `0x${string}`,
-      data: data,
-      value: BigInt(0),
-    };
+    return true;
+  };
 
-    const response = await submitAttest(
-      address,
-      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-      attestationRequestData,
-    );
-
+  const processAttestationResponse = async (
+    response: any,
+    isConfirm?: boolean
+  ) => {
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -113,7 +105,7 @@ export const BadgeDetailsSection = () => {
       });
       return;
     }
-
+  
     if (response.status !== "success") {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -123,10 +115,12 @@ export const BadgeDetailsSection = () => {
       });
       return;
     }
-
-    // Set confirmed to true on successful response
-    setConfirmed(isConfirm);
-
+    
+    if(isConfirm !== undefined) {
+      // Set confirmed to true on successful response
+      setConfirmed(isConfirm);
+    }
+  
     // TODO: Move to useNotify to create a notifySuccessWithLink function
     toast({
       position: "top-right",
@@ -160,11 +154,51 @@ export const BadgeDetailsSection = () => {
         </Box>
       ),
     });
-
+  
     setLoadingConfirm(false);
     setLoadingDeny(false);
     return;
   };
+  
+  // Submit attestation
+  const handleAttest = async (isConfirm: boolean) => {
+    if (!canProcessAttestation()) return;
+
+    const data = encodeAbiParameters(
+      parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
+      [isConfirm],
+    );
+    const attestationRequestData: AttestationRequestData = {
+      recipient: selectedBadge?.attester as `0x${string}`,
+      expirationTime: BigInt(0),
+      revocable: true,
+      refUID: selectedBadge?.id as `0x${string}`,
+      data: data,
+      value: BigInt(0),
+    };
+    
+    const response = await submitAttest(
+      address as `0x${string}`,
+      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+      attestationRequestData,
+    );
+
+    processAttestationResponse (response, isConfirm);
+  };
+
+   // Submit revoke
+   const handleRevoke = async () => {
+    if (!canProcessAttestation()) return;
+    const response = await revoke(
+      address as `0x${string}`,
+      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+      selectedBadge?.responseId as `0x${string}`,
+      0n 
+    );
+    console.log("response", response);
+    processAttestationResponse (response);
+  };
+
   const badgeStatus =
     confirmed === null && selectedBadge && selectedBadge.status === null
       ? BadgeStatus.PENDING
@@ -191,8 +225,12 @@ export const BadgeDetailsSection = () => {
             gap={6}
           >
             <Flex gap={4} className="w-full h-full items-top">
-              <Flex py="10px">
-                <HeartIcon className="w-6 h-6 opacity-50 text-slate-50" />
+              <Flex
+                className="flex items-center justify-center"
+                py="6px"
+                px={"20px"}
+              >
+                <HeartIcon className="w-8 h-8 opacity-50 text-slate-50" />
               </Flex>
               <Flex flexDirection={"column"} className="w-full">
                 <Box>
@@ -217,7 +255,11 @@ export const BadgeDetailsSection = () => {
               <Flex flexDirection={"column"} className="w-full items-center">
                 <Flex className="w-full flex-row p-4" gap={4}>
                   <Avatar />
-                  <Flex flexDirection={"column"} gap={2} justifyContent={"center"}>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={2}
+                    justifyContent={"center"}
+                  >
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Issued by
                     </Text>
@@ -231,7 +273,11 @@ export const BadgeDetailsSection = () => {
                 <Divider className="border-slate-50 opacity-10 w-full" />
                 <Flex className="w-full flex-row p-4" gap={4}>
                   <Avatar />
-                  <Flex flexDirection={"column"}  gap={2} justifyContent={"center"}>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={2}
+                    justifyContent={"center"}
+                  >
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Receiver
                     </Text>
@@ -319,7 +365,7 @@ export const BadgeDetailsSection = () => {
             </Card>
             {selectedBadge.schema.id !==
               ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid &&
-              selectedBadge.status !== BadgeStatus.PENDING && (
+              badgeStatus !== BadgeStatus.PENDING && (
                 <Button
                   className="w-full flex justify-center items-center bg-[#2d2525] gap-2 px-6 text-[#DB4C40] rounded-lg"
                   _hover={{ color: "#fff", bg: "#DB4C40" }}
@@ -329,7 +375,7 @@ export const BadgeDetailsSection = () => {
                   spinner={<BeatLoader size={8} color="white" />}
                   onClick={() => {
                     setLoadingDeny(true);
-                    handleAttest(false);
+                    handleRevoke();
                   }}
                 >
                   <CloseIcon className="w-[14px] h-[14px]" />

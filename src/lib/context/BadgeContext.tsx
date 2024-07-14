@@ -28,6 +28,7 @@ interface Badge {
   txid: string;
   schema: Schema;
   revoked: boolean;
+  responseId?: string;
 }
 
 interface BadgeContextType {
