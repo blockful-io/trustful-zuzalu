@@ -213,30 +213,32 @@ export const BadgeDetailsSection = () => {
             </Flex>
           </Flex>
         </Card>
-        <Card
-          background={"#F5FFFF0D"}
-          className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
-        >
-          <Flex flexDirection={"column"} gap={2} p={4}>
-            <Text className="flex text-slate-50 text-sm font-medium leading-none">
-              Comment
-            </Text>
-            <Textarea
-              color="white"
-              className="px-0 opacity-70 disabled text-slate-50 text-sm font-normal border-none leading-tight"
-              readOnly={true}
-              _readOnly={{
-                opacity: 0.7,
-                cursor: "not-allowed",
-              }}
-              disabled={true}
-              value={selectedBadge.comment}
-              rows={selectedBadge.comment.length > 50 ? 3 : 1}
-              minH="unset"
-              resize="none"
-            ></Textarea>
-          </Flex>
-        </Card>
+        {selectedBadge.comment && (
+          <Card
+            background={"#F5FFFF0D"}
+            className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
+          >
+            <Flex flexDirection={"column"} gap={2} p={4}>
+              <Text className="flex text-slate-50 text-sm font-medium leading-none">
+                Comment
+              </Text>
+              <Textarea
+                color="white"
+                className="px-0 opacity-70 disabled text-slate-50 text-sm font-normal border-none leading-tight"
+                readOnly={true}
+                _readOnly={{
+                  opacity: 0.7,
+                  cursor: "not-allowed",
+                }}
+                disabled={true}
+                value={selectedBadge.comment}
+                rows={selectedBadge.comment.length > 50 ? 3 : 1}
+                minH="unset"
+                resize="none"
+              ></Textarea>
+            </Flex>
+          </Card>
+        )}
         <Card
           background={"#F5FFFF0D"}
           className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
