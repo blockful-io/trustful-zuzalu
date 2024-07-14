@@ -3,7 +3,7 @@ import { readContract } from "viem/actions";
 import { RESOLVER_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
-export async function getAllAttestationTitles(): Promise<boolean | Error> {
+export async function getAllAttestationTitles(): Promise<string[] | Error> {
   const data = {
     abi: [
       {
@@ -24,9 +24,7 @@ export async function getAllAttestationTitles(): Promise<boolean | Error> {
       args: [],
     });
 
-    if (response === typeof Boolean) return Error("Response should be boolean");
-
-    return response as boolean;
+    return response as string[];
   } catch (error) {
     return Error("Error when reading the contract");
   }

@@ -30,8 +30,6 @@ export async function hasRole(
       args: [role, account],
     });
 
-    if (response === typeof Boolean) return Error("Response should be boolean");
-
     return response as boolean;
   } catch (error) {
     return Error("Error when reading the contract");
