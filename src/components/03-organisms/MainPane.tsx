@@ -121,7 +121,6 @@ export const MainPane: FC = () => {
                             color: "#161617",
                             padding: "13px 28px 13px 28px",
                             borderRadius: "12px",
-                            fontFamily: "Onest",
                             lineHeight: "normal",
                             fontStyle: "normal",
                           }}
