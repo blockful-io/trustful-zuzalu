@@ -28,15 +28,14 @@ import {
   BadgeDetailsNavigation,
   CommentIcon,
   TheHeader,
-  QrCodeIcon,
   UserIcon,
   HandHeartIcon,
   TheFooterNavbar,
   ArrowIcon,
   ArrowIconVariant,
+  CopyToClipboardButton,
 } from "@/components/01-atoms";
-import { QRCode } from "@/components/03-organisms";
-import { useNotify, useWindowSize } from "@/hooks";
+import { useNotify } from "@/hooks";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
@@ -54,11 +53,6 @@ import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-export enum GiveBadgeAction {
-  ADDRESS = "ADDRESS",
-  QR_CODE = "QR_CODE",
-}
-
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
   INSERT_BADGE_AND_COMMENT = "INSERT_BADGE_AND_COMMENT",
@@ -66,15 +60,11 @@ export enum GiveBadgeStepAddress {
 }
 
 export const GiveBadgeSection = () => {
-  const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
   const {
-    setQRCodeisOpen,
-    action,
-    handleActionChange,
     addressStep,
     setAddressStep,
     badgeInputAddress,
@@ -102,7 +92,6 @@ export const GiveBadgeSection = () => {
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
-      handleActionChange(GiveBadgeAction.ADDRESS);
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
     };
@@ -348,303 +337,294 @@ export const GiveBadgeSection = () => {
     return;
   };
 
-  const renderStepContent = (action: GiveBadgeAction) => {
-    switch (action) {
-      case GiveBadgeAction.ADDRESS:
-        switch (addressStep) {
-          case GiveBadgeStepAddress.INSERT_ADDRESS:
-            return (
-              <>
-                {villagerAttestationCount !== null ? (
-                  <>
-                    <TheHeader />
-                    <Box
-                      as="main"
-                      className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
-                      gap={8}
-                    >
-                      <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                        Let&apos;s give a badge to someone
-                      </Text>
-                      <Flex className="w-full flex-col">
-                        <Flex className="gap-4 pb-4 justify-start items-center">
-                          <UserIcon className="text-[#B1EF42]" />
-                          <Input
-                            className="text-slate-50 text-base font-normal leading-snug border-none"
-                            placeholder="Insert address or ENS"
-                            _placeholder={{
-                              className: "text-slate-50 opacity-30",
-                            }}
-                            focusBorderColor={"#F5FFFF1A"}
-                            value={inputAddress}
-                            onChange={(e) => setInputAddress(e.target.value)}
-                          />
-                          <QrCodeIcon
-                            className="text-[#B1EF42]"
-                            onClick={() => {
-                              setQRCodeisOpen(true);
-                              handleActionChange(GiveBadgeAction.QR_CODE);
-                            }}
-                          />
-                        </Flex>
-                        <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                      </Flex>
-                      <Flex
-                        gap={4}
-                        color="white"
-                        className="w-full justify-between items-center"
-                      >
-                        <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
-                          Continue
-                        </Text>
-                        <button
-                          className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                          onClick={() => handleInputAddressChange()}
-                        >
-                          <ArrowIcon
-                            variant={ArrowIconVariant.RIGHT}
-                            props={{ className: iconColor }}
-                          />
-                        </button>
-                      </Flex>
-                      <TheFooterNavbar />
-                    </Box>
-                  </>
-                ) : (
-                  <Box flex={1} className="flex justify-center items-center">
-                    <BeatLoader size={8} color="#B1EF42" />
-                  </Box>
-                )}
-              </>
-            );
-          case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
-            return (
+  const renderStepContent = (addressStep: GiveBadgeStepAddress) => {
+    switch (addressStep) {
+      case GiveBadgeStepAddress.INSERT_ADDRESS:
+        return (
+          <>
+            {villagerAttestationCount !== null ? (
               <>
                 <TheHeader />
-                <BadgeDetailsNavigation />
                 <Box
-                  flex={1}
                   as="main"
-                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
-                  gap={4}
-                >
-                  <Card
-                    background={"#F5FFFF0D"}
-                    className="w-full border border-[#F5FFFF14] border-opacity-[8]"
-                  >
-                    <Flex
-                      flexDirection={"column"}
-                      className="w-full items-center"
-                    >
-                      <Flex className="w-full flex-row p-4" gap={4}>
-                        <Avatar />
-                        <Flex
-                          flexDirection={"column"}
-                          gap={2}
-                          justifyContent={"center"}
-                        >
-                          <Text className="text-slate-50 text-sm font-medium leading-none">
-                            Issued by
-                          </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                            {getEllipsedAddress(address)}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                      <Divider className="border-slate-50 opacity-10 w-full" />
-                      <Flex className="w-full flex-row p-4" gap={4}>
-                        <Avatar />
-                        <Flex
-                          flexDirection={"column"}
-                          gap={2}
-                          justifyContent={"center"}
-                        >
-                          <Text className="text-slate-50 text-sm font-medium leading-none">
-                            Receiver
-                          </Text>
-                          <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                            {getEllipsedAddress(badgeInputAddress?.address)}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                  </Card>
-                  {inputBadgeTitleList && inputBadgeTitleList.length > 0 && (
-                    <>
-                      <Card
-                        background={"#F5FFFF0D"}
-                        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
-                      >
-                        <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
-                          Select a Badge
-                        </Text>
-                        <Select
-                          placeholder="Select option"
-                          className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-                          color="white"
-                          onChange={handleBadgeSelectChange}
-                        >
-                          {inputBadgeTitleList?.map((title, index) => (
-                            <option key={index} value={title}>
-                              {title}
-                            </option>
-                          ))}
-                        </Select>
-                      </Card>
-                    </>
-                  )}
-                  {inputBadge?.allowComment && (
-                    <Flex className="w-full mt-2 flex-col">
-                      <Flex className="gap-4 pb-4 justify-start items-center">
-                        <CommentIcon />
-                        <Textarea
-                          className="text-slate-50 text-base font-normal leading-snug border-none"
-                          placeholder="Share your experience!"
-                          _placeholder={{
-                            className: "text-slate-50 opacity-30",
-                          }}
-                          focusBorderColor={"#F5FFFF1A"}
-                          value={text}
-                          onChange={handleTextareaChange}
-                          rows={1}
-                          minH="unset"
-                          resize="none"
-                        />
-                      </Flex>
-                      <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    </Flex>
-                  )}
-                  {badgeInputAddress &&
-                    inputBadge &&
-                    inputBadge.title === "Check-out" && (
-                      <Box>
-                        <Flex className="p-4 gap-4 items-center">
-                          <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                            &#x26A0;WARNING&#x26A0;
-                            <br />
-                            {`This action is irreversible. You are checking out in the name of ` +
-                              badgeInputAddress.getEllipsedAddress() +
-                              `. Make sure that this is the correct address. That you have their consent. Or that the event has ended.`}
-                          </Text>
-                        </Flex>
-                      </Box>
-                    )}
-                </Box>
-                <Box className="px-6 py-4 sm:px-[60px] w-full">
-                  <Button
-                    className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
-                    _hover={{ bg: "#B1EF42" }}
-                    _active={{ bg: "#B1EF42" }}
-                    isLoading={loading}
-                    spinner={<BeatLoader size={8} color="white" />}
-                    onClick={() => {
-                      setLoading(true);
-                      handleAttest();
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Box>
-              </>
-            );
-          case GiveBadgeStepAddress.CONFIRMATION:
-            return (
-              <>
-                <TheHeader />
-                <BadgeDetailsNavigation isFeedback={true} />
-                <Box
-                  flex={1}
-                  as="main"
-                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
+                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
                   gap={8}
                 >
-                  <Flex className="flex justify-center items-center px-1 py-1.5 bg-slate-50 bg-opacity-5 rounded-[100px] w-[100px] h-[100px]">
-                    <HandHeartIcon className="z-10 text-[#B1EF42]" />
+                  <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                    Let&apos;s give a badge to someone
+                  </Text>
+                  <Flex className="w-full flex-col">
+                    <Flex className="gap-4 pb-4 justify-start items-center">
+                      <UserIcon className="text-[#B1EF42]" />
+                      <Input
+                        className="text-slate-50 text-base font-normal leading-snug border-none"
+                        placeholder="Insert address or ENS"
+                        _placeholder={{
+                          className: "text-slate-50 opacity-30",
+                        }}
+                        focusBorderColor={"#F5FFFF1A"}
+                        value={inputAddress}
+                        onChange={(e) => setInputAddress(e.target.value)}
+                      />
+                      <Flex className="w-8" color="white">
+                        <CopyToClipboardButton
+                          isUserAddress={false}
+                          label={inputAddress}
+                        />
+                      </Flex>
+                    </Flex>
+                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                   </Flex>
-                  <Flex>
-                    <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                      Badge has been given successfully!
+                  <Flex
+                    gap={4}
+                    color="white"
+                    className="w-full justify-between items-center"
+                  >
+                    <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
+                      Continue
                     </Text>
+                    <button
+                      className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
+                      onClick={() => handleInputAddressChange()}
+                    >
+                      <ArrowIcon
+                        variant={ArrowIconVariant.RIGHT}
+                        props={{ className: iconColor }}
+                      />
+                    </button>
                   </Flex>
-                  <Flex className="flex-col">
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        Receiver
-                      </Text>
-                      <Flex gap={2}>
-                        <Text
-                          color="white"
-                          className="pl-4 text-slate-50 text-sm font-normal leading-tight"
-                        >
-                          {badgeInputAddress?.getEllipsedAddress()}
-                        </Text>
-                      </Flex>
-                    </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    <Flex className="py-4 gap-4 items-center">
-                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        Badge
-                      </Text>
-                      <Flex gap={2} className="w-full">
-                        {inputBadge && (
-                          <Textarea
-                            color="white"
-                            className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
-                            readOnly={true}
-                            _readOnly={{
-                              opacity: 1,
-                              cursor: "not-allowed",
-                            }}
-                            disabled={true}
-                            value={inputBadge?.title}
-                            rows={inputBadge?.title.length > 50 ? 3 : 1}
-                            minH="unset"
-                            resize="none"
-                          ></Textarea>
-                        )}
-                      </Flex>
-                    </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    {commentBadge && (
-                      <Flex className="py-4 gap-4 items-center">
-                        <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                          Comment
-                        </Text>
-                        <Flex gap={2} className="w-full">
-                          <Textarea
-                            color="white"
-                            className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
-                            readOnly={true}
-                            _readOnly={{
-                              opacity: 1,
-                              cursor: "not-allowed",
-                            }}
-                            disabled={true}
-                            value={commentBadge}
-                            rows={commentBadge.length > 50 ? 3 : 1}
-                            minH="unset"
-                            resize="none"
-                          ></Textarea>
-                        </Flex>
-                      </Flex>
-                    )}
-                    {commentBadge && (
-                      <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                    )}
-                  </Flex>
+                  <TheFooterNavbar />
                 </Box>
               </>
-            );
-        }
-      case GiveBadgeAction.QR_CODE:
-        return isMobile && <QRCode />;
+            ) : (
+              <Box flex={1} className="flex justify-center items-center">
+                <BeatLoader size={8} color="#B1EF42" />
+              </Box>
+            )}
+          </>
+        );
+      case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
+        return (
+          <>
+            <TheHeader />
+            <BadgeDetailsNavigation />
+            <Box
+              flex={1}
+              as="main"
+              className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
+              gap={4}
+            >
+              <Card
+                background={"#F5FFFF0D"}
+                className="w-full border border-[#F5FFFF14] border-opacity-[8]"
+              >
+                <Flex flexDirection={"column"} className="w-full items-center">
+                  <Flex className="w-full flex-row p-4" gap={4}>
+                    <Avatar />
+                    <Flex
+                      flexDirection={"column"}
+                      gap={2}
+                      justifyContent={"center"}
+                    >
+                      <Text className="text-slate-50 text-sm font-medium leading-none">
+                        Issued by
+                      </Text>
+                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                        {getEllipsedAddress(address)}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Divider className="border-slate-50 opacity-10 w-full" />
+                  <Flex className="w-full flex-row p-4" gap={4}>
+                    <Avatar />
+                    <Flex
+                      flexDirection={"column"}
+                      gap={2}
+                      justifyContent={"center"}
+                    >
+                      <Text className="text-slate-50 text-sm font-medium leading-none">
+                        Receiver
+                      </Text>
+                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                        {getEllipsedAddress(badgeInputAddress?.address)}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Card>
+              {inputBadgeTitleList && inputBadgeTitleList.length > 0 && (
+                <>
+                  <Card
+                    background={"#F5FFFF0D"}
+                    className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+                  >
+                    <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
+                      Select a Badge
+                    </Text>
+                    <Select
+                      placeholder="Select option"
+                      className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                      color="white"
+                      onChange={handleBadgeSelectChange}
+                    >
+                      {inputBadgeTitleList?.map((title, index) => (
+                        <option key={index} value={title}>
+                          {title}
+                        </option>
+                      ))}
+                    </Select>
+                  </Card>
+                </>
+              )}
+              {inputBadge?.allowComment && (
+                <Flex className="w-full mt-2 flex-col">
+                  <Flex className="gap-4 pb-4 justify-start items-center">
+                    <CommentIcon />
+                    <Textarea
+                      className="text-slate-50 text-base font-normal leading-snug border-none"
+                      placeholder="Share your experience!"
+                      _placeholder={{
+                        className: "text-slate-50 opacity-30",
+                      }}
+                      focusBorderColor={"#F5FFFF1A"}
+                      value={text}
+                      onChange={handleTextareaChange}
+                      rows={1}
+                      minH="unset"
+                      resize="none"
+                    />
+                  </Flex>
+                  <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                </Flex>
+              )}
+              {badgeInputAddress &&
+                inputBadge &&
+                inputBadge.title === "Check-out" && (
+                  <Box>
+                    <Flex className="p-4 gap-4 items-center">
+                      <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                        &#x26A0;WARNING&#x26A0;
+                        <br />
+                        {`This action is irreversible. You are checking out in the name of ` +
+                          badgeInputAddress.getEllipsedAddress() +
+                          `. Make sure that this is the correct address. That you have their consent. Or that the event has ended.`}
+                      </Text>
+                    </Flex>
+                  </Box>
+                )}
+            </Box>
+            <Box className="px-6 py-4 sm:px-[60px] w-full">
+              <Button
+                className="w-full px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
+                _hover={{ bg: "#B1EF42" }}
+                _active={{ bg: "#B1EF42" }}
+                isLoading={loading}
+                spinner={<BeatLoader size={8} color="white" />}
+                onClick={() => {
+                  setLoading(true);
+                  handleAttest();
+                }}
+              >
+                Confirm
+              </Button>
+            </Box>
+          </>
+        );
+      case GiveBadgeStepAddress.CONFIRMATION:
+        return (
+          <>
+            <TheHeader />
+            <BadgeDetailsNavigation isFeedback={true} />
+            <Box
+              flex={1}
+              as="main"
+              className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col"
+              gap={8}
+            >
+              <Flex className="flex justify-center items-center px-1 py-1.5 bg-slate-50 bg-opacity-5 rounded-[100px] w-[100px] h-[100px]">
+                <HandHeartIcon className="z-10 text-[#B1EF42]" />
+              </Flex>
+              <Flex>
+                <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                  Badge has been given successfully!
+                </Text>
+              </Flex>
+              <Flex className="flex-col">
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                <Flex className="py-4 gap-4 items-center">
+                  <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    Receiver
+                  </Text>
+                  <Flex gap={2}>
+                    <Text
+                      color="white"
+                      className="pl-4 text-slate-50 text-sm font-normal leading-tight"
+                    >
+                      {badgeInputAddress?.getEllipsedAddress()}
+                    </Text>
+                  </Flex>
+                </Flex>
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                <Flex className="py-4 gap-4 items-center">
+                  <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    Badge
+                  </Text>
+                  <Flex gap={2} className="w-full">
+                    {inputBadge && (
+                      <Textarea
+                        color="white"
+                        className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                        readOnly={true}
+                        _readOnly={{
+                          opacity: 1,
+                          cursor: "not-allowed",
+                        }}
+                        disabled={true}
+                        value={inputBadge?.title}
+                        rows={inputBadge?.title.length > 50 ? 3 : 1}
+                        minH="unset"
+                        resize="none"
+                      ></Textarea>
+                    )}
+                  </Flex>
+                </Flex>
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                {commentBadge && (
+                  <Flex className="py-4 gap-4 items-center">
+                    <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                      Comment
+                    </Text>
+                    <Flex gap={2} className="w-full">
+                      <Textarea
+                        color="white"
+                        className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                        readOnly={true}
+                        _readOnly={{
+                          opacity: 1,
+                          cursor: "not-allowed",
+                        }}
+                        disabled={true}
+                        value={commentBadge}
+                        rows={commentBadge.length > 50 ? 3 : 1}
+                        minH="unset"
+                        resize="none"
+                      ></Textarea>
+                    </Flex>
+                  </Flex>
+                )}
+                {commentBadge && (
+                  <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                )}
+              </Flex>
+            </Box>
+          </>
+        );
     }
   };
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
-      {renderStepContent(action)}
+      {renderStepContent(addressStep)}
     </Flex>
   );
 };

@@ -29,7 +29,6 @@ export * from "./CopyToClipboardButton";
 export * from "./CreatedByBlockful";
 export * from "./DropdownProfile";
 export * from "./QRCodeGiveBadge";
-export * from "./QRCodeScanner";
 export * from "./SignMessage";
 export * from "./TheFooterNavbar";
 export * from "./TheHeader";
