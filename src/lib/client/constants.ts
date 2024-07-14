@@ -1,7 +1,7 @@
 export const EAS_CONTRACT_OP = "0x4200000000000000000000000000000000000021";
 
 export const RESOLVER_CONTRACT_OP =
-  "0x4c385Bf95BbcF34fbDf3320b363a4eb0799886Cc";
+  "0xBe349aF283e825F6cC745E7FeaD142A303c73be4";
 
 export enum ROLES {
   ROOT = "0x79e553c6f53701daa99614646285e66adb98ff0fcc1ef165dd2718e5c873bee6",
@@ -18,25 +18,25 @@ export interface Schemas {
 
 export const ZUVILLAGE_SCHEMAS: { [key: string]: Schemas } = {
   ATTEST_MANAGER: {
-    uid: "0x7e84e2b90ff7e288a3ba134d64c35c3d093624ccff1d84a4a60a556c19fb27da",
+    uid: "0xdb021bf65b4dae52e9deeab8c9519ae9df249d034e6984049928207e40286939",
     data: "string role",
     revocable: true,
     allowedRole: [ROLES.ROOT],
   },
   ATTEST_VILLAGER: {
-    uid: "0x2b85bd1271fc0ca2c23f162bd7726688a4cc1f8ef57bbe2b8c4b24c2d6c3f1ee",
+    uid: "0xdf29a0c50ec254fc9c269a2ef9a8fbfea29ee2c7ecb1134ff5c7ced646242ab8",
     data: "string status",
     revocable: false,
     allowedRole: [ROLES.MANAGER],
   },
   ATTEST_EVENT: {
-    uid: "0xce1a0c6a7e3412f5cb2c36a8148510944131aada27d9cf98b789f4fd42cf1bee",
+    uid: "0x8db2e00b253e51ab7ec3ab076b901ef969d6fe12c0a0e2f728e514bf0bdef63b",
     data: "string title,string comment",
     revocable: false,
     allowedRole: [ROLES.VILLAGER],
   },
   ATTEST_RESPONSE: {
-    uid: "0x121dafbe9211e471f0d73e35f489e7e936f451ce858e7f74ea0fe48c9b702fdb",
+    uid: "0x77a37bb52f592a325728585536c98ed25f5e290a316b1bb76e9f639f7011afc2",
     data: "bool status",
     revocable: true,
     allowedRole: [ROLES.VILLAGER],
