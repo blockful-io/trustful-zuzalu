@@ -19,7 +19,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -44,6 +44,7 @@ import {
   type BadgeTitle,
 } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
+import { WalletContext } from "@/lib/context/WalletContext";
 import {
   submitAttest,
   type AttestationRequestData,
@@ -68,6 +69,7 @@ export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const toast = useToast();
+  const { push } = useRouter();
   const { notifyError } = useNotify();
   const {
     setQRCodeisOpen,
@@ -79,6 +81,17 @@ export const GiveBadgeSection = () => {
     setBadgeInputAddress,
     inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
+  const { villagerAttestationCount } = useContext(WalletContext);
+
+  useEffect(() => {
+    if (villagerAttestationCount === 0) {
+      notifyError({
+        title: "You have not checked in",
+        message: "Please check-in first.",
+      });
+      push("/pre-checkin");
+    }
+  }, [villagerAttestationCount]);
 
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
@@ -91,7 +104,7 @@ export const GiveBadgeSection = () => {
 
   const param = useParams();
 
-  if (param.slug[0] === "my-badge") {
+  if (param.slug[0] === "my-badges") {
     alert("Address is valid");
     setInputAddress(param.slug[1]);
   }
@@ -344,56 +357,66 @@ export const GiveBadgeSection = () => {
           case GiveBadgeStepAddress.INSERT_ADDRESS:
             return (
               <>
-                <TheHeader />
-                <Box
-                  as="main"
-                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
-                  gap={8}
-                >
-                  <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                    Let&apos;s give a badge to someone
-                  </Text>
-                  <Flex className="w-full flex-col">
-                    <Flex className="gap-4 pb-4 justify-start items-center">
-                      <UserIcon className="text-[#B1EF42]" />
-                      <Input
-                        className="text-slate-50 text-base font-normal leading-snug border-none"
-                        placeholder="Insert address or ENS"
-                        _placeholder={{ className: "text-slate-50 opacity-30" }}
-                        focusBorderColor={"#F5FFFF1A"}
-                        value={inputAddress}
-                        onChange={(e) => setInputAddress(e.target.value)}
-                      />
-                      <QrCodeIcon
-                        className="text-[#B1EF42]"
-                        onClick={() => {
-                          setQRCodeisOpen(true);
-                          handleActionChange(GiveBadgeAction.QR_CODE);
-                        }}
-                      />
-                    </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                  </Flex>
-                  <Flex
-                    gap={4}
-                    color="white"
-                    className="w-full justify-between items-center"
-                  >
-                    <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
-                      Continue
-                    </Text>
-                    <button
-                      className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                      onClick={() => handleInputAddressChange()}
+                {villagerAttestationCount !== null ? (
+                  <>
+                    <TheHeader />
+                    <Box
+                      as="main"
+                      className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
+                      gap={8}
                     >
-                      <ArrowIcon
-                        variant={ArrowIconVariant.RIGHT}
-                        props={{ className: iconColor }}
-                      />
-                    </button>
-                  </Flex>
-                  <TheFooterNavbar />
-                </Box>
+                      <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                        Let&apos;s give a badge to someone
+                      </Text>
+                      <Flex className="w-full flex-col">
+                        <Flex className="gap-4 pb-4 justify-start items-center">
+                          <UserIcon className="text-[#B1EF42]" />
+                          <Input
+                            className="text-slate-50 text-base font-normal leading-snug border-none"
+                            placeholder="Insert address or ENS"
+                            _placeholder={{
+                              className: "text-slate-50 opacity-30",
+                            }}
+                            focusBorderColor={"#F5FFFF1A"}
+                            value={inputAddress}
+                            onChange={(e) => setInputAddress(e.target.value)}
+                          />
+                          <QrCodeIcon
+                            className="text-[#B1EF42]"
+                            onClick={() => {
+                              setQRCodeisOpen(true);
+                              handleActionChange(GiveBadgeAction.QR_CODE);
+                            }}
+                          />
+                        </Flex>
+                        <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                      </Flex>
+                      <Flex
+                        gap={4}
+                        color="white"
+                        className="w-full justify-between items-center"
+                      >
+                        <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
+                          Continue
+                        </Text>
+                        <button
+                          className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
+                          onClick={() => handleInputAddressChange()}
+                        >
+                          <ArrowIcon
+                            variant={ArrowIconVariant.RIGHT}
+                            props={{ className: iconColor }}
+                          />
+                        </button>
+                      </Flex>
+                      <TheFooterNavbar />
+                    </Box>
+                  </>
+                ) : (
+                  <Box flex={1} className="flex justify-center items-center">
+                    <BeatLoader size={8} color="#B1EF42" />
+                  </Box>
+                )}
               </>
             );
           case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:

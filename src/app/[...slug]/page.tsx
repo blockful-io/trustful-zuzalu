@@ -21,7 +21,7 @@ export default function renderPage({ params }: { params: { slug: [string] } }) {
       return <CheckoutSection />;
     case "share":
       return <ShareSection />;
-    case "my-badge":
+    case "my-badges":
       return <MyBadgeSection />;
     case "my-badge-details":
       return <BadgeDetailsSection />;

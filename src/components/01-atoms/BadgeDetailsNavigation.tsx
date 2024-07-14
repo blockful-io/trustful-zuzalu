@@ -32,7 +32,7 @@ export const BadgeDetailsNavigation = ({
       <Box
         className="w-full flex items-center p-4"
         onClick={() => {
-          router.push(`my-badge`);
+          router.push(`my-badges`);
         }}
       >
         <Flex className="cursor-pointer p-2 opacity-80" color="white">
