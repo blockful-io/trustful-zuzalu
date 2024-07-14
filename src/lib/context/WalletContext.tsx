@@ -62,8 +62,6 @@ export const WalletContextProvider = ({
   useEffect(() => {
     if (address && villagerAttestationCount === null) {
       handleQuery();
-    } else {
-      push("/");
     }
   }, [address]);
 

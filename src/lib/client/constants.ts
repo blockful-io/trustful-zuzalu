@@ -27,7 +27,7 @@ export const ZUVILLAGE_SCHEMAS: { [key: string]: Schemas } = {
     uid: "0x2b85bd1271fc0ca2c23f162bd7726688a4cc1f8ef57bbe2b8c4b24c2d6c3f1ee",
     data: "string status",
     revocable: false,
-    allowedRole: [ROLES.MANAGER, ROLES.VILLAGER],
+    allowedRole: [ROLES.MANAGER],
   },
   ATTEST_EVENT: {
     uid: "0xce1a0c6a7e3412f5cb2c36a8148510944131aada27d9cf98b789f4fd42cf1bee",
