@@ -49,6 +49,7 @@ import {
   type AttestationRequestData,
   hasRole,
 } from "@/lib/service";
+import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
 
@@ -76,11 +77,11 @@ export const GiveBadgeSection = () => {
     setAddressStep,
     badgeInputAddress,
     setBadgeInputAddress,
+    inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
 
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
-  const [inputBadgeTitleList, setInputBadgeTitleList] = useState<string[]>();
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
@@ -88,21 +89,13 @@ export const GiveBadgeSection = () => {
   const searchParams = useSearchParams();
   const addressShared = searchParams.get("address");
 
-  // Checks if the shared-address is valid and sets it to the inputAddress
-  useEffect(() => {
-    if (addressShared && isAddress(addressShared)) {
-      setInputAddress(addressShared);
-    }
-  }, [addressShared]);
-
   const param = useParams();
-  console.log("param,", param);
 
   if (param.slug[0] === "my-badge") {
     alert("Address is valid");
-    console.log("Address is valid");
     setInputAddress(param.slug[1]);
   }
+
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
     return () => {
@@ -112,18 +105,12 @@ export const GiveBadgeSection = () => {
     };
   }, []);
 
-  // Filters the badges based on the user's role. Single activation
+  // Checks if the shared-address is valid and sets it to the inputAddress
   useEffect(() => {
-    if (address && inputBadgeTitleList === undefined) {
-      const filteredBadges: string[] = [];
-      ZUVILLAGE_BADGE_TITLES.map(async (badge) => {
-        if (await hasRole(badge.allowedRole, address)) {
-          filteredBadges.push(badge.title);
-        }
-      });
-      setInputBadgeTitleList(filteredBadges);
+    if (addressShared && isAddress(addressShared)) {
+      setInputAddress(addressShared);
     }
-  }, [address]);
+  }, [addressShared]);
 
   // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
@@ -227,19 +214,35 @@ export const GiveBadgeSection = () => {
         return;
       }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
-      encodeArgs = ["Check-in"];
-      const isVillager = await hasRole(
-        ROLES.VILLAGER,
-        badgeInputAddress.address,
-      );
-      if (isVillager) {
-        setLoading(false);
-        notifyError({
-          title: "Address already checked-in",
-          message: "Address already have this badge.",
-        });
-        return;
+      if (inputBadge.title === "Check-in") {
+        encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
+        encodeArgs = ["Check-in"];
+        const isVillager = await hasRole(
+          ROLES.VILLAGER,
+          badgeInputAddress.address,
+        );
+        if (isVillager) {
+          setLoading(false);
+          notifyError({
+            title: "Address already checked-in",
+            message: "Address already have this badge.",
+          });
+          return;
+        }
+      } else if (inputBadge.title === "Check-out") {
+        encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
+        encodeArgs = ["Check-out"];
+        const isCheckedOut = await checkedOutVillagers(
+          badgeInputAddress.address,
+        );
+        if (isCheckedOut) {
+          setLoading(false);
+          notifyError({
+            title: "Address already checked-out",
+            message: "Address already have this badge.",
+          });
+          return;
+        }
       }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
@@ -416,6 +419,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">
@@ -431,6 +435,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">
@@ -443,26 +448,30 @@ export const GiveBadgeSection = () => {
                       </Flex>
                     </Flex>
                   </Card>
-                  <Card
-                    background={"#F5FFFF0D"}
-                    className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
-                  >
-                    <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
-                      Select a Badge
-                    </Text>
-                    <Select
-                      placeholder="Select option"
-                      className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-                      color="white"
-                      onChange={handleBadgeSelectChange}
-                    >
-                      {inputBadgeTitleList?.map((title, index) => (
-                        <option key={index} value={title}>
-                          {title}
-                        </option>
-                      ))}
-                    </Select>
-                  </Card>
+                  {inputBadgeTitleList && inputBadgeTitleList.length > 0 && (
+                    <>
+                      <Card
+                        background={"#F5FFFF0D"}
+                        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+                      >
+                        <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
+                          Select a Badge
+                        </Text>
+                        <Select
+                          placeholder="Select option"
+                          className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                          color="white"
+                          onChange={handleBadgeSelectChange}
+                        >
+                          {inputBadgeTitleList?.map((title, index) => (
+                            <option key={index} value={title}>
+                              {title}
+                            </option>
+                          ))}
+                        </Select>
+                      </Card>
+                    </>
+                  )}
                   {inputBadge?.allowComment && (
                     <Flex className="w-full mt-2 flex-col">
                       <Flex className="gap-4 pb-4 justify-start items-center">
@@ -484,6 +493,21 @@ export const GiveBadgeSection = () => {
                       <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     </Flex>
                   )}
+                  {badgeInputAddress &&
+                    inputBadge &&
+                    inputBadge.title === "Check-out" && (
+                      <Box>
+                        <Flex className="p-4 gap-4 items-center">
+                          <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                            &#x26A0;WARNING&#x26A0;
+                            <br />
+                            {`This action is irreversible. You are checking out in the name of ` +
+                              badgeInputAddress.getEllipsedAddress() +
+                              `. Make sure that this is the correct address. That you have their consent. Or that the event has ended.`}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    )}
                 </Box>
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
@@ -541,13 +565,23 @@ export const GiveBadgeSection = () => {
                       <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                         Badge
                       </Text>
-                      <Flex gap={2}>
-                        <Text
-                          color="white"
-                          className="pl-[16px] text-slate-50 text-sm font-normal leading-tight"
-                        >
-                          {inputBadge?.title}
-                        </Text>
+                      <Flex gap={2} className="w-full">
+                        {inputBadge && (
+                          <Textarea
+                            color="white"
+                            className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                            readOnly={true}
+                            _readOnly={{
+                              opacity: 1,
+                              cursor: "not-allowed",
+                            }}
+                            disabled={true}
+                            value={inputBadge?.title}
+                            rows={inputBadge?.title.length > 50 ? 3 : 1}
+                            minH="unset"
+                            resize="none"
+                          ></Textarea>
+                        )}
                       </Flex>
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />

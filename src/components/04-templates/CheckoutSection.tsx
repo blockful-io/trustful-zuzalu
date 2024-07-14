@@ -330,7 +330,7 @@ export const CheckoutSection = () => {
             )}
             {checkOutDate && (
               <Flex className={"items-center"}>
-                <Text className="text-cente text-slate-50 text-base font-normal leading-snug">
+                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                   Checked-out at:
                   <br />
                   {getReadableData(Number(checkOutDate))}

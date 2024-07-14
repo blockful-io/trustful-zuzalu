@@ -12,12 +12,12 @@ import {
   ListItem,
   UnorderedList,
 } from "@chakra-ui/react";
-import { useQRCode } from "next-qrcode";
 import { useAccount } from "wagmi";
 
 import {
   CopyToClipboardButton,
   CircleQuestion,
+  QRCodeGiveBadge,
   TheFooterNavbar,
   TheHeader,
   TicketIcon,
@@ -25,7 +25,6 @@ import {
 import { getEllipsedAddress } from "@/utils/formatters";
 
 export const CheckinSection = () => {
-  const { Canvas } = useQRCode();
   const { address, chain } = useAccount();
 
   const [isTrustfulVisible, setIsTrustfulVisible] = useState(false);
@@ -79,23 +78,14 @@ export const CheckinSection = () => {
             >
               {address && chain ? (
                 <>
-                  <Canvas
-                    text={address}
-                    options={{
-                      errorCorrectionLevel: "M",
-                      width: 250,
-                      color: {
-                        dark: "#F5FFFFDC",
-                        light: "#212223",
-                      },
-                    }}
-                  />
+                  <QRCodeGiveBadge />
+
                   <Flex
                     color="white"
                     className="justify-center items-center gap-2"
                   >
                     <Text>{getEllipsedAddress(address)}</Text>
-                    <CopyToClipboardButton />
+                    <CopyToClipboardButton isUserAddress />
                   </Flex>
                 </>
               ) : (
