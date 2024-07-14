@@ -116,10 +116,7 @@ export const BadgeDetailsSection = () => {
     return true;
   };
 
-  const processAttestationResponse = async (
-    response: any,
-    isConfirm?: boolean,
-  ) => {
+  const processAttestationResponse = async (response: any) => {
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -207,7 +204,7 @@ export const BadgeDetailsSection = () => {
       attestationRequestData,
     );
 
-    processAttestationResponse(response, isConfirm);
+    processAttestationResponse(response);
     fetchAttestationResponse();
   };
 

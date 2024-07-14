@@ -14,7 +14,7 @@ interface Schema {
   index: string;
   id: string;
 }
- 
+
 interface Badge {
   id: string;
   title: string;
