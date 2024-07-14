@@ -11,12 +11,17 @@ import { wagmiConfig } from "@/wagmi";
 import { RESOLVER_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
-export async function grantRole(
-  from: `0x${string}`,
-  role: `0x${string}`,
-  account: `0x${string}`,
-  msgValue: bigint,
-): Promise<TransactionReceipt | Error> {
+export async function grantRole({
+  from,
+  role,
+  account,
+  msgValue,
+}: {
+  from: `0x${string}`;
+  role: `0x${string}`;
+  account: `0x${string}`;
+  msgValue: bigint;
+}): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
 
