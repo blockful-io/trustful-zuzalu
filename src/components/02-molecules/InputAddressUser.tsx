@@ -5,18 +5,20 @@ import { UserIcon, CopyToClipboardButton } from "@/components/01-atoms";
 interface InputAddressUserProps {
   onInputChange: (value: string) => void;
   inputAddress: string;
+  label: string;
 }
 
 export const InputAddressUser = ({
   onInputChange,
   inputAddress,
+  label,
 }: InputAddressUserProps) => {
   return (
     <Flex className="gap-4 pb-4 justify-start items-center">
       <UserIcon className="text-[#B1EF42]" />
       <Input
         className="text-slate-50 text-base font-normal leading-snug border-none"
-        placeholder="Insert address or ENS"
+        placeholder={label}
         _placeholder={{
           className: "text-slate-50 opacity-30",
         }}
