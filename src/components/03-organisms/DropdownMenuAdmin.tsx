@@ -135,6 +135,132 @@ export const DropdownMenuAdmin = () => {
     setIsLoading(false);
   };
 
+  const renderAdminAction: Record<ADMIN_ACTION, React.JSX.Element> = {
+    [ADMIN_ACTION.GRANT_ROLE]: (
+      <Flex className="w-full flex-col">
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Select
+            placeholder="Role"
+            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+            color="white"
+            onChange={handleRoleSelectChange}
+          >
+            {Object.entries(ROLES_OPTIONS).map(
+              ([roleName, roleValue], index) => (
+                <option key={index} value={roleValue}>
+                  {roleName}
+                </option>
+              ),
+            )}
+          </Select>
+        </Flex>
+        <InputAddressUser
+          label="Address to Grant"
+          onInputChange={handleInputChange}
+          inputAddress={String(inputAddress)}
+        />
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          _hover={{ bg: "#B1EF42" }}
+          _active={{ bg: "#B1EF42" }}
+          isLoading={isloading}
+          isDisabled={!isAddress(inputAddress.toString()) || !role}
+          spinner={<BeatLoader size={8} color="white" />}
+          onClick={() => {
+            setIsLoading(true);
+            handleGrantRole();
+          }}
+        >
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Flex>
+    ),
+    [ADMIN_ACTION.REVOKE_ROLE]: (
+      <Flex className="w-full flex-col">
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Select
+            placeholder="Role"
+            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+            color="white"
+            onChange={handleRoleSelectChange}
+          >
+            {Object.entries(ROLES_OPTIONS).map(
+              ([roleName, roleValue], index) => (
+                <option key={index} value={roleValue}>
+                  {roleName}
+                </option>
+              ),
+            )}
+          </Select>
+        </Flex>
+        <InputAddressUser
+          onInputChange={handleInputChange}
+          inputAddress={String(inputAddress)}
+          label={"Address to Revoke"}
+        />
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          _hover={{ bg: "#B1EF42" }}
+          _active={{ bg: "#B1EF42" }}
+          isLoading={isloading}
+          isDisabled={!isAddress(inputAddress.toString()) || !role}
+          spinner={<BeatLoader size={8} color="white" />}
+          onClick={() => {
+            setIsLoading(true);
+            handleRevokeGrantRole();
+          }}
+        >
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Flex>
+    ),
+    [ADMIN_ACTION.SET_ATTESTATION_TITLE]: (
+      <Flex className="w-full flex-col">
+        <Flex className="gap-4 pb-4 justify-start items-center"></Flex>
+        <InputAddressUser
+          label="Enter the address"
+          onInputChange={handleInputChange}
+          inputAddress={String(inputAddress)}
+        />
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Textarea
+            className="text-slate-50 text-base font-normal leading-snug border-none"
+            placeholder="Set the attestation title"
+            _placeholder={{
+              className: "text-slate-50 opacity-30",
+            }}
+            focusBorderColor={"#F5FFFF1A"}
+            value={attestationTitleText}
+            onChange={handleTextareaChange}
+            rows={1}
+            minH="unset"
+            resize="none"
+          />
+        </Flex>
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          _hover={{ bg: "#B1EF42" }}
+          _active={{ bg: "#B1EF42" }}
+          isLoading={isloading}
+          isDisabled={
+            !isAddress(inputAddress.toString()) || !attestationTitleText
+          }
+          spinner={<BeatLoader size={8} color="white" />}
+          onClick={() => {
+            setIsLoading(true);
+            handleAttestationTitle();
+          }}
+        >
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Flex>
+    ),
+    [ADMIN_ACTION.SET_SCHEMA]: <div></div>,
+  };
+
   return (
     <>
       <Card
@@ -157,129 +283,8 @@ export const DropdownMenuAdmin = () => {
           ))}
         </Select>
       </Card>
-      {adminAction === ADMIN_ACTION.GRANT_ROLE && (
-        <Flex className="w-full flex-col">
-          <Flex className="gap-4 pb-4 justify-start items-center">
-            <Select
-              placeholder="Role"
-              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-              color="white"
-              onChange={handleRoleSelectChange}
-            >
-              {Object.entries(ROLES_OPTIONS).map(
-                ([roleName, roleValue], index) => (
-                  <option key={index} value={roleValue}>
-                    {roleName}
-                  </option>
-                ),
-              )}
-            </Select>
-          </Flex>
-          <InputAddressUser
-            label="Address to Grant"
-            onInputChange={handleInputChange}
-            inputAddress={String(inputAddress)}
-          />
-          <Button
-            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-            _hover={{ bg: "#B1EF42" }}
-            _active={{ bg: "#B1EF42" }}
-            isLoading={isloading}
-            isDisabled={!isAddress(inputAddress.toString()) || !role}
-            spinner={<BeatLoader size={8} color="white" />}
-            onClick={() => {
-              setIsLoading(true);
-              handleGrantRole();
-            }}
-          >
-            <CheckIcon className="w-[16px] h-[16px]" />
-            Confirm
-          </Button>
-        </Flex>
-      )}
-      {adminAction === ADMIN_ACTION.REVOKE_ROLE && (
-        <Flex className="w-full flex-col">
-          <Flex className="gap-4 pb-4 justify-start items-center">
-            <Select
-              placeholder="Role"
-              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-              color="white"
-              onChange={handleRoleSelectChange}
-            >
-              {Object.entries(ROLES_OPTIONS).map(
-                ([roleName, roleValue], index) => (
-                  <option key={index} value={roleValue}>
-                    {roleName}
-                  </option>
-                ),
-              )}
-            </Select>
-          </Flex>
-          <InputAddressUser
-            onInputChange={handleInputChange}
-            inputAddress={String(inputAddress)}
-            label={"Address to Revoke"}
-          />
-          <Button
-            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-            _hover={{ bg: "#B1EF42" }}
-            _active={{ bg: "#B1EF42" }}
-            isLoading={isloading}
-            isDisabled={!isAddress(inputAddress.toString()) || !role}
-            spinner={<BeatLoader size={8} color="white" />}
-            onClick={() => {
-              setIsLoading(true);
-              handleRevokeGrantRole();
-            }}
-          >
-            <CheckIcon className="w-[16px] h-[16px]" />
-            Confirm
-          </Button>
-        </Flex>
-      )}
-      {adminAction === ADMIN_ACTION.SET_ATTESTATION_TITLE && (
-        <Flex className="w-full flex-col">
-          <Flex className="gap-4 pb-4 justify-start items-center"></Flex>
-          <InputAddressUser
-            label="Enter the address"
-            onInputChange={handleInputChange}
-            inputAddress={String(inputAddress)}
-          />
-          <Flex className="gap-4 pb-4 justify-start items-center">
-            <Textarea
-              className="text-slate-50 text-base font-normal leading-snug border-none"
-              placeholder="Set the attestation title"
-              _placeholder={{
-                className: "text-slate-50 opacity-30",
-              }}
-              focusBorderColor={"#F5FFFF1A"}
-              value={attestationTitleText}
-              onChange={handleTextareaChange}
-              rows={1}
-              minH="unset"
-              resize="none"
-            />
-          </Flex>
-          <Button
-            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-            _hover={{ bg: "#B1EF42" }}
-            _active={{ bg: "#B1EF42" }}
-            isLoading={isloading}
-            isDisabled={
-              !isAddress(inputAddress.toString()) || !attestationTitleText
-            }
-            spinner={<BeatLoader size={8} color="white" />}
-            onClick={() => {
-              setIsLoading(true);
-              handleAttestationTitle();
-            }}
-          >
-            <CheckIcon className="w-[16px] h-[16px]" />
-            Confirm
-          </Button>
-        </Flex>
-      )}
-      {adminAction === ADMIN_ACTION.SET_SCHEMA && <div>ok</div>}
+
+      {adminAction && renderAdminAction[adminAction]}
     </>
   );
 };
