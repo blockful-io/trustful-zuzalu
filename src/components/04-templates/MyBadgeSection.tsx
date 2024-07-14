@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { Box, Flex, Image } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners";
 import { useAccount } from "wagmi";
 
 import {
@@ -12,6 +14,7 @@ import {
 import { useNotify } from "@/hooks/useNotify";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { BADGE_QUERY } from "@/lib/client/schemaQueries";
+import { WalletContext } from "@/lib/context/WalletContext";
 import { fetchEASData } from "@/lib/service/fetchEASData";
 
 interface Schema {
@@ -45,6 +48,20 @@ interface BadgeData {
 export const MyBadgeSection: React.FC = () => {
   const { address } = useAccount();
   const { notifyError } = useNotify();
+  const { push } = useRouter();
+
+  const { villagerAttestationCount } = useContext(WalletContext);
+
+  useEffect(() => {
+    if (villagerAttestationCount === 0) {
+      notifyError({
+        title: "You have not checked in",
+        message: "Please check-in first.",
+      });
+      push("/pre-checkin");
+    }
+  }, [villagerAttestationCount]);
+
   const [badgeData, setBadgeData] = useState<BadgeData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -206,27 +223,32 @@ export const MyBadgeSection: React.FC = () => {
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
-      <TheHeader />
-      <Box
-        flex={1}
-        as="main"
-        className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
-        marginBottom="60px"
-      >
-        <Flex flexDirection={"column"} gap={2} className="w-full">
-          {loading ? (
-            <Image
-              src="/img/loading.gif"
-              width="30px"
-              margin="auto"
-              alt="Loading..."
-            />
-          ) : (
-            <BadgeCard badgeData={badgeData} />
-          )}
-        </Flex>
-      </Box>
-      <TheFooterNavbar />
+      {villagerAttestationCount !== null ? (
+        <>
+          <TheHeader />
+          <Box
+            flex={1}
+            as="main"
+            className="p-6 sm:px-[60px] sm:py-[80px] justify-center flex items-center"
+            marginBottom="60px"
+          >
+            <Flex flexDirection={"column"} gap={2} className="w-full">
+              {loading ? (
+                <Box flex={1} className="flex justify-center items-center">
+                  <BeatLoader size={8} color="#B1EF42" />
+                </Box>
+              ) : (
+                <BadgeCard badgeData={badgeData} />
+              )}
+            </Flex>
+          </Box>
+          <TheFooterNavbar />
+        </>
+      ) : (
+        <Box flex={1} className="flex justify-center items-center">
+          <BeatLoader size={8} color="#B1EF42" />
+        </Box>
+      )}
     </Flex>
   );
 };

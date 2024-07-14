@@ -9,7 +9,6 @@ import React, {
   useContext,
 } from "react";
 
-import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
@@ -56,7 +55,6 @@ export const WalletContextProvider = ({
   }, [villagerAttestationCount]);
 
   const { address } = useAccount();
-  const { push } = useRouter();
   const { notifyError } = useNotify();
 
   useEffect(() => {
@@ -64,16 +62,6 @@ export const WalletContextProvider = ({
       handleQuery();
     }
   }, [address]);
-
-  useEffect(() => {
-    if (villagerAttestationCount === 0) {
-      push("/pre-checkin");
-    }
-
-    // if (villagerAttestationCount && villagerAttestationCount > 0) {
-    //   push("/my-badge");
-    // }
-  }, [villagerAttestationCount]);
 
   const handleQuery = async () => {
     // If the user is ROOT we skip the checkin validation
