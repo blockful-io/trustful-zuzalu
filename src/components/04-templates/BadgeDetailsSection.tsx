@@ -35,11 +35,12 @@ import {
   submitAttest,
   type AttestationRequestData,
 } from "../../lib/service/attest";
+import { color } from "framer-motion";
 
 export const BadgeDetailsSection = () => {
   const [loadingConfirm, setLoadingConfirm] = useState<boolean>(false);
   const [loadingDeny, setLoadingDeny] = useState<boolean>(false);
-  const [confirmed, setConfirmed] = useState<boolean | null>(null); 
+  const [confirmed, setConfirmed] = useState<boolean | null>(null);
   const { notifyError } = useNotify();
   const { selectedBadge } = useBadge();
   const { address } = useAccount();
@@ -140,13 +141,14 @@ export const BadgeDetailsSection = () => {
     setLoadingDeny(false);
     return;
   };
-  const badgeStatus = confirmed === null && selectedBadge.status === null
-  ? BadgeStatus.PENDING
-  : confirmed === true
-    ? BadgeStatus.CONFIRMED
-    : confirmed === false
-      ? BadgeStatus.REJECTED
-      : selectedBadge.status;
+  const badgeStatus =
+    confirmed === null && selectedBadge.status === null
+      ? BadgeStatus.PENDING
+      : confirmed === true
+        ? BadgeStatus.CONFIRMED
+        : confirmed === false
+          ? BadgeStatus.REJECTED
+          : selectedBadge.status;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
@@ -155,8 +157,8 @@ export const BadgeDetailsSection = () => {
       <Box
         flex={1}
         as="main"
-        px={{ base: 6, sm: "60px" }} 
-        py={{ base: 2, sm: "20px" }} 
+        px={{ base: 6, sm: "60px" }}
+        py={{ base: 2, sm: "20px" }}
         className="justify-center flex items-center flex-col"
         gap={6}
       >
@@ -249,10 +251,30 @@ export const BadgeDetailsSection = () => {
               #{selectedBadge.schema.index}
             </Text>
           </Flex>
+          
         </Card>
+        {selectedBadge.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid 
+        && selectedBadge.status !== BadgeStatus.PENDING && (
+          <Button
+            className="w-full flex justify-center items-center bg-[#2d2525] gap-2 px-6 text-[#DB4C40] rounded-lg"
+            _hover={{color: "#fff", bg: "#DB4C40" }}
+            _active={{ color: "#fff", bg: "#DB4C40" }}
+            bg = "#F5FFFF0D"
+            isLoading={loadingDeny}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setLoadingDeny(true);
+              handleAttest(false);
+            }}
+          >
+            <CloseIcon className="w-[14px] h-[14px]" />
+            Revoke
+          </Button>
+          ) }
       </Box>
       {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
-      confirmed === null && selectedBadge.status === BadgeStatus.PENDING ? (
+      confirmed === null &&
+      selectedBadge.status === BadgeStatus.PENDING ? (
         <Box
           as="footer"
           position="fixed"

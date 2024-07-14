@@ -36,6 +36,7 @@ export const BADGE_QUERY = `query Query($where: AttestationWhereInput) {
     recipient
     txid
     refUID
+    revoked
     schema {
       index
       id

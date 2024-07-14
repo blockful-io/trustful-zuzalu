@@ -1,5 +1,4 @@
 // BadgeContext.tsx
-import type { BadgeStatus } from "@/components/01-atoms";
 import React, {
   createContext,
   useContext,
@@ -9,6 +8,8 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from "react";
+
+import type { BadgeStatus } from "@/components/01-atoms";
 
 interface Schema {
   index: string;
@@ -26,6 +27,7 @@ interface Badge {
   recipient: string;
   txid: string;
   schema: Schema;
+  revoked: boolean;
 }
 
 interface BadgeContextType {

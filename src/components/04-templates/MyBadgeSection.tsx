@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Box, Flex, Image } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
-import { BadgeCard, BadgeStatus, TheHeader, TheFooterNavbar } from "@/components/01-atoms";
+import {
+  BadgeCard,
+  BadgeStatus,
+  TheHeader,
+  TheFooterNavbar,
+} from "@/components/01-atoms";
 import { useNotify } from "@/hooks/useNotify";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { BADGE_QUERY } from "@/lib/client/schemaQueries";
@@ -18,6 +23,7 @@ interface Attestation {
   decodedDataJson: string;
   timeCreated: number;
   attester: string;
+  revoked: boolean;
   id: string;
   recipient: string;
   txid: string;
@@ -35,6 +41,7 @@ interface BadgeData {
   recipient: string;
   txid: string;
   schema: Schema;
+  revoked: boolean;
 }
 
 export const MyBadgeSection: React.FC = () => {
@@ -49,47 +56,74 @@ export const MyBadgeSection: React.FC = () => {
     }
   }, [address]);
 
-  
   const fetchData = async () => {
     setLoading(true);
     const response: Attestation[] = await handleQuery();
     if (response) {
       // Mapa de refUIDs para status
-      const refUIDStatusMap: { [key: string]: boolean | undefined } = response.reduce((map: { [key: string]: boolean | undefined }, attestation: Attestation) => {
-        if (attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid
-           && attestation.decodedDataJson) {
-          const parsedJson = JSON.parse(attestation.decodedDataJson);
-          const status = parsedJson.find((item: any) => item.name === "status")?.value.value;
-          if (typeof status === 'boolean') {
-            map[attestation.refUID] = status;
-          }
-        }
-        return map;
-      }, {});
-  
-      const decodedData: BadgeData[] = response
-        .filter((attestation: Attestation) => attestation.decodedDataJson && attestation.schema.id !== "0x440a07d9a96ab2f16f2e983582f5331bd80c7c9033d57c784c052619b868a9c2")
-        .map((attestation: Attestation) => {
-          const parsedJson = JSON.parse(attestation.decodedDataJson);
-          let title = parsedJson.find((item: any) => item.name === "title")?.value.value;
-          if (!title) {
-            title = parsedJson.find((item: any) => item.name === "status")?.value.value;
-            if (!title) {
-              title = parsedJson.find((item: any) => item.name === "role")?.value.value;
+      const responseDataMap: { [key: string]: { status: boolean | undefined, revoked: boolean | undefined } } =
+        response.reduce(
+          (
+            map: { [key: string]: { status: boolean | undefined, revoked: boolean | undefined } },
+            attestation: Attestation,
+          ) => {
+            if (
+              attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid &&
+              attestation.decodedDataJson
+            ) {
+              const parsedJson = JSON.parse(attestation.decodedDataJson);
+              const status = parsedJson.find(
+                (item: any) => item.name === "status",
+              )?.value.value;
+              const revoked = attestation.revoked;
+              if (typeof status === "boolean" && typeof revoked === "boolean") {
+                map[attestation.refUID] = { status, revoked };
+              }
             }
-          }
-          const comment = parsedJson.find((item: any) => item.name === "comment")?.value.value;
-          
+            return map;
+          },
+          {},
+        );
+      console.log(responseDataMap);
+      const decodedData: BadgeData[] = response
+        .filter(
+          (attestation: Attestation) =>
+            attestation.decodedDataJson &&
+            attestation.schema.id  !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+        )
+        .map((attestation: Attestation) => {
           let badgeStatus: BadgeStatus;
-          const refStatus = refUIDStatusMap[attestation.id];
-          if (refStatus === false) {
+          const responseStatus = responseDataMap[attestation.id].status;
+          const responseRevoked = responseDataMap[attestation.id].revoked;
+          if (responseStatus === false && responseRevoked === false) {
             badgeStatus = BadgeStatus.REJECTED;
-          } else if (refStatus === true) {
+          } else if (responseStatus === true && responseRevoked === false) {
             badgeStatus = BadgeStatus.CONFIRMED;
           } else {
             badgeStatus = BadgeStatus.PENDING;
           }
-  
+
+          const parsedJson = JSON.parse(attestation.decodedDataJson);
+          let title = parsedJson.find((item: any) => item.name === "title")
+            ?.value.value;
+          if (!title) {
+            title = parsedJson.find((item: any) => item.name === "status")
+              ?.value.value;
+              if (attestation.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid){
+                badgeStatus = BadgeStatus.CONFIRMED;
+              }
+            
+            if (!title) {
+              title = parsedJson.find((item: any) => item.name === "role")
+                ?.value.value;
+            }
+          }
+          const comment = parsedJson.find(
+            (item: any) => item.name === "comment",
+          )?.value.value;
+
+       
+
           return {
             id: attestation.id,
             title,
@@ -99,10 +133,10 @@ export const MyBadgeSection: React.FC = () => {
             recipient: attestation.recipient,
             txid: attestation.txid,
             schema: attestation.schema,
-            status: badgeStatus
+            status: badgeStatus,
           };
         });
-  
+
       setBadgeData(decodedData);
     }
     setLoading(false);
