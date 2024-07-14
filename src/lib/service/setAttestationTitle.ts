@@ -6,17 +6,21 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
+import { RESOLVER_CONTRACT_OP } from "@/lib/client/constants";
+import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
-import { RESOLVER_CONTRACT_OP } from "../client/constants";
-import { publicClient } from "../wallet/client";
-
-export async function setAttestationTitle(
-  from: `0x${string}`,
-  title: string,
-  isValid: boolean,
-  value: bigint,
-): Promise<TransactionReceipt | Error> {
+export async function setAttestationTitle({
+  from,
+  title,
+  isValid,
+  value,
+}: {
+  from: `0x${string}`;
+  title: string;
+  isValid: boolean;
+  value: bigint;
+}): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
 

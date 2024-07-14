@@ -6,10 +6,9 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
+import { EAS_CONTRACT_OP } from "@/lib/client/constants";
+import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
-
-import { EAS_CONTRACT_OP } from "../client/constants";
-import { publicClient } from "../wallet/client";
 
 export interface RevocationRequestData {
   uid: `0x${string}`;
@@ -22,11 +21,15 @@ export interface RevocationRequest {
   data: RevocationRequestData;
 }
 
-export async function revoke(
-  from: `0x${string}`,
-  schemaUID: `0x${string}`,
-  revocationRequestData: RevocationRequestData,
-): Promise<TransactionReceipt | Error> {
+export async function revoke({
+  from,
+  schemaUID,
+  revocationRequestData,
+}: {
+  from: `0x${string}`;
+  schemaUID: `0x${string}`;
+  revocationRequestData: RevocationRequestData;
+}): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
 
@@ -75,7 +78,6 @@ export async function revoke(
         type: "function",
       },
     ],
-
     args: [RevocationRequest],
   });
 
