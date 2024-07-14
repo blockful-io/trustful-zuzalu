@@ -39,14 +39,14 @@ export const TheFooterNavbar = () => {
         <Flex gap={4} className="w-full justify-center">
           {villagerAttestationCount > 0 && (
             <Box
-              className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
-              onClick={() => push("/my-badge")}
+              className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badges" ? "border-[#B1EF42]" : "border-transparent"}`}
+              onClick={() => push("/my-badges")}
             >
               <BadgeIcon
-                className={`w-5 h-5 text-white ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"}`}
+                className={`w-5 h-5 text-white ${params.slug == "my-badges" ? "opacity-100" : "opacity-50"}`}
               />
               <Text
-                className={`text-slate-50 ${params.slug == "my-badge" ? "opacity-100" : "opacity-50"} text-sm font-medium leading-none`}
+                className={`text-slate-50 ${params.slug == "my-badges" ? "opacity-100" : "opacity-50"} text-sm font-medium leading-none`}
               >
                 My badges
               </Text>

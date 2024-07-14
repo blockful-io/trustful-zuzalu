@@ -9,13 +9,13 @@ import React, {
   useContext,
 } from "react";
 
-import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
 import { fetchEASData } from "@/lib/service/fetchEASData";
+import { hasRole } from "@/lib/service/hasRole";
 
-import { ZUVILLAGE_SCHEMAS } from "../client/constants";
+import { ZUVILLAGE_SCHEMAS, ROLES } from "../client/constants";
 import { VILLAGER_QUERY } from "../client/schemaQueries";
 
 interface WalletContextProps {
@@ -55,28 +55,24 @@ export const WalletContextProvider = ({
   }, [villagerAttestationCount]);
 
   const { address } = useAccount();
-  const { push } = useRouter();
   const { notifyError } = useNotify();
 
   useEffect(() => {
     if (address && villagerAttestationCount === null) {
       handleQuery();
-    } else {
-      push("/");
     }
   }, [address]);
 
-  useEffect(() => {
-    if (villagerAttestationCount === 0) {
-      push("/pre-checkin");
+  const handleQuery = async () => {
+    // If the user is ROOT we skip the checkin validation
+    if (address) {
+      const isRoot = await hasRole(ROLES.ROOT, address);
+      if (isRoot) {
+        setVillagerAttestationCount(2);
+        return;
+      }
     }
 
-    // if (villagerAttestationCount && villagerAttestationCount > 0) {
-    //   push("/my-badge");
-    // }
-  }, [villagerAttestationCount]);
-
-  const handleQuery = async () => {
     const queryVariables = {
       where: {
         schemaId: {
@@ -107,6 +103,15 @@ export const WalletContextProvider = ({
         message: "Subgraph returned error with current query",
       });
       return;
+    }
+
+    if (address) {
+      const isRoot = await hasRole(ROLES.ROOT, address);
+      if (isRoot) {
+        setVillagerAttestationCount(2);
+      } else {
+        setVillagerAttestationCount(response.data.data.attestations.length);
+      }
     }
 
     setVillagerAttestationCount(response.data.data.attestations.length);

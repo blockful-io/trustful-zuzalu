@@ -1,15 +1,17 @@
 // components/MainPane.tsx
-import { type FC } from "react";
+import { useContext, type FC } from "react";
 
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Space_Grotesk } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners";
 import { useAccount } from "wagmi";
 
 import { CreatedByBlockful } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks";
+import { WalletContext } from "@/lib/context/WalletContext";
 import styles from "@/styles/mainPane.module.css";
 
 const grotesk = Space_Grotesk({ subsets: ["latin"] });
@@ -18,6 +20,15 @@ export const MainPane: FC = () => {
   const { isConnected } = useAccount();
   const { isMobile } = useWindowSize();
   const { push } = useRouter();
+
+  const { villagerAttestationCount } = useContext(WalletContext);
+
+  const handleNavigate = () => {
+    if (villagerAttestationCount !== null) {
+      if (villagerAttestationCount === 0) push("/pre-checkin");
+      else push("/my-badges");
+    }
+  };
 
   return (
     <Box className={styles.container}>
@@ -37,26 +48,37 @@ export const MainPane: FC = () => {
       {isConnected && (
         <>
           <Box
-            gap={6}
             display={"flex"}
             alignItems={"left"}
             justifyContent={"left"}
             flex={1}
-            className="py-4"
           >
             <Button
-              className="px-6 py-4 bg-[#B1EF42] text-black rounded-lg"
-              _hover={{ bg: "#B1EF42" }}
-              _active={{ bg: "#B1EF42" }}
-              onClick={() => push("/my-badge")}
+              className="px-6 py-4 text-black rounded-lg"
+              _loading={{
+                opacity: 1,
+                cursor: "not-allowed",
+              }}
+              backgroundColor={
+                villagerAttestationCount === null ? "transparent" : "#B1EF42"
+              }
+              isLoading={villagerAttestationCount === null}
+              spinner={<BeatLoader size={8} color="#B1EF42" />}
+              _hover={{
+                bg: "bg-[#B1EF42]",
+              }}
+              _active={{
+                bg: "bg-[#B1EF42]",
+              }}
+              onClick={() => handleNavigate()}
             >
               Go to dApp
             </Button>
           </Box>
         </>
       )}
-      <Flex className={styles.content}>
-        {!isConnected && isMobile && (
+      {!isConnected && isMobile && (
+        <Flex className={styles.content}>
           <ConnectButton.Custom>
             {({
               account,
@@ -150,6 +172,7 @@ export const MainPane: FC = () => {
                                   alt={chain.name ?? "Chain icon"}
                                   src={chain.iconUrl}
                                   style={{ width: 12, height: 12 }}
+                                  width={12}
                                 />
                               )}
                             </div>
@@ -170,8 +193,8 @@ export const MainPane: FC = () => {
               );
             }}
           </ConnectButton.Custom>
-        )}
-      </Flex>
+        </Flex>
+      )}
       <Flex className="bottom-[5%] absolute mt-auto">
         <CreatedByBlockful />
       </Flex>

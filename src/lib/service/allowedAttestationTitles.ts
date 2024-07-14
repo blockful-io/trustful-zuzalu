@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { readContract } from "viem/actions";
 
-import { TRUSTFUL_CONTRACT_ADDRESSES } from "../client/constants";
+import { RESOLVER_CONTRACT_OP } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
 export interface ConnetedWalletConfiguration {
@@ -11,27 +11,25 @@ export interface ConnetedWalletConfiguration {
 
 export async function allowedAttestationTitles(
   attestationTitle: string,
-  configurations: ConnetedWalletConfiguration,
 ): Promise<boolean | Error> {
   const data = {
     abi: [
       {
-        type: "function",
+        inputs: [{ internalType: "string", name: "title", type: "string" }],
         name: "allowedAttestationTitles",
-        inputs: [{ name: "title", type: "string", internalType: "string" }],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
+        outputs: [{ internalType: "bool", name: "", type: "bool" }],
         stateMutability: "view",
+        type: "function",
       },
     ],
+    args: [attestationTitle],
   };
 
   try {
     const response = await readContract(publicClient, {
-      address: TRUSTFUL_CONTRACT_ADDRESSES[
-        configurations.chain
-      ] as `0x${string}`,
-      abi: data.abi,
+      address: RESOLVER_CONTRACT_OP as `0x${string}`,
       functionName: "allowedAttestationTitles",
+      abi: data.abi,
       args: [attestationTitle],
     });
 

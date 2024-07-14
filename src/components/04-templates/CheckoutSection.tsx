@@ -53,6 +53,10 @@ export const CheckoutSection = () => {
   const { villagerAttestationCount, setVillagerAttestationCount } =
     useContext(WalletContext);
 
+  useEffect(() => {
+    if (villagerAttestationCount === 0) push("/pre-checkin");
+  }, [villagerAttestationCount]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [checkInDate, setCheckInDate] = useState<number | null>(null);
@@ -213,12 +217,20 @@ export const CheckoutSection = () => {
 
     // If the user has not checked in, redirect to pre-checkin page
     if (response.data.data.attestations.length === 0) {
-      notifyError({
-        title: "You have not checked in",
-        message: "Please check-in first.",
-      });
-      push("/pre-checkin");
-      return;
+      if (address) {
+        const isRoot = await hasRole(ROLES.ROOT, address);
+        if (isRoot) {
+          setVillagerAttestationCount(2);
+          return;
+        } else {
+          notifyError({
+            title: "You have not checked in",
+            message: "Please check-in first.",
+          });
+          push("/pre-checkin");
+          return;
+        }
+      }
     }
 
     // Loop through the attestations to find the check-in and check-out timestamps
@@ -242,6 +254,8 @@ export const CheckoutSection = () => {
     }
   };
 
+  // Subgraph may take some time to update, so we force a check straight to the blockchain
+  // to see if the user role has been updated, changing the view accordingly
   const handleThankYou = async () => {
     if (!address) {
       setLoading(false);
@@ -251,177 +265,194 @@ export const CheckoutSection = () => {
       });
       return;
     }
+    const isRoot = await hasRole(ROLES.ROOT, address);
     const isVillager = await hasRole(ROLES.VILLAGER, address);
-    if (!isVillager) {
+    if (isRoot || !isVillager) {
       setVillagerAttestationCount(2);
+      return;
+    } else {
+      notifyError({
+        title: "You have not checked in",
+        message: "Please check-in first.",
+      });
+      push("/pre-checkin");
+      return;
     }
   };
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="60px">
-      <TheHeader />
-      <Box
-        flex={1}
-        as="main"
-        className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center"
-        gap={6}
-      >
-        <Card
-          className="px-8 py-6 mt-6"
-          background={"#212223"}
-          border={2}
-          borderRadius={16}
-          gap={4}
-        >
-          <CardHeader
-            gap={2}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            flexDirection={"column"}
-            p={0}
-          >
-            <Flex className={"items-center"}>
-              {villagerAttestationCount === 1 && (
-                <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                  Check out of
-                  <br />
-                  ZuVillage Georgia
-                </Text>
-              )}
-              {villagerAttestationCount === 2 && (
-                <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                  Thank You!
-                </Text>
-              )}
-            </Flex>
-            <Flex className={"items-center"}>
-              {villagerAttestationCount === 1 && (
-                <Text className="text-center py-4 text-slate-50 text-base font-normal leading-snug">
-                  Are you sure you want to check out?
-                  <br />
-                  This proccess is irreversible.
-                </Text>
-              )}
-              {villagerAttestationCount === 2 && (
-                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                  For being a cherished member of ZuVillage Georgia.
-                </Text>
-              )}
-            </Flex>
-          </CardHeader>
-          <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+      {villagerAttestationCount !== null ? (
+        <>
+          <TheHeader />
           <Box
+            flex={1}
+            as="main"
+            className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col items-center"
             gap={6}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            flexDirection={"column"}
-            className="px-6 py-4 sm:px-[60px] w-full"
           >
-            {checkInDate && (
-              <Flex className={"items-center"}>
-                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                  Checked-in at:
-                  <br />
-                  {getReadableData(Number(checkInDate))}
-                </Text>
-              </Flex>
-            )}
-            {checkOutDate && (
-              <Flex className={"items-center"}>
-                <Text className="text-cente text-slate-50 text-base font-normal leading-snug">
-                  Checked-out at:
-                  <br />
-                  {getReadableData(Number(checkOutDate))}
-                </Text>
-              </Flex>
-            )}
-            {!checkInDate && (
-              <Flex className={"items-center"}>
-                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                  Fetching check-in data...
-                </Text>
-              </Flex>
-            )}
-            {villagerAttestationCount !== 2 && checkInDate && eventTime && (
-              <Flex className={"items-center"}>
-                <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                  You are with us for:
-                  <br />
-                  {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                  minutes
-                </Text>
-              </Flex>
-            )}
-            {villagerAttestationCount === 2 &&
-              checkInDate &&
-              checkOutDate &&
-              eventTime && (
-                <Flex className={"items-center"}>
-                  <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                    You stayed with us for:
-                    <br />
-                    {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                    minutes
-                  </Text>
-                </Flex>
-              )}
-          </Box>
-          {villagerAttestationCount === 1 && (
-            <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-          )}
-          {villagerAttestationCount === 1 && (
-            <Box
-              gap={6}
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              flexDirection={"column"}
-              className="px-6 py-4 sm:px-[60px] w-full"
+            <Card
+              className="px-8 py-6 mt-6"
+              background={"#212223"}
+              border={2}
+              borderRadius={16}
+              gap={4}
             >
-              <Button
-                className="w-full px-6 py-4 bg-[#ef4343] text-white rounded-lg"
-                _hover={{ bg: "#ef4343" }}
-                _active={{ bg: "#ef4343" }}
-                onClick={onOpen}
+              <CardHeader
+                gap={2}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                flexDirection={"column"}
+                p={0}
               >
-                Confirm
-              </Button>
-            </Box>
-          )}
-        </Card>
-      </Box>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent bg={"#ef4343"} mx={{ base: 8, md: 0 }}>
-          <ModalHeader>CHECK OUT</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody fontWeight={500}>
-            I&apos;m checking out of ZuVillage Georgia.
-            <br />
-            I&apos;m aware that this action is irreversible.
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mr={3}
-              textColor={"white"}
-              bg={"#161617"}
-              _hover={{ bg: "#161617" }}
-              _active={{ bg: "#161617" }}
-              spinner={<BeatLoader size={8} color="white" />}
-              isLoading={loading}
-              onClick={() => {
-                setLoading(true);
-                handleAttest();
-              }}
-            >
-              Check Out
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <TheFooterNavbar />
+                <Flex className={"items-center"}>
+                  {villagerAttestationCount === 1 && (
+                    <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                      Check out of
+                      <br />
+                      ZuVillage Georgia
+                    </Text>
+                  )}
+                  {villagerAttestationCount === 2 && (
+                    <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                      Thank You!
+                    </Text>
+                  )}
+                </Flex>
+                <Flex className={"items-center"}>
+                  {villagerAttestationCount === 1 && (
+                    <Text className="text-center py-4 text-slate-50 text-base font-normal leading-snug">
+                      Are you sure you want to check out?
+                      <br />
+                      This proccess is irreversible.
+                    </Text>
+                  )}
+                  {villagerAttestationCount === 2 && (
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      For being a cherished member of ZuVillage Georgia.
+                    </Text>
+                  )}
+                </Flex>
+              </CardHeader>
+              <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+              <Box
+                gap={6}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                flexDirection={"column"}
+                className="px-6 py-4 sm:px-[60px] w-full"
+              >
+                {checkInDate && (
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      Checked-in at:
+                      <br />
+                      {getReadableData(Number(checkInDate))}
+                    </Text>
+                  </Flex>
+                )}
+                {checkOutDate && (
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      Checked-out at:
+                      <br />
+                      {getReadableData(Number(checkOutDate))}
+                    </Text>
+                  </Flex>
+                )}
+                {!checkInDate && (
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      Fetching check-in data...
+                    </Text>
+                  </Flex>
+                )}
+                {villagerAttestationCount !== 2 && checkInDate && eventTime && (
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      You are with us for:
+                      <br />
+                      {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
+                      minutes
+                    </Text>
+                  </Flex>
+                )}
+                {villagerAttestationCount === 2 &&
+                  checkInDate &&
+                  checkOutDate &&
+                  eventTime && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        You stayed with us for:
+                        <br />
+                        {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
+                        minutes
+                      </Text>
+                    </Flex>
+                  )}
+              </Box>
+              {villagerAttestationCount === 1 && (
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+              )}
+              {villagerAttestationCount === 1 && (
+                <Box
+                  gap={6}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  flexDirection={"column"}
+                  className="px-6 py-4 sm:px-[60px] w-full"
+                >
+                  <Button
+                    className="w-full px-6 py-4 bg-[#ef4343] text-white rounded-lg"
+                    _hover={{ bg: "#ef4343" }}
+                    _active={{ bg: "#ef4343" }}
+                    onClick={onOpen}
+                  >
+                    Confirm
+                  </Button>
+                </Box>
+              )}
+            </Card>
+          </Box>
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent bg={"#ef4343"} mx={{ base: 8, md: 0 }}>
+              <ModalHeader>CHECK OUT</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody fontWeight={500}>
+                I&apos;m checking out of ZuVillage Georgia.
+                <br />
+                I&apos;m aware that this action is irreversible.
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  mr={3}
+                  textColor={"white"}
+                  bg={"#161617"}
+                  _hover={{ bg: "#161617" }}
+                  _active={{ bg: "#161617" }}
+                  spinner={<BeatLoader size={8} color="white" />}
+                  isLoading={loading}
+                  onClick={() => {
+                    setLoading(true);
+                    handleAttest();
+                  }}
+                >
+                  Check Out
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          <TheFooterNavbar />
+        </>
+      ) : (
+        <Box flex={1} className="flex justify-center items-center">
+          <BeatLoader size={8} color="#B1EF42" />
+        </Box>
+      )}
     </Flex>
   );
 };

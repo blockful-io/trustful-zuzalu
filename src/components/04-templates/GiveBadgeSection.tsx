@@ -19,6 +19,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -39,17 +40,19 @@ import { useNotify, useWindowSize } from "@/hooks";
 import {
   ZUVILLAGE_BADGE_TITLES,
   ZUVILLAGE_SCHEMAS,
+  ROLES,
+  type BadgeTitle,
 } from "@/lib/client/constants";
-import { ROLES, type BadgeTitle } from "@/lib/client/constants";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
-import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
-
+import { WalletContext } from "@/lib/context/WalletContext";
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
-import { hasRole } from "../../lib/service/hasRole";
+  hasRole,
+} from "@/lib/service";
+import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
+import { EthereumAddress } from "@/lib/shared/types";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export enum GiveBadgeAction {
   ADDRESS = "ADDRESS",
@@ -66,6 +69,7 @@ export const GiveBadgeSection = () => {
   const { isMobile } = useWindowSize();
   const { address } = useAccount();
   const toast = useToast();
+  const { push } = useRouter();
   const { notifyError } = useNotify();
   const {
     setQRCodeisOpen,
@@ -75,14 +79,25 @@ export const GiveBadgeSection = () => {
     setAddressStep,
     badgeInputAddress,
     setBadgeInputAddress,
+    inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
+  const { villagerAttestationCount } = useContext(WalletContext);
+
+  useEffect(() => {
+    if (villagerAttestationCount === 0) {
+      notifyError({
+        title: "You have not checked in",
+        message: "Please check-in first.",
+      });
+      push("/pre-checkin");
+    }
+  }, [villagerAttestationCount]);
 
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
-  const [inputBadgeTitleList, setInputBadgeTitleList] = useState<string[]>();
   const [commentBadge, setCommentBadge] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState<string>("");
 
   // Resets the context when the component is mounted for the first time
   useEffect(() => {
@@ -93,18 +108,20 @@ export const GiveBadgeSection = () => {
     };
   }, []);
 
-  // Filters the badges based on the user's role. Single activation
+  const searchParams = useSearchParams();
+  const addressShared = searchParams.get("address");
+  const param = useParams();
+
+  // Checks if the shared-address is valid and sets it to the inputAddress
   useEffect(() => {
-    if (address && inputBadgeTitleList === undefined) {
-      const filteredBadges: string[] = [];
-      ZUVILLAGE_BADGE_TITLES.map(async (badge) => {
-        if (await hasRole(badge.allowedRole, address)) {
-          filteredBadges.push(badge.title);
-        }
-      });
-      setInputBadgeTitleList(filteredBadges);
+    if (
+      addressShared &&
+      isAddress(addressShared) &&
+      param.slug[0] === "give-badge"
+    ) {
+      setInputAddress(addressShared);
     }
-  }, [address]);
+  }, [addressShared]);
 
   // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
@@ -115,6 +132,13 @@ export const GiveBadgeSection = () => {
 
   // Do not allow invalid Ethereum addresses to move into the next step
   const handleInputAddressChange = () => {
+    if (!inputAddress || !isAddress(inputAddress)) {
+      notifyError({
+        title: "Field is empty",
+        message: "Please provide a valid Ethereum address.",
+      });
+      return;
+    }
     if (inputAddress && !isAddress(inputAddress)) {
       notifyError({
         title: "Invalid Ethereum Address",
@@ -201,19 +225,35 @@ export const GiveBadgeSection = () => {
         return;
       }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid) {
-      encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
-      encodeArgs = ["Check-in"];
-      const isVillager = await hasRole(
-        ROLES.VILLAGER,
-        badgeInputAddress.address,
-      );
-      if (isVillager) {
-        setLoading(false);
-        notifyError({
-          title: "Address already checked-in",
-          message: "Address already have this badge.",
-        });
-        return;
+      if (inputBadge.title === "Check-in") {
+        encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
+        encodeArgs = ["Check-in"];
+        const isVillager = await hasRole(
+          ROLES.VILLAGER,
+          badgeInputAddress.address,
+        );
+        if (isVillager) {
+          setLoading(false);
+          notifyError({
+            title: "Address already checked-in",
+            message: "Address already have this badge.",
+          });
+          return;
+        }
+      } else if (inputBadge.title === "Check-out") {
+        encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
+        encodeArgs = ["Check-out"];
+        const isCheckedOut = await checkedOutVillagers(
+          badgeInputAddress.address,
+        );
+        if (isCheckedOut) {
+          setLoading(false);
+          notifyError({
+            title: "Address already checked-out",
+            message: "Address already have this badge.",
+          });
+          return;
+        }
       }
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
@@ -315,56 +355,66 @@ export const GiveBadgeSection = () => {
           case GiveBadgeStepAddress.INSERT_ADDRESS:
             return (
               <>
-                <TheHeader />
-                <Box
-                  as="main"
-                  className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
-                  gap={8}
-                >
-                  <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
-                    Let&apos;s give a badge to someone
-                  </Text>
-                  <Flex className="w-full flex-col">
-                    <Flex className="gap-4 pb-4 justify-start items-center">
-                      <UserIcon className="text-[#B1EF42]" />
-                      <Input
-                        className="text-slate-50 text-base font-normal leading-snug border-none"
-                        placeholder="Insert address or ENS"
-                        _placeholder={{ className: "text-slate-50 opacity-30" }}
-                        focusBorderColor={"#F5FFFF1A"}
-                        value={inputAddress}
-                        onChange={(e) => setInputAddress(e.target.value)}
-                      />
-                      <QrCodeIcon
-                        className="text-[#B1EF42]"
-                        onClick={() => {
-                          setQRCodeisOpen(true);
-                          handleActionChange(GiveBadgeAction.QR_CODE);
-                        }}
-                      />
-                    </Flex>
-                    <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                  </Flex>
-                  <Flex
-                    gap={4}
-                    color="white"
-                    className="w-full justify-between items-center"
-                  >
-                    <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
-                      Continue
-                    </Text>
-                    <button
-                      className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                      onClick={() => handleInputAddressChange()}
+                {villagerAttestationCount !== null ? (
+                  <>
+                    <TheHeader />
+                    <Box
+                      as="main"
+                      className="p-6 sm:px-[60px] sm:py-[80px] flex flex-col w-full"
+                      gap={8}
                     >
-                      <ArrowIcon
-                        variant={ArrowIconVariant.RIGHT}
-                        props={{ className: iconColor }}
-                      />
-                    </button>
-                  </Flex>
-                  <TheFooterNavbar />
-                </Box>
+                      <Text className="flex text-slate-50 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                        Let&apos;s give a badge to someone
+                      </Text>
+                      <Flex className="w-full flex-col">
+                        <Flex className="gap-4 pb-4 justify-start items-center">
+                          <UserIcon className="text-[#B1EF42]" />
+                          <Input
+                            className="text-slate-50 text-base font-normal leading-snug border-none"
+                            placeholder="Insert address or ENS"
+                            _placeholder={{
+                              className: "text-slate-50 opacity-30",
+                            }}
+                            focusBorderColor={"#F5FFFF1A"}
+                            value={inputAddress}
+                            onChange={(e) => setInputAddress(e.target.value)}
+                          />
+                          <QrCodeIcon
+                            className="text-[#B1EF42]"
+                            onClick={() => {
+                              setQRCodeisOpen(true);
+                              handleActionChange(GiveBadgeAction.QR_CODE);
+                            }}
+                          />
+                        </Flex>
+                        <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+                      </Flex>
+                      <Flex
+                        gap={4}
+                        color="white"
+                        className="w-full justify-between items-center"
+                      >
+                        <Text className="text-slate-50 opacity-80 text-base font-normal leading-snug border-none">
+                          Continue
+                        </Text>
+                        <button
+                          className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
+                          onClick={() => handleInputAddressChange()}
+                        >
+                          <ArrowIcon
+                            variant={ArrowIconVariant.RIGHT}
+                            props={{ className: iconColor }}
+                          />
+                        </button>
+                      </Flex>
+                      <TheFooterNavbar />
+                    </Box>
+                  </>
+                ) : (
+                  <Box flex={1} className="flex justify-center items-center">
+                    <BeatLoader size={8} color="#B1EF42" />
+                  </Box>
+                )}
               </>
             );
           case GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT:
@@ -390,6 +440,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">
@@ -405,6 +456,7 @@ export const GiveBadgeSection = () => {
                         <Avatar />
                         <Flex
                           flexDirection={"column"}
+                          gap={2}
                           justifyContent={"center"}
                         >
                           <Text className="text-slate-50 text-sm font-medium leading-none">
@@ -417,26 +469,30 @@ export const GiveBadgeSection = () => {
                       </Flex>
                     </Flex>
                   </Card>
-                  <Card
-                    background={"#F5FFFF0D"}
-                    className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
-                  >
-                    <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
-                      Select a Badge
-                    </Text>
-                    <Select
-                      placeholder="Select option"
-                      className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-                      color="white"
-                      onChange={handleBadgeSelectChange}
-                    >
-                      {inputBadgeTitleList?.map((title, index) => (
-                        <option key={index} value={title}>
-                          {title}
-                        </option>
-                      ))}
-                    </Select>
-                  </Card>
+                  {inputBadgeTitleList && inputBadgeTitleList.length > 0 && (
+                    <>
+                      <Card
+                        background={"#F5FFFF0D"}
+                        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+                      >
+                        <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
+                          Select a Badge
+                        </Text>
+                        <Select
+                          placeholder="Select option"
+                          className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                          color="white"
+                          onChange={handleBadgeSelectChange}
+                        >
+                          {inputBadgeTitleList?.map((title, index) => (
+                            <option key={index} value={title}>
+                              {title}
+                            </option>
+                          ))}
+                        </Select>
+                      </Card>
+                    </>
+                  )}
                   {inputBadge?.allowComment && (
                     <Flex className="w-full mt-2 flex-col">
                       <Flex className="gap-4 pb-4 justify-start items-center">
@@ -458,6 +514,21 @@ export const GiveBadgeSection = () => {
                       <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
                     </Flex>
                   )}
+                  {badgeInputAddress &&
+                    inputBadge &&
+                    inputBadge.title === "Check-out" && (
+                      <Box>
+                        <Flex className="p-4 gap-4 items-center">
+                          <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                            &#x26A0;WARNING&#x26A0;
+                            <br />
+                            {`This action is irreversible. You are checking out in the name of ` +
+                              badgeInputAddress.getEllipsedAddress() +
+                              `. Make sure that this is the correct address. That you have their consent. Or that the event has ended.`}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    )}
                 </Box>
                 <Box className="px-6 py-4 sm:px-[60px] w-full">
                   <Button
@@ -515,13 +586,23 @@ export const GiveBadgeSection = () => {
                       <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                         Badge
                       </Text>
-                      <Flex gap={2}>
-                        <Text
-                          color="white"
-                          className="pl-[16px] text-slate-50 text-sm font-normal leading-tight"
-                        >
-                          {inputBadge?.title}
-                        </Text>
+                      <Flex gap={2} className="w-full">
+                        {inputBadge && (
+                          <Textarea
+                            color="white"
+                            className="text-opacity-100 disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                            readOnly={true}
+                            _readOnly={{
+                              opacity: 1,
+                              cursor: "not-allowed",
+                            }}
+                            disabled={true}
+                            value={inputBadge?.title}
+                            rows={inputBadge?.title.length > 50 ? 3 : 1}
+                            minH="unset"
+                            resize="none"
+                          ></Textarea>
+                        )}
                       </Flex>
                     </Flex>
                     <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />

@@ -21,7 +21,7 @@ interface Badge {
   id: string;
   title: string;
   status: BadgeStatus;
-  comment: string;
+  comment?: string;
   timeCreated: number;
   attester: string;
   recipient: string;
