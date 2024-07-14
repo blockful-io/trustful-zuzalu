@@ -27,6 +27,7 @@ interface Badge {
   recipient: string;
   txid: string;
   schema: Schema;
+  revoked: boolean;
 }
 
 interface BadgeContextType {
