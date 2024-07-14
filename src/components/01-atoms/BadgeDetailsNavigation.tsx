@@ -5,10 +5,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
 import { ArrowIcon, ArrowIconVariant } from "@/components/01-atoms";
-import {
-  GiveBadgeAction,
-  GiveBadgeStepAddress,
-} from "@/components/04-templates";
+import { GiveBadgeStepAddress } from "@/components/04-templates";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 
 export const BadgeDetailsNavigation = ({
@@ -20,10 +17,9 @@ export const BadgeDetailsNavigation = ({
   isFeedback?: boolean;
   isQRCode?: boolean;
 }) => {
-  const { setAddressStep, setAction } = useContext(GiveBadgeContext);
+  const { setAddressStep } = useContext(GiveBadgeContext);
   const router = useRouter();
   const handleBack = () => {
-    setAction(GiveBadgeAction.ADDRESS);
     setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
   };
 
