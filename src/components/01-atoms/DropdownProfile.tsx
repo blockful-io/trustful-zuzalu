@@ -16,9 +16,16 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
 
-import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
+import {
+  AdminIcon,
+  CopyToClipboardButton,
+  LogoutIcon,
+  UserIcon,
+} from "@/components/01-atoms";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
+import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -27,7 +34,7 @@ export const DropdownProfile = ({
   isOpenMenu: boolean;
   onClose: () => void;
 }) => {
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({ config: wagmiConfig });
   const { push } = useRouter();
   const { address } = useAccount();
 
@@ -141,6 +148,12 @@ export const DropdownProfile = ({
                   <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                     Profile
                   </Text>
+                </Flex>
+                <Text className="px-2 justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                  ({getEllipsedAddress(address)})
+                </Text>
+                <Flex color={"white"}>
+                  <CopyToClipboardButton isUserAddress />
                 </Flex>
               </Flex>
               <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">
