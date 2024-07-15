@@ -33,11 +33,3 @@ export class EthereumAddress {
     return this.address.slice(0, 6) + "..." + this.address.slice(-4);
   }
 }
-
-export enum Action {
-  NONE,
-  ASSIGN_MANAGER,
-  ASSIGN_VILLAGER,
-  ATTEST,
-  REPLY,
-}

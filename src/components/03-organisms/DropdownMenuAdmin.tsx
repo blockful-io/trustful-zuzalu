@@ -7,13 +7,20 @@ import { isAddress } from "viem";
 import { useAccount } from "wagmi";
 
 import { InputAddressUser } from "@/components/02-molecules/";
+import { useNotify } from "@/hooks";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service";
 import { grantRole } from "@/lib/service/grantRole";
-// import { revoke } from "@/lib/service/revoke";
+import { revokeRole } from "@/lib/service/revokeRole";
 import { setAttestationTitle } from "@/lib/service/setAttestationTitle";
+import { setSchema } from "@/lib/service/setSchema";
 import { EthereumAddress } from "@/lib/shared/types";
-import { ADMIN_ACTION, ADMIN_OPTIONS, ROLES_OPTIONS } from "@/utils/ui-utils";
+import {
+  ACTIONS_OPTIONS,
+  ADMIN_ACTION,
+  ADMIN_OPTIONS,
+  ROLES_OPTIONS,
+} from "@/utils/ui-utils";
 
 export const DropdownMenuAdmin = () => {
   const [adminAction, setAdminAction] = useState<ADMIN_ACTION | null>(null);
@@ -23,8 +30,14 @@ export const DropdownMenuAdmin = () => {
     null,
   );
   const [isloading, setIsLoading] = useState<boolean>(false);
-  const [attestationTitleText, setAttestationTitleTex] = useState<string>("");
+  const [attestationTitleText, setAttestationTitleText] = useState<string>("");
+  const [attestationBadgeIsValid, setAttestationBadgeIsValid] =
+    useState<boolean>(false);
+  const [schemaUID, setSchemaUID] = useState<string | `0x${string}`>("");
+  const [action, setAction] = useState<number>(0);
+
   const { address } = useAccount();
+  const { notifyError } = useNotify();
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -72,9 +85,9 @@ export const DropdownMenuAdmin = () => {
   const handleGrantRole = async () => {
     if (address && inputAddress && role && validAddress) {
       const transactionGrantRole = await grantRole({
-        from: validAddress.address as `0x${string}`,
+        from: address,
         role: role,
-        account: address,
+        account: validAddress.address as `0x${string}`,
         msgValue: BigInt(0),
       });
       transactionGrantRole ? setIsLoading(true) : setIsLoading(false);
@@ -82,28 +95,28 @@ export const DropdownMenuAdmin = () => {
     setIsLoading(false);
   };
 
-  // Call the revoke function with the current state values
+  // Call the revokeRole function with the current state values
   const handleRevokeGrantRole = async () => {
     if (address && inputAddress && role && validAddress) {
-      console.log("handleRevokesssssssss = ", role);
-      console.log("validAddress = ", validAddress.address);
-
       const userHasRole = await hasRole(
         role,
         validAddress.address as `0x${string}`,
       );
       if (userHasRole) {
-        console.log("userHasRole", userHasRole);
-        // const transactionGrantRole = await revoke({
-        //   from: validAddress.address as `0x${string}`,
-        //   schemaUID:,
-        //   revocationRequestData: {
-        //     uid:,
-        //     data: ,
-        //     value: BigInt(0),
-        //   },
-        // });
-        // transactionGrantRole ? setIsLoading(true) : setIsLoading(false);
+        const transactionRevokeRole = await revokeRole({
+          from: address,
+          role: role,
+          account: validAddress.address as `0x${string}`,
+          msgValue: BigInt(0),
+        });
+        transactionRevokeRole ? setIsLoading(true) : setIsLoading(false);
+      } else if (!userHasRole) {
+        setIsLoading(false);
+        notifyError({
+          title: `Address doesn't have the role`,
+          message: "Address doesn't have this badge.",
+        });
+        return;
       }
     }
     setIsLoading(false);
@@ -118,17 +131,65 @@ export const DropdownMenuAdmin = () => {
     if (currentRows >= 2) {
       event.target.rows = currentRows;
     }
-    setAttestationTitleTex(event.target.value);
-    handleAttestationTitle();
+    setAttestationTitleText(event.target.value);
   };
 
   const handleAttestationTitle = async () => {
-    if (address && inputAddress && validAddress) {
+    if (address) {
       const transactionAttestationTitle = await setAttestationTitle({
-        from: validAddress.address as `0x${string}`,
-        isValid: true, // TODO: Confirm if it's always true
-        title: attestationTitleText, //  TODO: Confirm if it's attestationsTitle
-        value: BigInt(0), //  TODO: Confirm if it's always 0n
+        from: address,
+        isValid: attestationBadgeIsValid,
+        title: attestationTitleText,
+        value: BigInt(0),
+      });
+      transactionAttestationTitle ? setIsLoading(true) : setIsLoading(false);
+    }
+    setIsLoading(false);
+  };
+
+  const handleAttestationValidBadge = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ): void => {
+    const selectedRoleValue = event.target.value;
+
+    if (selectedRoleValue === "Yes") {
+      setAttestationBadgeIsValid(true);
+    } else if (selectedRoleValue === "No") {
+      setAttestationBadgeIsValid(false);
+    } else {
+      console.log("Selected Badge Is Valid does not exist in options");
+    }
+  };
+
+  // SCHEMA
+
+  // Get the current title and move to state. It also updates the textarea height based on the content
+  const handleTextareaSchemaUIDChange = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    const textareaLineHeight = 22;
+    const scrollHeight = event.target.scrollHeight - 16;
+
+    const currentRows = Math.ceil(scrollHeight / textareaLineHeight);
+    if (currentRows >= 2) {
+      event.target.rows = currentRows;
+    }
+    setSchemaUID(event.target.value);
+  };
+
+  // Get the current role selected and move to state
+  const handleAction = (event: ChangeEvent<HTMLSelectElement>): void => {
+    const actionSchemaValue = event.target.value;
+    setAction(Number(actionSchemaValue));
+  };
+
+  const handleSetSchema = async () => {
+    if (address) {
+      const transactionAttestationTitle = await setSchema({
+        from: address,
+        uid: schemaUID as `0x${string}`,
+        action: action,
+        msgValue: BigInt(0),
       });
       transactionAttestationTitle ? setIsLoading(true) : setIsLoading(false);
     }
@@ -218,12 +279,6 @@ export const DropdownMenuAdmin = () => {
     ),
     [ADMIN_ACTION.SET_ATTESTATION_TITLE]: (
       <Flex className="w-full flex-col">
-        <Flex className="gap-4 pb-4 justify-start items-center"></Flex>
-        <InputAddressUser
-          label="Enter the address"
-          onInputChange={handleInputChange}
-          inputAddress={String(inputAddress)}
-        />
         <Flex className="gap-4 pb-4 justify-start items-center">
           <Textarea
             className="text-slate-50 text-base font-normal leading-snug border-none"
@@ -239,14 +294,28 @@ export const DropdownMenuAdmin = () => {
             resize="none"
           />
         </Flex>
+        <Flex className="w-full">
+          <Text className="text-slate-50 text-sm font-normal leading-snug items-center ">
+            Badge Valid ?
+          </Text>
+        </Flex>
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Select
+            placeholder="Role"
+            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+            color="white"
+            onChange={handleAttestationValidBadge}
+          >
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </Select>
+        </Flex>
         <Button
           className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
           _hover={{ bg: "#B1EF42" }}
           _active={{ bg: "#B1EF42" }}
           isLoading={isloading}
-          isDisabled={
-            !isAddress(inputAddress.toString()) || !attestationTitleText
-          }
+          isDisabled={!attestationTitleText}
           spinner={<BeatLoader size={8} color="white" />}
           onClick={() => {
             setIsLoading(true);
@@ -258,7 +327,56 @@ export const DropdownMenuAdmin = () => {
         </Button>
       </Flex>
     ),
-    [ADMIN_ACTION.SET_SCHEMA]: <div></div>,
+    [ADMIN_ACTION.SET_SCHEMA]: (
+      <Flex className="w-full flex-col">
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Textarea
+            className="text-slate-50 text-base font-normal leading-snug border-none"
+            placeholder="Set the attestation title"
+            _placeholder={{
+              className: "text-slate-50 opacity-30",
+            }}
+            focusBorderColor={"#F5FFFF1A"}
+            value={schemaUID}
+            onChange={handleTextareaSchemaUIDChange}
+            rows={1}
+            minH="unset"
+            resize="none"
+          />
+        </Flex>
+        <Flex className="gap-4 pb-4 justify-start items-center">
+          <Select
+            placeholder="Action schema"
+            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+            color="white"
+            onChange={handleAction}
+          >
+            {Object.entries(ACTIONS_OPTIONS).map(
+              ([schemaUID, actionSchemaValue], index) => (
+                <option key={index} value={actionSchemaValue}>
+                  {schemaUID}
+                </option>
+              ),
+            )}
+          </Select>
+        </Flex>
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          _hover={{ bg: "#B1EF42" }}
+          _active={{ bg: "#B1EF42" }}
+          isLoading={isloading}
+          isDisabled={!schemaUID}
+          spinner={<BeatLoader size={8} color="white" />}
+          onClick={() => {
+            setIsLoading(true);
+            handleSetSchema();
+          }}
+        >
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Flex>
+    ),
   };
 
   return (

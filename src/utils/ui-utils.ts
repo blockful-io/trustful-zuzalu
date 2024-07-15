@@ -6,10 +6,26 @@ enum ROLES_NAME {
   VILLAGER = "VILLAGER",
 }
 
+export enum ActionName {
+  NONE = "NONE", // 0
+  ASSIGN_MANAGER = "ASSIGN_MANAGER", // 1
+  ASSIGN_VILLAGER = "ASSIGN_VILLAGER", // 2
+  ATTEST = "ATTEST", // 3
+  REPLY = "REPLY", // 4
+}
+
 export const ROLES_OPTIONS: Record<ROLES_NAME, ROLES> = {
   ROOT: ROLES.ROOT,
   MANAGER: ROLES.MANAGER,
   VILLAGER: ROLES.VILLAGER,
+};
+
+export const ACTIONS_OPTIONS: Record<ActionName, number> = {
+  NONE: 0,
+  ASSIGN_MANAGER: 1,
+  ASSIGN_VILLAGER: 2,
+  ATTEST: 3,
+  REPLY: 4,
 };
 
 export enum ADMIN_ACTION {

@@ -10,18 +10,17 @@ import { RESOLVER_CONTRACT_OP } from "@/lib/client/constants";
 import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
-export async function setSchema({
+export async function revokeRole({
   from,
-  uid,
-  action,
+  role,
+  account,
   msgValue,
 }: {
   from: `0x${string}`;
-  uid: `0x${string}`;
-  action: number;
+  role: `0x${string}`;
+  account: `0x${string}`;
   msgValue: bigint;
 }): Promise<TransactionReceipt | Error> {
-  const actionAsBigInt = BigInt(action);
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
 
@@ -29,16 +28,16 @@ export async function setSchema({
     abi: [
       {
         inputs: [
-          { internalType: "bytes32", name: "uid", type: "bytes32" },
-          { internalType: "uint256", name: "action", type: "uint256" },
+          { internalType: "bytes32", name: "role", type: "bytes32" },
+          { internalType: "address", name: "account", type: "address" },
         ],
-        name: "setSchema",
+        name: "revokeRole",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
       },
     ],
-    args: [uid, actionAsBigInt],
+    args: [role, account],
   });
 
   try {
