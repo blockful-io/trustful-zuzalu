@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -15,6 +16,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { useAccount } from "wagmi";
@@ -31,15 +33,12 @@ import {
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
-import { getEllipsedAddress } from "@/utils/formatters";
-
+import { WalletContext } from "@/lib/context/WalletContext";
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
-import { color } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { WalletContext } from "@/lib/context/WalletContext";
+} from "@/lib/service/attest";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -174,7 +173,7 @@ export const BadgeDetailsSection = () => {
           ? BadgeStatus.REJECTED
           : selectedBadge && selectedBadge.status
             ? selectedBadge.status
-            : "Inexistent";
+            : BadgeStatus.DEFAULT;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
@@ -217,7 +216,11 @@ export const BadgeDetailsSection = () => {
               <Flex flexDirection={"column"} className="w-full items-center">
                 <Flex className="w-full flex-row p-4" gap={4}>
                   <Avatar />
-                  <Flex flexDirection={"column"} gap={2} justifyContent={"center"}>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={2}
+                    justifyContent={"center"}
+                  >
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Issued by
                     </Text>
@@ -231,7 +234,11 @@ export const BadgeDetailsSection = () => {
                 <Divider className="border-slate-50 opacity-10 w-full" />
                 <Flex className="w-full flex-row p-4" gap={4}>
                   <Avatar />
-                  <Flex flexDirection={"column"}  gap={2} justifyContent={"center"}>
+                  <Flex
+                    flexDirection={"column"}
+                    gap={2}
+                    justifyContent={"center"}
+                  >
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Receiver
                     </Text>

@@ -1,4 +1,5 @@
 // Icons
+export * from "./icons/AdminIcon";
 export * from "./icons/ArrowIcon";
 export * from "./icons/BadgeIcon";
 export * from "./icons/BadgeTagIcon";

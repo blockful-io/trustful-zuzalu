@@ -135,10 +135,12 @@ export const MyBadgeSection: React.FC = () => {
           if (!title) {
             title = parsedJson.find((item: any) => item.name === "status")
               ?.value.value;
-              if (attestation.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid){
-                badgeStatus = BadgeStatus.CONFIRMED;
-              }
-            
+            if (
+              attestation.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid
+            ) {
+              badgeStatus = BadgeStatus.CONFIRMED;
+            }
+
             if (!title) {
               title = parsedJson.find((item: any) => item.name === "role")
                 ?.value.value;
@@ -147,8 +149,6 @@ export const MyBadgeSection: React.FC = () => {
           const comment = parsedJson.find(
             (item: any) => item.name === "comment",
           )?.value.value;
-
-       
 
           return {
             id: attestation.id,
@@ -160,6 +160,7 @@ export const MyBadgeSection: React.FC = () => {
             txid: attestation.txid,
             schema: attestation.schema,
             status: badgeStatus,
+            revoked: attestation.revoked,
           };
         });
 
