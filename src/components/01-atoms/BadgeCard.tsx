@@ -37,6 +37,7 @@ interface BadgeData {
   recipient: string;
   txid: string;
   schema: Schema;
+  revoked: boolean;
 }
 
 interface BadgeCardProps {

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
-import { CheckIcon, CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
@@ -32,11 +33,12 @@ import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
 import { WalletContext } from "@/lib/context/WalletContext";
+import { getEllipsedAddress } from "@/utils/formatters";
+
 import {
   submitAttest,
   type AttestationRequestData,
-} from "@/lib/service/attest";
-import { getEllipsedAddress } from "@/utils/formatters";
+} from "../../lib/service/attest";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -63,16 +65,6 @@ export const BadgeDetailsSection = () => {
 
   // Submit attestation
   const handleAttest = async (isConfirm: boolean) => {
-    if (!address) {
-      setLoadingConfirm(false);
-      setLoadingDeny(false);
-      notifyError({
-        title: "No account connected",
-        message: "Please connect your wallet.",
-      });
-      return;
-    }
-
     if (!selectedBadge) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -83,11 +75,19 @@ export const BadgeDetailsSection = () => {
       return;
     }
 
+    if (!address) {
+      setLoadingConfirm(false);
+      setLoadingDeny(false);
+      notifyError({
+        title: "No account connected",
+        message: "Please connect your wallet.",
+      });
+      return;
+    }
     const data = encodeAbiParameters(
       parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
       [isConfirm],
     );
-
     const attestationRequestData: AttestationRequestData = {
       recipient: selectedBadge.attester as `0x${string}`,
       expirationTime: BigInt(0),
@@ -182,7 +182,7 @@ export const BadgeDetailsSection = () => {
           <TheHeader />
           <BadgeDetailsNavigation isDetail={true} />
           <Box
-            flex={0}
+            flex={1}
             as="main"
             px={{ base: 6, sm: "60px" }}
             py={{ base: 2, sm: "20px" }}
@@ -190,12 +190,8 @@ export const BadgeDetailsSection = () => {
             gap={6}
           >
             <Flex gap={4} className="w-full h-full items-top">
-              <Flex
-                className="flex items-center justify-center"
-                py="6px"
-                px={"20px"}
-              >
-                <HeartIcon className="w-8 h-8 opacity-50 text-slate-50" />
+              <Flex py="10px">
+                <HeartIcon className="w-6 h-6 opacity-50 text-slate-50" />
               </Flex>
               <Flex flexDirection={"column"} className="w-full">
                 <Box>
@@ -204,7 +200,7 @@ export const BadgeDetailsSection = () => {
                   </Text>
                 </Box>
                 <Flex gap={2} className="items-center">
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                  <Text className="text-slate-50 text-sm font-normal  leading-tight">
                     {new Date(
                       selectedBadge.timeCreated * 1000,
                     ).toLocaleString()}
@@ -228,7 +224,7 @@ export const BadgeDetailsSection = () => {
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Issued by
                     </Text>
-                    <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                       {getEllipsedAddress(
                         selectedBadge.attester as `0x${string}`,
                       )}
@@ -246,7 +242,7 @@ export const BadgeDetailsSection = () => {
                     <Text className="text-slate-50 text-sm font-medium  leading-none">
                       Receiver
                     </Text>
-                    <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
                       {getEllipsedAddress(
                         selectedBadge.recipient as `0x${string}`,
                       )}
@@ -293,7 +289,6 @@ export const BadgeDetailsSection = () => {
                   <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
                     {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
                   </Text>
-
                   <CopyToClipboardButton
                     label={selectedBadge.id}
                     isUserAddress={false}
@@ -329,6 +324,25 @@ export const BadgeDetailsSection = () => {
                 </Flex>
               </Flex>
             </Card>
+            {selectedBadge.schema.id !==
+              ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid &&
+              selectedBadge.status !== BadgeStatus.PENDING && (
+                <Button
+                  className="w-full flex justify-center items-center bg-[#2d2525] gap-2 px-6 text-[#DB4C40] rounded-lg"
+                  _hover={{ color: "#fff", bg: "#DB4C40" }}
+                  _active={{ color: "#fff", bg: "#DB4C40" }}
+                  bg="#F5FFFF0D"
+                  isLoading={loadingDeny}
+                  spinner={<BeatLoader size={8} color="white" />}
+                  onClick={() => {
+                    setLoadingDeny(true);
+                    handleAttest(false);
+                  }}
+                >
+                  <CloseIcon className="w-[14px] h-[14px]" />
+                  Revoke
+                </Button>
+              )}
           </Box>
           {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
           confirmed === null &&
