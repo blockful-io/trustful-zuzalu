@@ -618,6 +618,17 @@ export const DropdownMenuAdmin = () => {
             onInputChange={handleInputChange}
             inputAddress={String(inputAddress)}
           />
+          <Box>
+            <Flex className="pb-4 gap-4 items-center">
+              <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                &#x26A0;WARNING&#x26A0;
+                <br />
+                {`This is an access control function that works outside the scope of how Trustul is supposed to work and the behaviour of the dApp might not be as expected once you override.`}
+                <br />
+                {`Are you sure you want to proceed?`}
+              </Text>
+            </Flex>
+          </Box>
           <Button
             className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
             _hover={{ bg: "#B1EF42" }}
@@ -664,6 +675,17 @@ export const DropdownMenuAdmin = () => {
             inputAddress={String(inputAddress)}
             label={"Address to Revoke Role"}
           />
+          <Box>
+            <Flex className="pb-4 gap-4 items-center">
+              <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                &#x26A0;WARNING&#x26A0;
+                <br />
+                {`This is an access control function that works outside the scope of how Trustul is supposed to work and the behaviour of the dApp might not be as expected once you override.`}
+                <br />
+                {`Are you sure you want to proceed?`}
+              </Text>
+            </Flex>
+          </Box>
           <Button
             className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
             _hover={{ bg: "#B1EF42" }}
@@ -698,7 +720,7 @@ export const DropdownMenuAdmin = () => {
               <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                 &#x26A0;WARNING&#x26A0;
                 <br />
-                {`This action is irreversible. You are revoking the Manager badge from the address ${inputAddress ? inputAddress : "above"}. He will not be able to get this badge again and its status will show revoked for eternity. Are you sure you want to proceed?`}
+                {`This action is irreversible. You are revoking the Manager badge from the address ${inputAddress ? inputAddress : "above"}. He will not be able to get this badge again and its status will show revoked for eternity in the EAS protocol. Are you sure you want to proceed?`}
               </Text>
             </Flex>
           </Box>
@@ -754,18 +776,17 @@ export const DropdownMenuAdmin = () => {
               <option value="No">No</option>
             </Select>
           </Flex>
-          <Flex className="w-full">
-            <Text
-              m={4}
-              className="text-slate-50 text-sm font-normal leading-snug items-center "
-            >
-              Badge Validity:
-              <br />
-              Yes = Can be emitted/created/attested on the contract.
-              <br />
-              No = Cannot be emitted/created/attested on the contract.
-            </Text>
-          </Flex>
+          <Box>
+            <Flex className="pb-4 gap-4 items-center">
+              <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                Badge Validity:
+                <br />
+                Yes = Can be emitted/created/attested on the contract.
+                <br />
+                No = Cannot be emitted/created/attested on the contract.
+              </Text>
+            </Flex>
+          </Box>
           <Button
             className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
             _hover={{ bg: "#B1EF42" }}
@@ -822,6 +843,15 @@ export const DropdownMenuAdmin = () => {
               )}
             </Select>
           </Flex>
+          <Box>
+            <Flex className="pb-4 gap-4 items-center">
+              <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                &#x26A0;WARNING&#x26A0;
+                <br />
+                {`Only use call this function if you really know what you are doing as it will affect how the Resolver Contract works with EAS and Trusful.`}
+              </Text>
+            </Flex>
+          </Box>
           <Button
             className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
             _hover={{ bg: "#B1EF42" }}
