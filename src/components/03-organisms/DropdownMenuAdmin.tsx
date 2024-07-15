@@ -502,11 +502,9 @@ export const DropdownMenuAdmin = () => {
   const handleConnectedAddress = async () => {
     if (address) {
       const isRoot = await hasRole(ROLES.ROOT, address);
-      console.log("isRoot", isRoot);
       if (isRoot) setConnectedRole(ROLES.ROOT);
       else {
         const isManager = await hasRole(ROLES.MANAGER, address);
-        console.log("isManager", isManager);
         if (isManager) setConnectedRole(ROLES.MANAGER);
         else {
           push("/");
