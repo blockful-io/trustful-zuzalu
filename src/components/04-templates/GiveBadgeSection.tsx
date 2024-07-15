@@ -143,6 +143,16 @@ export const GiveBadgeSection = () => {
     ZUVILLAGE_BADGE_TITLES.filter((badge) => {
       if (badge.title === event.target.value) {
         setInputBadge(badge);
+      } else {
+        const customBadge: BadgeTitle = {
+          title: event.target.value,
+          uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+          allowComment: true,
+          revocable: false,
+          data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+          allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+        };
+        setInputBadge(customBadge);
       }
     });
   };
