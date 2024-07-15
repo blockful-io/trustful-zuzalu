@@ -57,3 +57,12 @@ export const ADMIN_OPTIONS: AdminActions[] = [
     action: ADMIN_ACTION.SET_SCHEMA,
   },
 ];
+
+export const MANAGER_OPTIONS: AdminActions[] = [
+  {
+    action: ADMIN_ACTION.REVOKE_MANAGER,
+  },
+  {
+    action: ADMIN_ACTION.SET_ATTESTATION_TITLE,
+  },
+];

@@ -13,6 +13,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress } from "viem";
 import { useAccount } from "wagmi";
@@ -33,14 +34,17 @@ import {
   ACTIONS_OPTIONS,
   ADMIN_ACTION,
   ADMIN_OPTIONS,
+  MANAGER_OPTIONS,
   ROLES_OPTIONS,
 } from "@/utils/ui-utils";
 
 export const DropdownMenuAdmin = () => {
   const { address } = useAccount();
+  const { push } = useRouter();
   const { notifyError } = useNotify();
   const toast = useToast();
 
+  const [connectedRole, setConnectedRole] = useState<ROLES | null>(null);
   const [adminAction, setAdminAction] = useState<ADMIN_ACTION | null>(null);
   const [role, setRole] = useState<ROLES | null>(null);
   const [inputAddress, setInputAddress] = useState<string>("");
@@ -62,73 +66,85 @@ export const DropdownMenuAdmin = () => {
   }, [inputAddress]);
 
   useEffect(() => {
+    handleConnectedAddress();
+  }, [address]);
+
+  useEffect(() => {
     setRole(null);
   }, [adminAction]);
 
   // Call the grantRole function with the current state values
   const handleGrantRole = async () => {
-    if (address && inputAddress && role && validAddress) {
-      const response = await grantRole({
-        from: address,
-        role: role,
-        account: validAddress.address as `0x${string}`,
-        msgValue: BigInt(0),
+    if (!address || !inputAddress || !role || !validAddress) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
       });
-      if (response instanceof Error) {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: response.message,
-        });
-        return;
-      }
-
-      if (response.status !== "success") {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: "Contract execution reverted.",
-        });
-        return;
-      }
-
-      // TODO: Move this function to only one place
-      // TODO: Move to useNotify to create a notifySuccessWithLink function
-      toast({
-        position: "top-right",
-        duration: 4000,
-        isClosable: true,
-        render: () => (
-          <Box
-            color="white"
-            p={4}
-            bg="green.500"
-            borderRadius="md"
-            boxShadow="lg"
-            display="flex"
-            alignItems="center"
-          >
-            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
-            <Box>
-              <Text fontWeight="bold">Success.</Text>
-              <Text>
-                Badge sent at tx:{" "}
-                <Link
-                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
-                  isExternal
-                  color="white"
-                  textDecoration="underline"
-                >
-                  {getEllipsedAddress(response.transactionHash)}
-                </Link>
-              </Text>
-            </Box>
-          </Box>
-        ),
-      });
-      response ? setIsLoading(true) : setIsLoading(false);
+      return;
     }
+
+    const response = await grantRole({
+      from: address,
+      role: role,
+      account: validAddress.address as `0x${string}`,
+      msgValue: BigInt(0),
+    });
+
+    if (response instanceof Error) {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
     setIsLoading(false);
+
+    // TODO: Move this function to only one place
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
   };
 
   // Call the revokeRole function with the current state values
@@ -150,8 +166,8 @@ export const DropdownMenuAdmin = () => {
     if (!userHasRole) {
       setIsLoading(false);
       notifyError({
-        title: `Address doesn't have the role`,
-        message: "Address doesn't have this badge.",
+        title: `Unauthorized Access`,
+        message: "Address doesn't have this role.",
       });
       return;
     }
@@ -482,6 +498,27 @@ export const DropdownMenuAdmin = () => {
     });
   };
 
+  // Defines the connected user to use the admin menu
+  const handleConnectedAddress = async () => {
+    if (address) {
+      const isRoot = await hasRole(ROLES.ROOT, address);
+      console.log("isRoot", isRoot);
+      if (isRoot) setConnectedRole(ROLES.ROOT);
+      else {
+        const isManager = await hasRole(ROLES.MANAGER, address);
+        console.log("isManager", isManager);
+        if (isManager) setConnectedRole(ROLES.MANAGER);
+        else {
+          push("/");
+          notifyError({
+            title: "MERE MORTAL",
+            message: "Get out of here! YOU-NO-ADMIN!!",
+          });
+        }
+      }
+    }
+  };
+
   // Handle the input change and validate the address
   const handleInputChange = (value: string) => {
     setInputAddress(value);
@@ -499,9 +536,25 @@ export const DropdownMenuAdmin = () => {
     setAttestationTitleText(event.target.value);
   };
 
-  // Get the current action selected and move to state
-  const handleActionSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+  // Get the current action selected from the Admin menu and move to state
+  const handleAdminActionSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ) => {
     ADMIN_OPTIONS.filter((admin) => {
+      if (event.target.value === "") {
+        setAdminAction(null);
+      }
+      if (event.target.value === admin.action) {
+        setAdminAction(admin.action);
+      }
+    });
+  };
+
+  // Get the current action selected from the Manager menu and move to state
+  const handleManagerActionSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ) => {
+    MANAGER_OPTIONS.filter((admin) => {
       if (event.target.value === "") {
         setAdminAction(null);
       }
@@ -791,29 +844,52 @@ export const DropdownMenuAdmin = () => {
 
   return (
     <>
-      <Card
-        background={"#F5FFFF0D"}
-        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
-      >
-        <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
-          Select a function
-        </Text>
-        <Select
-          placeholder="Select option"
-          className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-          color="white"
-          onChange={handleActionSelectChange}
-          focusBorderColor={"#B1EF42"}
-        >
-          {ADMIN_OPTIONS.map((admin, index) => (
-            <option key={index} value={admin.action}>
-              {admin.action}
-            </option>
-          ))}
-        </Select>
-      </Card>
-
-      {adminAction && renderAdminAction[adminAction]}
+      {connectedRole ? (
+        <>
+          <Card
+            background={"#F5FFFF0D"}
+            className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+          >
+            <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
+              Select a function
+            </Text>
+            {connectedRole === ROLES.ROOT ? (
+              <Select
+                placeholder="Select option"
+                className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                color="white"
+                onChange={handleAdminActionSelectChange}
+                focusBorderColor={"#B1EF42"}
+              >
+                {ADMIN_OPTIONS.map((admin, index) => (
+                  <option key={index} value={admin.action}>
+                    {admin.action}
+                  </option>
+                ))}
+              </Select>
+            ) : connectedRole === ROLES.MANAGER ? (
+              <Select
+                placeholder="Select option"
+                className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                color="white"
+                onChange={handleManagerActionSelectChange}
+                focusBorderColor={"#B1EF42"}
+              >
+                {MANAGER_OPTIONS.map((admin, index) => (
+                  <option key={index} value={admin.action}>
+                    {admin.action}
+                  </option>
+                ))}
+              </Select>
+            ) : null}
+          </Card>
+          {adminAction && renderAdminAction[adminAction]}
+        </>
+      ) : (
+        <Box flex={1} className="flex justify-center items-center">
+          <BeatLoader size={8} color="#B1EF42" />
+        </Box>
+      )}
     </>
   );
 };
