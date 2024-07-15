@@ -53,3 +53,11 @@ $attestationsWhere2: AttestationWhereInput) {
     }
   }
 }`;
+
+// Get data from the villager schema where data equals check-in
+export const ID_CHECK_IN_QUERY = `query Query($where: AttestationWhereInput) {
+  attestations(where: $where) {
+    id
+    revoked
+  }
+}`;

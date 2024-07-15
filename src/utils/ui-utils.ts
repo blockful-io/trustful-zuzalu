@@ -29,10 +29,11 @@ export const ACTIONS_OPTIONS: Record<ActionName, number> = {
 };
 
 export enum ADMIN_ACTION {
-  GRANT_ROLE = "GRANT_ROLE",
-  REVOKE_ROLE = "REVOKE_ROLE",
-  SET_ATTESTATION_TITLE = "SET_ATTESTATION_TITLE",
-  SET_SCHEMA = "SET_SCHEMA",
+  GRANT_ROLE = "Grant Role",
+  REVOKE_ROLE = "Revoke Role",
+  REVOKE_MANAGER = "Revoke Manager",
+  SET_ATTESTATION_TITLE = "Create Badge",
+  SET_SCHEMA = "Set Schema Action",
 }
 
 export interface AdminActions {
@@ -49,6 +50,11 @@ export const ADMIN_OPTIONS: AdminActions[] = [
   },
   {
     action: ADMIN_ACTION.REVOKE_ROLE,
+    allowComment: false,
+    allowChangeRole: true,
+  },
+  {
+    action: ADMIN_ACTION.REVOKE_MANAGER,
     allowComment: false,
     allowChangeRole: true,
   },

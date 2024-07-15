@@ -19,9 +19,11 @@ import { useAccount } from "wagmi";
 
 import { InputAddressUser } from "@/components/02-molecules/";
 import { useNotify } from "@/hooks";
-import { ROLES } from "@/lib/client/constants";
-import { hasRole } from "@/lib/service";
+import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
+import { ID_CHECK_IN_QUERY } from "@/lib/client/schemaQueries";
+import { fetchEASData, hasRole } from "@/lib/service";
 import { grantRole } from "@/lib/service/grantRole";
+import { revoke } from "@/lib/service/revoke";
 import { revokeRole } from "@/lib/service/revokeRole";
 import { setAttestationTitle } from "@/lib/service/setAttestationTitle";
 import { setSchema } from "@/lib/service/setSchema";
@@ -35,6 +37,10 @@ import {
 } from "@/utils/ui-utils";
 
 export const DropdownMenuAdmin = () => {
+  const { address } = useAccount();
+  const { notifyError } = useNotify();
+  const toast = useToast();
+
   const [adminAction, setAdminAction] = useState<ADMIN_ACTION | null>(null);
   const [role, setRole] = useState<ROLES | null>(null);
   const [inputAddress, setInputAddress] = useState<string>("");
@@ -47,10 +53,6 @@ export const DropdownMenuAdmin = () => {
     useState<boolean>(false);
   const [schemaUID, setSchemaUID] = useState<string | `0x${string}`>("");
   const [action, setAction] = useState<number>(0);
-
-  const { address } = useAccount();
-  const { notifyError } = useNotify();
-  const toast = useToast();
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -351,6 +353,7 @@ export const DropdownMenuAdmin = () => {
         action: action,
         msgValue: BigInt(0),
       });
+
       if (response instanceof Error) {
         setIsLoading(false);
         notifyError({
@@ -404,6 +407,116 @@ export const DropdownMenuAdmin = () => {
       });
       response ? setIsLoading(true) : setIsLoading(false);
     }
+    setIsLoading(false);
+  };
+
+  const handleQuery = async () => {
+    const queryVariables = {
+      where: {
+        schemaId: {
+          equals: ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid,
+        },
+        recipient: {
+          equals: inputAddress,
+        },
+        decodedDataJson: {
+          contains: "Manager",
+        },
+      },
+    };
+
+    const { response, success } = await fetchEASData(
+      ID_CHECK_IN_QUERY,
+      queryVariables,
+    );
+
+    if (!success || !response) {
+      notifyError({
+        title: "Cannot fetch EAS",
+        message: "Error while fetching Attestation data from Subgraphs",
+      });
+      return;
+    }
+
+    if (response.data.data.attestations.length === 0) {
+      notifyError({
+        title: "Cannot fetch Badge",
+        message: "This user doesn't not have a Manager badge.",
+      });
+      return;
+    }
+
+    if (response.data.data.attestations[0].revoked) {
+      notifyError({
+        title: "Already Revoked",
+        message: "This badge was revoked",
+      });
+      return;
+    }
+
+    const txuid = response.data.data.attestations[0].id;
+    const transactionResponse = await revoke(
+      address as `0x${string}`,
+      ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid,
+      txuid as `0x${string}`,
+      0n,
+    );
+
+    if (transactionResponse instanceof Error) {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: transactionResponse.message,
+      });
+      return;
+    }
+
+    if (transactionResponse.status !== "success") {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${transactionResponse.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(transactionResponse.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
+  };
+
+  const handleRevokeManagerRole = async () => {
+    await handleQuery();
     setIsLoading(false);
   };
 
@@ -481,6 +594,30 @@ export const DropdownMenuAdmin = () => {
           onClick={() => {
             setIsLoading(true);
             handleRevokeGrantRole();
+          }}
+        >
+          <CheckIcon className="w-[16px] h-[16px]" />
+          Confirm
+        </Button>
+      </Flex>
+    ),
+    [ADMIN_ACTION.REVOKE_MANAGER]: (
+      <Flex className="w-full flex-col">
+        <InputAddressUser
+          onInputChange={handleInputChange}
+          inputAddress={String(inputAddress)}
+          label={"Address to Revoke"}
+        />
+        <Button
+          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+          _hover={{ bg: "#B1EF42" }}
+          _active={{ bg: "#B1EF42" }}
+          isLoading={isloading}
+          isDisabled={!isAddress(inputAddress.toString())}
+          spinner={<BeatLoader size={8} color="white" />}
+          onClick={() => {
+            setIsLoading(true);
+            handleRevokeManagerRole();
           }}
         >
           <CheckIcon className="w-[16px] h-[16px]" />
@@ -597,7 +734,7 @@ export const DropdownMenuAdmin = () => {
         className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
       >
         <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
-          Select a Badge User Role
+          Select a function
         </Text>
         <Select
           placeholder="Select option"
