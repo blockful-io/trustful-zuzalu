@@ -93,6 +93,12 @@ export const WalletContextProvider = ({
       if (isRoot) {
         setVillagerAttestationCount(2);
         return;
+      } else {
+        const isManager = await hasRole(ROLES.MANAGER, address);
+        if (isManager) {
+          setVillagerAttestationCount(2);
+          return;
+        }
       }
     }
 
