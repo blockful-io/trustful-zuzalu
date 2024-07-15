@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import { Tooltip } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 
+interface CopyToClipboardButtonProps {
+  isUserAddress?: boolean;
+  isShare?: boolean;
+  showSvg?: boolean;
+  label?: string;
+  className?: string;
+  svgClassName?: string;
+  children?: ReactNode;
+}
+
 export const CopyToClipboardButton = ({
   isUserAddress = false,
   isShare = false,
+  showSvg = false,
   label,
-}: {
-  isUserAddress: boolean;
-  isShare?: boolean;
-  label?: string;
-}) => {
+  className = "",
+  svgClassName = "",
+  children,
+}: CopyToClipboardButtonProps) => {
   const { address } = useAccount();
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -30,13 +40,29 @@ export const CopyToClipboardButton = ({
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000); // Revert icon back after 2 seconds
   };
+
   return (
     <Tooltip label={"Copy to clipboard"} hasArrow placement="bottom">
-      {isCopied ? (
-        <CheckIcon />
-      ) : (
-        <CopyIcon onClick={handleCopy} className="cursor-pointer" />
-      )}
+      <div
+        onClick={handleCopy}
+        className={className}
+        style={{
+          cursor: "pointer",
+          display: "inline-flex",
+          alignItems: "center",
+        }}
+      >
+        {children}
+        {showSvg && (
+          <>
+            {isCopied ? (
+              <CheckIcon className={svgClassName} />
+            ) : (
+              <CopyIcon className={svgClassName} />
+            )}
+          </>
+        )}
+      </div>
     </Tooltip>
   );
 };

@@ -34,6 +34,7 @@ import {
   ArrowIcon,
   ArrowIconVariant,
   PasteToClipboardButton,
+  CopyToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import {
@@ -51,7 +52,9 @@ import {
 } from "@/lib/service";
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
+import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
+
+import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -140,11 +143,24 @@ export const GiveBadgeSection = () => {
 
   // Get the current badge selected and move to state
   const handleBadgeSelectChange = (event: any) => {
-    ZUVILLAGE_BADGE_TITLES.filter((badge) => {
+    let selectedBadge: BadgeTitle | undefined = undefined;
+    ZUVILLAGE_BADGE_TITLES.map((badge) => {
       if (badge.title === event.target.value) {
-        setInputBadge(badge);
+        selectedBadge = badge;
       }
     });
+    if (!selectedBadge) {
+      const customBadge: BadgeTitle = {
+        title: event.target.value,
+        uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+        allowComment: true,
+        revocable: false,
+        data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+        allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+      };
+      selectedBadge = customBadge;
+    }
+    setInputBadge(selectedBadge);
   };
 
   // Get the current comment and move to state
@@ -232,6 +248,14 @@ export const GiveBadgeSection = () => {
       } else if (inputBadge.title === "Check-out") {
         encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
         encodeArgs = ["Check-out"];
+        if (!isBytes32(commentBadge as `0x${string}`)) {
+          setLoading(false);
+          notifyError({
+            title: "Invalid reference UID",
+            message: "The format provided is not a valid bytes32.",
+          });
+          return;
+        }
         const isCheckedOut = await checkedOutVillagers(
           badgeInputAddress.address,
         );
@@ -266,7 +290,9 @@ export const GiveBadgeSection = () => {
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:
-        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        inputBadge.title === "Check-out"
+          ? (commentBadge as `0x${string}`)
+          : "0x0000000000000000000000000000000000000000000000000000000000000000",
       data: data,
       value: BigInt(0),
     };
@@ -426,10 +452,19 @@ export const GiveBadgeSection = () => {
                       justifyContent={"center"}
                     >
                       <Text className="text-slate-50 text-sm font-medium leading-none">
-                        Issued by
+                        Issuer
                       </Text>
                       <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        {getEllipsedAddress(address)}
+                        <CopyToClipboardButton
+                          label={address}
+                          isUserAddress={true}
+                        >
+                          {getEllipsedAddress(address)}
+                        </CopyToClipboardButton>
+                        <OutboundLinkButton
+                          label={`https://optimistic.etherscan.io/address/${address}`}
+                          className="cursor-pointer text-center ml-1"
+                        />
                       </Text>
                     </Flex>
                   </Flex>
@@ -445,7 +480,16 @@ export const GiveBadgeSection = () => {
                         Receiver
                       </Text>
                       <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        {getEllipsedAddress(badgeInputAddress?.address)}
+                        <CopyToClipboardButton
+                          label={badgeInputAddress?.address}
+                          isUserAddress={true}
+                        >
+                          {getEllipsedAddress(badgeInputAddress?.address)}
+                        </CopyToClipboardButton>
+                        <OutboundLinkButton
+                          label={`https://optimistic.etherscan.io/address/${badgeInputAddress?.address}`}
+                          className="cursor-pointer text-center ml-1"
+                        />
                       </Text>
                     </Flex>
                   </Flex>
@@ -481,7 +525,11 @@ export const GiveBadgeSection = () => {
                     <CommentIcon />
                     <Textarea
                       className="text-slate-50 text-base font-normal leading-snug border-none"
-                      placeholder="Share your experience!"
+                      placeholder={
+                        inputBadge && inputBadge.title === "Check-out"
+                          ? `Rereferenced attestation`
+                          : `Share your experience!`
+                      }
                       _placeholder={{
                         className: "text-slate-50 opacity-30",
                       }}
@@ -588,7 +636,7 @@ export const GiveBadgeSection = () => {
                   </Flex>
                 </Flex>
                 <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                {commentBadge && (
+                {commentBadge && !isBytes32(commentBadge as `0x${string}`) && (
                   <Flex className="py-4 gap-4 items-center">
                     <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                       Comment
