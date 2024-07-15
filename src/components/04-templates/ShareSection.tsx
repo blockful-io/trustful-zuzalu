@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect } from "react";
 
 import {
@@ -17,9 +18,9 @@ import {
   CopyToClipboardButton,
   BlockfulLogo,
   QRCodeGiveBadge,
+  ShareIcon,
   TheFooterNavbar,
   TheHeader,
-  TicketIcon,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import { WalletContext } from "@/lib/context/WalletContext";
@@ -59,7 +60,7 @@ export const ShareSection = () => {
               border={2}
             >
               <Flex className="absolute left-1/2 top-1 -translate-x-1/2 -translate-y-1/2 border dark:border-[#161617] border-[#707572] bg-[#F6F6F6] dark:bg-[#212322] rounded-full w-[72px] h-[72px] flex items-center justify-center">
-                <TicketIcon />
+                <ShareIcon className="w-10 h-10 text-lime-400" />
               </Flex>
               <CardHeader
                 gap={2}
@@ -91,11 +92,15 @@ export const ShareSection = () => {
                     <>
                       <QRCodeGiveBadge />
                       <Flex
-                        color="white"
+                        color={"white"}
                         className="justify-center items-center gap-2"
                       >
                         <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress />
+                        <CopyToClipboardButton
+                          isUserAddress={false}
+                          isShare
+                          showSvg
+                        />
                       </Flex>
                     </>
                   ) : (

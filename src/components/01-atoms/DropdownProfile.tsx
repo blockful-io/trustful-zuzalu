@@ -16,9 +16,17 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
 
-import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
+import {
+  AdminIcon,
+  CopyToClipboardButton,
+  LogoutIcon,
+  UserIcon,
+} from "@/components/01-atoms";
+import { useWindowSize } from "@/hooks";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
+import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -27,10 +35,10 @@ export const DropdownProfile = ({
   isOpenMenu: boolean;
   onClose: () => void;
 }) => {
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({ config: wagmiConfig });
   const { push } = useRouter();
   const { address } = useAccount();
-
+  const { isMobile } = useWindowSize();
   const [isRoot, setIsRoot] = useState<boolean>(false);
 
   //Checks if the user has the `Manager` or `Root` badge
@@ -137,10 +145,25 @@ export const DropdownProfile = ({
             >
               <Flex gap={3} alignItems={"center"}>
                 <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
-                <Flex>
-                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    Profile
+                {!isMobile && (
+                  <>
+                    <Flex>
+                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                        Profile
+                      </Text>
+                    </Flex>
+                    <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                      ({getEllipsedAddress(address)})
+                    </Text>
+                  </>
+                )}
+                {isMobile && (
+                  <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    {getEllipsedAddress(address)}
                   </Text>
+                )}
+                <Flex color={"white"}>
+                  <CopyToClipboardButton isUserAddress showSvg />
                 </Flex>
               </Flex>
               <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">
