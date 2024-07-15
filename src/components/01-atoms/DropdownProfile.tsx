@@ -19,6 +19,7 @@ import { useAccount } from "wagmi";
 import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -142,6 +143,9 @@ export const DropdownProfile = ({
                     Profile
                   </Text>
                 </Flex>
+                <Text className="px-2 justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                  ({getEllipsedAddress(address)})
+                </Text>
               </Flex>
               <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">
                 coming soon
