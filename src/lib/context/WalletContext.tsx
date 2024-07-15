@@ -9,14 +9,16 @@ import React, {
   useContext,
 } from "react";
 
+import { watchAccount } from "@wagmi/core";
 import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
+import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
+import { VILLAGER_QUERY } from "@/lib/client/schemaQueries";
 import { fetchEASData } from "@/lib/service/fetchEASData";
 import { hasRole } from "@/lib/service/hasRole";
-
-import { ZUVILLAGE_SCHEMAS, ROLES } from "../client/constants";
-import { VILLAGER_QUERY } from "../client/schemaQueries";
+import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 interface WalletContextProps {
   villagerAttestationCount: number | null;
@@ -55,12 +57,33 @@ export const WalletContextProvider = ({
   }, [villagerAttestationCount]);
 
   const { address } = useAccount();
-  const { notifyError } = useNotify();
+  const { notifyError, notifySuccess } = useNotify();
+  const unwatch = watchAccount(wagmiConfig, {
+    onChange(account) {
+      console.log("Account changed!", account);
+    },
+  });
 
   useEffect(() => {
+    // First Time user in page
     if (address && villagerAttestationCount === null) {
       handleQuery();
     }
+    unwatch();
+  }, [address]);
+
+  useEffect(() => {
+    // User changes account
+    if (address) {
+      handleQuery();
+      notifySuccess({
+        title: "Account Changed",
+        message: `Connected to your account ${getEllipsedAddress(address)}`,
+      });
+    }
+    return () => {
+      unwatch();
+    };
   }, [address]);
 
   const handleQuery = async () => {
