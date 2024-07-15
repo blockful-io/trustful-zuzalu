@@ -92,11 +92,15 @@ export const ShareSection = () => {
                     <>
                       <QRCodeGiveBadge />
                       <Flex
-                        color="white"
+                        color={"white"}
                         className="justify-center items-center gap-2"
                       >
                         <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress={false} isShare />
+                        <CopyToClipboardButton
+                          isUserAddress={false}
+                          isShare
+                          showSvg
+                        />
                       </Flex>
                     </>
                   ) : (

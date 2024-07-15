@@ -27,7 +27,11 @@ export const InputAddressUser = ({
         onChange={(e) => onInputChange(e.target.value)}
       />
       <Flex className="w-8" color="white">
-        <CopyToClipboardButton isUserAddress={false} label={inputAddress} />
+        <CopyToClipboardButton
+          isUserAddress={false}
+          label={inputAddress}
+          showSvg
+        />
       </Flex>
     </Flex>
   );
