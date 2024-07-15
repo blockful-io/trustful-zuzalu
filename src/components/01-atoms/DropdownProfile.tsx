@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
+
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Card,
@@ -11,8 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 
-import { LogoutIcon, UserIcon } from "@/components/01-atoms";
+import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
+import { ROLES } from "@/lib/client/constants";
+import { hasRole } from "@/lib/service/hasRole";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -23,7 +29,28 @@ export const DropdownProfile = ({
 }) => {
   const { disconnect } = useDisconnect();
   const { push } = useRouter();
+  const { address } = useAccount();
 
+  const [isRoot, setIsRoot] = useState<boolean>(false);
+
+  //Checks if the user has the `Manager` or `Root` badge
+  useEffect(() => {
+    checkUserRole();
+  }, [address]);
+
+  const checkUserRole = async () => {
+    if (!address) {
+      return;
+    }
+    if (await hasRole(ROLES.ROOT, address)) {
+      setIsRoot(true);
+      return;
+    }
+    if (await hasRole(ROLES.MANAGER, address)) {
+      setIsRoot(true);
+      return;
+    }
+  };
   return (
     <>
       <div
@@ -58,7 +85,7 @@ export const DropdownProfile = ({
             opacity={0.7}
           >
             <Flex gap={4} className={"items-center"}>
-              <Heading size="md">Profile options</Heading>
+              <Heading size="md">Options</Heading>
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <CloseIcon onClick={onClose} />
@@ -83,6 +110,24 @@ export const DropdownProfile = ({
                 </Text>
               </Flex>
             </Flex>
+            {isRoot && (
+              <Flex
+                gap={4}
+                alignItems={"center"}
+                flexDirection={"row"}
+                p={4}
+                onClick={() => {
+                  push("/admin");
+                }}
+              >
+                <AdminIcon className="w-6 h-6 text-[#F5FFFF80]" />
+                <Flex gap={2} alignItems={"center"}>
+                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight ">
+                    Admin
+                  </Text>
+                </Flex>
+              </Flex>
+            )}
             <Flex
               gap={4}
               alignItems={"center"}

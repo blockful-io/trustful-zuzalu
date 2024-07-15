@@ -10,16 +10,16 @@ import { RESOLVER_CONTRACT_OP } from "@/lib/client/constants";
 import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
-export async function setAttestationTitle({
+export async function revokeRole({
   from,
-  title,
-  isValid,
-  value,
+  role,
+  account,
+  msgValue,
 }: {
   from: `0x${string}`;
-  title: string;
-  isValid: boolean;
-  value: bigint;
+  role: `0x${string}`;
+  account: `0x${string}`;
+  msgValue: bigint;
 }): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
@@ -28,16 +28,16 @@ export async function setAttestationTitle({
     abi: [
       {
         inputs: [
-          { internalType: "string", name: "title", type: "string" },
-          { internalType: "bool", name: "isValid", type: "bool" },
+          { internalType: "bytes32", name: "role", type: "bytes32" },
+          { internalType: "address", name: "account", type: "address" },
         ],
-        name: "setAttestationTitle",
+        name: "revokeRole",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
       },
     ],
-    args: [title, isValid],
+    args: [role, account],
   });
 
   try {
@@ -45,7 +45,7 @@ export async function setAttestationTitle({
       account: from as `0x${string}`,
       to: RESOLVER_CONTRACT_OP as `0x${string}`,
       data: data,
-      value: value,
+      value: msgValue,
     });
   } catch (error) {
     return Error("Error estimating gas.");
@@ -57,7 +57,7 @@ export async function setAttestationTitle({
       to: RESOLVER_CONTRACT_OP as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
-      value: value,
+      value: msgValue,
       chain: walletClient.chain,
     });
 

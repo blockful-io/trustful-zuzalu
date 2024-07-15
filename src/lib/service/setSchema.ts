@@ -6,20 +6,21 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
+import { RESOLVER_CONTRACT_OP } from "@/lib/client/constants";
+import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
-import { RESOLVER_CONTRACT_OP } from "../client/constants";
-import { Action } from "../shared/types";
-import { publicClient } from "../wallet/client";
-
-export async function setSchema(
-  from: `0x${string}`,
-  uid: `0x${string}`,
-  roleId: `0x${string}`,
-  action: Action,
-
-  msgValue: bigint,
-): Promise<TransactionReceipt | Error> {
+export async function setSchema({
+  from,
+  uid,
+  action,
+  msgValue,
+}: {
+  from: `0x${string}`;
+  uid: `0x${string}`;
+  action: number;
+  msgValue: bigint;
+}): Promise<TransactionReceipt | Error> {
   const actionAsBigInt = BigInt(action);
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
@@ -29,7 +30,6 @@ export async function setSchema(
       {
         inputs: [
           { internalType: "bytes32", name: "uid", type: "bytes32" },
-          { internalType: "bytes32", name: "roleId", type: "bytes32" },
           { internalType: "uint256", name: "action", type: "uint256" },
         ],
         name: "setSchema",
@@ -38,7 +38,7 @@ export async function setSchema(
         type: "function",
       },
     ],
-    args: [uid, roleId, actionAsBigInt],
+    args: [uid, actionAsBigInt],
   });
 
   try {

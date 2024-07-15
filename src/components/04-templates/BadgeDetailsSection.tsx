@@ -214,7 +214,7 @@ export const BadgeDetailsSection = () => {
     const response = await revoke(
       address as `0x${string}`,
       ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-      attestResponseId as `0x${string}`,
+      attestResponseId as  `0x${string}`,
       0n,
     );
     processAttestationResponse(response);
@@ -304,7 +304,7 @@ export const BadgeDetailsSection = () => {
           <TheHeader />
           <BadgeDetailsNavigation isDetail={true} />
           <Box
-            flex={1}
+            flex={0}
             as="main"
             px={{ base: 6, sm: "60px" }}
             py={{ base: 2, sm: "20px" }}
@@ -441,10 +441,10 @@ export const BadgeDetailsSection = () => {
                 </Text>
                 <Flex color="white" className="gap-2">
                   <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    #{selectedBadge.schema.index}
+                    {getEllipsedAddress(selectedBadge.schema.id as `0x${string}`)}
                   </Text>
                   <CopyToClipboardButton
-                    label={selectedBadge.schema.index}
+                    label={selectedBadge.schema.id}
                     isUserAddress={false}
                   />
                 </Flex>

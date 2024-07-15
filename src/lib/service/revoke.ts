@@ -6,10 +6,9 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
+import { EAS_CONTRACT_OP } from "@/lib/client/constants";
+import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
-
-import { EAS_CONTRACT_OP } from "../client/constants";
-import { publicClient } from "../wallet/client";
 
 export interface RevocationRequestData {
   uid: `0x${string}`;
@@ -80,7 +79,6 @@ export async function revoke(
         type: "function",
       },
     ],
-
     args: [RevocationRequest],
   });
 
