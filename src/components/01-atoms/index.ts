@@ -29,6 +29,7 @@ export * from "./BadgeDetailsNavigation";
 export * from "./CopyToClipboardButton";
 export * from "./CreatedByBlockful";
 export * from "./DropdownProfile";
+export * from "./PasteToClipboardButton";
 export * from "./QRCodeGiveBadge";
 export * from "./SignMessage";
 export * from "./TheFooterNavbar";
