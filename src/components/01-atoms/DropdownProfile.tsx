@@ -25,6 +25,7 @@ import {
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
 import { getEllipsedAddress } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -33,7 +34,7 @@ export const DropdownProfile = ({
   isOpenMenu: boolean;
   onClose: () => void;
 }) => {
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({ config: wagmiConfig });
   const { push } = useRouter();
   const { address } = useAccount();
 
