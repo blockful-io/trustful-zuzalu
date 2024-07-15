@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useState, useEffect } from "react";
 
 import {
@@ -104,7 +105,7 @@ export const CheckinSection = () => {
                         className="justify-center items-center gap-2"
                       >
                         <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress />
+                        <CopyToClipboardButton isUserAddress={false} isShare />
                       </Flex>
                     </>
                   ) : (
@@ -182,7 +183,6 @@ export const CheckinSection = () => {
                   check-in.
                   <UnorderedList styleType="disc" pl={4}>
                     {" "}
-                    {/* Use "disc" for default bullet points */}
                     <ListItem>
                       {" "}
                       Your check-in badge will be your first badge, unlocking
