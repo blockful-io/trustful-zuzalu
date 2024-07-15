@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useState, useEffect } from "react";
 
+import { ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Card,
@@ -121,19 +122,28 @@ export const CheckinSection = () => {
             >
               <Divider className="border-slate-50 opacity-10 w-full" />
               <Flex
-                className="w-full flex-row py-3 cursor-pointer"
+                className="w-full flex-row py-3 cursor-pointer justify-between"
                 gap={4}
                 onClick={() => setIsTrustfulVisible(!isTrustfulVisible)}
               >
-                <CircleQuestion />
-                <Flex flexDirection={"column"} justifyContent={"center"}>
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What Trustful is?
-                  </Text>
+                <Flex gap={4}>
+                  <CircleQuestion />
+                  <Flex flexDirection={"column"} justifyContent={"center"}>
+                    <Text className="text-slate-50 font-normal text-lg leading-tight">
+                      What Trustful is?
+                    </Text>
+                  </Flex>
+                </Flex>
+                <Flex className="items-center">
+                  {isTrustfulVisible ? (
+                    <ChevronDownIcon className="text-white" />
+                  ) : (
+                    <ChevronRightIcon className="text-white" />
+                  )}
                 </Flex>
               </Flex>
               <Collapse in={isTrustfulVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box px={10} py={4} color="white">
                   Trustful is a reputation aggregator system designed to match
                   governance, participation, and efforts. Using the Ethereum
                   Attestation Service (EAS) and a badge system, we can attest to
@@ -144,19 +154,28 @@ export const CheckinSection = () => {
               </Collapse>
               <Divider className="border-slate-50 opacity-10 w-full" />
               <Flex
-                className="w-full flex-row py-3 cursor-pointer"
+                className="w-full flex-row py-3 cursor-pointer justify-between"
                 gap={4}
                 onClick={() => setIsZuVillageVisible(!isZuVillageVisible)}
               >
-                <CircleQuestion />
-                <Flex flexDirection={"column"} justifyContent={"center"}>
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    How it works in ZuVillage?
-                  </Text>
+                <Flex gap={4}>
+                  <CircleQuestion />
+                  <Flex flexDirection={"column"} justifyContent={"center"}>
+                    <Text className="text-slate-50 text-lg font-normal leading-tight">
+                      How it works in ZuVillage?
+                    </Text>
+                  </Flex>
+                </Flex>
+                <Flex className="items-center">
+                  {isZuVillageVisible ? (
+                    <ChevronDownIcon className="text-white" />
+                  ) : (
+                    <ChevronRightIcon className="text-white" />
+                  )}
                 </Flex>
               </Flex>
               <Collapse in={isZuVillageVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box px={10} py={4} color="white">
                   In ZuVillage, your interactions and contributions will be
                   attested to and stored on-chain. This promotes dialogue,
                   avoids echo chambers, and encourages active participation. In
@@ -166,19 +185,28 @@ export const CheckinSection = () => {
               </Collapse>
               <Divider className="border-slate-50 opacity-10 w-full" />
               <Flex
-                className="w-full flex-row py-3 cursor-pointer"
+                className="w-full flex-row py-3 cursor-pointer justify-between"
                 gap={4}
                 onClick={() => setToDoNowVisible(!isToDoNowVisible)}
               >
-                <CircleQuestion />
-                <Flex flexDirection={"column"} justifyContent={"center"}>
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What to do now
-                  </Text>
+                <Flex gap={4}>
+                  <CircleQuestion />
+                  <Flex flexDirection={"column"} justifyContent={"center"}>
+                    <Text className="text-slate-50 text-lg font-normal leading-tight">
+                      What to do now
+                    </Text>
+                  </Flex>
+                </Flex>
+                <Flex className="items-center">
+                  {isToDoNowVisible ? (
+                    <ChevronDownIcon className="text-white" />
+                  ) : (
+                    <ChevronRightIcon className="text-white" />
+                  )}
                 </Flex>
               </Flex>
               <Collapse in={isToDoNowVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box px={10} py={4} color="white">
                   Now that you have connected your wallet, you need to do the
                   check-in.
                   <UnorderedList styleType="disc" pl={4}>
