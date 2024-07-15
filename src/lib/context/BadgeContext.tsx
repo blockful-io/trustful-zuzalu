@@ -1,4 +1,3 @@
-// BadgeContext.tsx
 import React, {
   createContext,
   useContext,
@@ -16,7 +15,6 @@ interface Schema {
   id: string;
 }
 
-// Defina os tipos no mesmo arquivo
 interface Badge {
   id: string;
   title: string;
@@ -28,6 +26,7 @@ interface Badge {
   txid: string;
   schema: Schema;
   revoked: boolean;
+  responseId?: string;
 }
 
 interface BadgeContextType {

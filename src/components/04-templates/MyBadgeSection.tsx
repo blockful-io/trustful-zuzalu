@@ -17,10 +17,8 @@ import { BADGE_QUERY } from "@/lib/client/schemaQueries";
 import { WalletContext } from "@/lib/context/WalletContext";
 import { fetchEASData } from "@/lib/service/fetchEASData";
 
-interface Schema {
-  index: string;
-  id: string;
-}
+import { type BadgeData } from "../01-atoms/BadgeCard";
+import { type Schema } from "../01-atoms/BadgeCard";
 
 interface Attestation {
   decodedDataJson: string;
@@ -32,19 +30,7 @@ interface Attestation {
   txid: string;
   schema: Schema;
   refUID: string;
-}
-
-interface BadgeData {
-  id: string;
-  title: string;
-  status: BadgeStatus;
-  comment: string;
-  timeCreated: number;
-  attester: string;
-  recipient: string;
-  txid: string;
-  schema: Schema;
-  revoked: boolean;
+  status: boolean;
 }
 
 export const MyBadgeSection: React.FC = () => {
@@ -75,71 +61,21 @@ export const MyBadgeSection: React.FC = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const response: Attestation[] = await handleQuery();
-    if (response) {
-      // Mapa de refUIDs para status
-      const responseDataMap: {
-        [key: string]: {
-          status: boolean | undefined;
-          revoked: boolean | undefined;
-        };
-      } = response.reduce(
-        (
-          map: {
-            [key: string]: {
-              status: boolean | undefined;
-              revoked: boolean | undefined;
-            };
-          },
-          attestation: Attestation,
-        ) => {
-          if (
-            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid &&
-            attestation.decodedDataJson
-          ) {
-            const parsedJson = JSON.parse(attestation.decodedDataJson);
-            const status = parsedJson.find(
-              (item: any) => item.name === "status",
-            )?.value.value;
-            const revoked = attestation.revoked;
-            if (typeof status === "boolean" && typeof revoked === "boolean") {
-              map[attestation.refUID] = { status, revoked };
-            }
-          }
-          return map;
-        },
-        {},
-      );
-      console.log(responseDataMap);
-      const decodedData: BadgeData[] = response
-        .filter(
-          (attestation: Attestation) =>
-            attestation.decodedDataJson &&
-            attestation.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-        )
-        .map((attestation: Attestation) => {
-          let badgeStatus: BadgeStatus;
-          const responseStatus = responseDataMap[attestation.id].status;
-          const responseRevoked = responseDataMap[attestation.id].revoked;
-          if (responseStatus === false && responseRevoked === false) {
-            badgeStatus = BadgeStatus.REJECTED;
-          } else if (responseStatus === true && responseRevoked === false) {
-            badgeStatus = BadgeStatus.CONFIRMED;
-          } else {
-            badgeStatus = BadgeStatus.PENDING;
-          }
-
+    const responseAttestBadges: Attestation[] = await handleQuery(
+      false,
+      null,
+      null,
+    );
+    if (responseAttestBadges) {
+      const decodedDataPromises: Promise<BadgeData>[] = responseAttestBadges
+        .filter((attestation: Attestation) => attestation.decodedDataJson)
+        .map(async (attestation: Attestation) => {
           const parsedJson = JSON.parse(attestation.decodedDataJson);
           let title = parsedJson.find((item: any) => item.name === "title")
             ?.value.value;
           if (!title) {
             title = parsedJson.find((item: any) => item.name === "status")
               ?.value.value;
-            if (
-              attestation.schema.id !== ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid
-            ) {
-              badgeStatus = BadgeStatus.CONFIRMED;
-            }
 
             if (!title) {
               title = parsedJson.find((item: any) => item.name === "role")
@@ -149,6 +85,41 @@ export const MyBadgeSection: React.FC = () => {
           const comment = parsedJson.find(
             (item: any) => item.name === "comment",
           )?.value.value;
+          let badgeStatus = BadgeStatus.PENDING;
+          let responseId: string | undefined = undefined;
+          const responseAttestResponse: Attestation[] = await handleQuery(
+            true,
+            attestation.attester,
+            attestation.id,
+          );
+          if (responseAttestResponse.length > 0) {
+            responseAttestResponse.sort(
+              (a, b) => b.timeCreated - a.timeCreated,
+            );
+            const lastItem = responseAttestResponse[0];
+            const parsedJson = JSON.parse(lastItem.decodedDataJson);
+            const status = parsedJson.find(
+              (item: any) => item.name === "status",
+            )?.value.value;
+            const revoked = lastItem.revoked;
+            responseId = lastItem.id ?? undefined;
+            if (!revoked && !status) {
+              badgeStatus = BadgeStatus.REJECTED;
+            } else if (!revoked && status) {
+              badgeStatus = BadgeStatus.CONFIRMED;
+            }
+          } else if (
+            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
+            (attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
+              !attestation.revoked)
+          ) {
+            badgeStatus = BadgeStatus.CONFIRMED;
+          } else if (
+            attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
+            attestation.revoked
+          ) {
+            badgeStatus = BadgeStatus.REJECTED;
+          }
 
           return {
             id: attestation.id,
@@ -161,21 +132,29 @@ export const MyBadgeSection: React.FC = () => {
             schema: attestation.schema,
             status: badgeStatus,
             revoked: attestation.revoked,
+            responseId: responseId,
           };
         });
 
+      const decodedData = await Promise.all(decodedDataPromises);
       setBadgeData(decodedData);
     }
+
     setLoading(false);
   };
 
-  const handleQuery = async () => {
-    const queryVariables = {
+  const handleQuery = async (
+    isAttestResponse: boolean,
+    recipient: string | null,
+    attestation: string | null,
+  ) => {
+    let queryVariables = {};
+    queryVariables = {
       where: {
         OR: [
           {
             schemaId: {
-              equals: ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+              equals: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
             },
             recipient: {
               equals: address,
@@ -197,20 +176,34 @@ export const MyBadgeSection: React.FC = () => {
               equals: address,
             },
           },
-          {
-            schemaId: {
-              equals: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
-            },
-            recipient: {
-              equals: address,
-            },
-          },
         ],
       },
-      orderBy: {
-        timeCreated: "desc",
-      },
+      orderBy: [
+        {
+          timeCreated: "desc",
+        },
+      ],
     };
+    if (isAttestResponse) {
+      queryVariables = {
+        where: {
+          schemaId: {
+            equals: ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+          },
+          recipient: {
+            equals: recipient,
+          },
+          refUID: {
+            equals: attestation,
+          },
+        },
+        orderBy: [
+          {
+            timeCreated: "desc",
+          },
+        ],
+      };
+    }
 
     try {
       const { response } = await fetchEASData(BADGE_QUERY, queryVariables);

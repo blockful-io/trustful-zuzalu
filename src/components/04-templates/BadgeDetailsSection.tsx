@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -34,11 +33,13 @@ import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
 import { WalletContext } from "@/lib/context/WalletContext";
+import { getEllipsedAddress } from "@/utils/formatters";
+
 import {
   submitAttest,
   type AttestationRequestData,
-} from "@/lib/service/attest";
-import { getEllipsedAddress } from "@/utils/formatters";
+} from "../../lib/service/attest";
+import { revoke } from "../../lib/service/revoke";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -46,6 +47,7 @@ export const BadgeDetailsSection = () => {
   const toast = useToast();
   const { notifyError } = useNotify();
   const { push } = useRouter();
+  const { setSelectedBadge } = useBadge();
 
   const { villagerAttestationCount } = useContext(WalletContext);
 
@@ -57,22 +59,31 @@ export const BadgeDetailsSection = () => {
       });
       push("/pre-checkin");
     }
+    if (selectedBadge) {
+      setBadgeStatus(selectedBadge?.status);
+      setAttestResponseId(selectedBadge?.responseId);
+    } else {
+      push("/my-badges");
+    }
   }, [villagerAttestationCount]);
 
   const [loadingConfirm, setLoadingConfirm] = useState<boolean>(false);
   const [loadingDeny, setLoadingDeny] = useState<boolean>(false);
-  const [confirmed, setConfirmed] = useState<boolean | null>(null);
+  const [badgeStatus, setBadgeStatus] = useState<BadgeStatus>(
+    BadgeStatus.PENDING,
+  );
+  const [attestResponseId, setAttestResponseId] = useState<string>();
 
-  // Submit attestation
-  const handleAttest = async (isConfirm: boolean) => {
+  const canProcessAttestation = () => {
     if (!selectedBadge) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
       notifyError({
-        title: "No selected badges",
-        message: "No badges found for this account.",
+        title: "No badge selected",
+        message: "Please select a badge.",
       });
-      return;
+
+      return false;
     }
 
     if (!address) {
@@ -82,27 +93,15 @@ export const BadgeDetailsSection = () => {
         title: "No account connected",
         message: "Please connect your wallet.",
       });
-      return;
+      return false;
     }
-    const data = encodeAbiParameters(
-      parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
-      [isConfirm],
-    );
-    const attestationRequestData: AttestationRequestData = {
-      recipient: selectedBadge.attester as `0x${string}`,
-      expirationTime: BigInt(0),
-      revocable: true,
-      refUID: selectedBadge.id as `0x${string}`,
-      data: data,
-      value: BigInt(0),
-    };
+    return true;
+  };
 
-    const response = await submitAttest(
-      address,
-      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-      attestationRequestData,
-    );
-
+  const processAttestationResponse = async (
+    response: any,
+    isConfirm: boolean | null,
+  ) => {
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -122,9 +121,10 @@ export const BadgeDetailsSection = () => {
       });
       return;
     }
-
-    // Set confirmed to true on successful response
-    setConfirmed(isConfirm);
+    if (selectedBadge) {
+      selectedBadge.revoked = true;
+      setSelectedBadge(selectedBadge);
+    }
 
     // TODO: Move to useNotify to create a notifySuccessWithLink function
     toast({
@@ -160,20 +160,61 @@ export const BadgeDetailsSection = () => {
       ),
     });
 
+    if (isConfirm === null) {
+      setBadgeStatus(BadgeStatus.PENDING);
+    } else {
+      if (!(response instanceof Error)) {
+        if (isConfirm) {
+          setBadgeStatus(BadgeStatus.CONFIRMED);
+        } else {
+          setBadgeStatus(BadgeStatus.REJECTED);
+        }
+        setAttestResponseId(response.logs[0].data);
+      }
+    }
     setLoadingConfirm(false);
     setLoadingDeny(false);
+
     return;
   };
-  const badgeStatus =
-    confirmed === null && selectedBadge && selectedBadge.status === null
-      ? BadgeStatus.PENDING
-      : confirmed === true
-        ? BadgeStatus.CONFIRMED
-        : confirmed === false
-          ? BadgeStatus.REJECTED
-          : selectedBadge && selectedBadge.status
-            ? selectedBadge.status
-            : BadgeStatus.DEFAULT;
+
+  // Submit attestation
+  const handleAttest = async (isConfirm: boolean) => {
+    if (!canProcessAttestation()) return;
+
+    const data = encodeAbiParameters(
+      parseAbiParameters(ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.data),
+      [isConfirm],
+    );
+    const attestationRequestData: AttestationRequestData = {
+      recipient: selectedBadge?.attester as `0x${string}`,
+      expirationTime: BigInt(0),
+      revocable: true,
+      refUID: selectedBadge?.id as `0x${string}`,
+      data: data,
+      value: BigInt(0),
+    };
+
+    const response = await submitAttest(
+      address as `0x${string}`,
+      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+      attestationRequestData,
+    );
+    processAttestationResponse(response, isConfirm);
+    //fetchAttestationResponse();
+  };
+
+  // Submit revoke
+  const handleRevoke = async () => {
+    if (!canProcessAttestation()) return;
+    const response = await revoke(
+      address as `0x${string}`,
+      ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
+      attestResponseId as `0x${string}`,
+      0n,
+    );
+    processAttestationResponse(response, null);
+  };
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
@@ -182,7 +223,7 @@ export const BadgeDetailsSection = () => {
           <TheHeader />
           <BadgeDetailsNavigation isDetail={true} />
           <Box
-            flex={1}
+            flex={0}
             as="main"
             px={{ base: 6, sm: "60px" }}
             py={{ base: 2, sm: "20px" }}
@@ -190,8 +231,12 @@ export const BadgeDetailsSection = () => {
             gap={6}
           >
             <Flex gap={4} className="w-full h-full items-top">
-              <Flex py="10px">
-                <HeartIcon className="w-6 h-6 opacity-50 text-slate-50" />
+              <Flex
+                className="flex items-center justify-center"
+                py="6px"
+                px={"20px"}
+              >
+                <HeartIcon className="w-8 h-8 opacity-50 text-slate-50" />
               </Flex>
               <Flex flexDirection={"column"} className="w-full">
                 <Box>
@@ -315,18 +360,19 @@ export const BadgeDetailsSection = () => {
                 </Text>
                 <Flex color="white" className="gap-2">
                   <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    #{selectedBadge.schema.index}
+                    {getEllipsedAddress(
+                      selectedBadge.schema.id as `0x${string}`,
+                    )}
                   </Text>
                   <CopyToClipboardButton
-                    label={selectedBadge.schema.index}
+                    label={selectedBadge.schema.id}
                     isUserAddress={false}
                   />
                 </Flex>
               </Flex>
             </Card>
-            {selectedBadge.schema.id !==
-              ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid &&
-              selectedBadge.status !== BadgeStatus.PENDING && (
+            {selectedBadge.schema.id == ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
+              badgeStatus !== BadgeStatus.PENDING && (
                 <Button
                   className="w-full flex justify-center items-center bg-[#2d2525] gap-2 px-6 text-[#DB4C40] rounded-lg"
                   _hover={{ color: "#fff", bg: "#DB4C40" }}
@@ -336,7 +382,7 @@ export const BadgeDetailsSection = () => {
                   spinner={<BeatLoader size={8} color="white" />}
                   onClick={() => {
                     setLoadingDeny(true);
-                    handleAttest(false);
+                    handleRevoke();
                   }}
                 >
                   <CloseIcon className="w-[14px] h-[14px]" />
@@ -345,8 +391,7 @@ export const BadgeDetailsSection = () => {
               )}
           </Box>
           {selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid &&
-          confirmed === null &&
-          selectedBadge.status === BadgeStatus.PENDING ? (
+          badgeStatus === BadgeStatus.PENDING ? (
             <Box
               as="footer"
               position="fixed"

@@ -8,6 +8,7 @@ import {
   Divider,
   Flex,
   Avatar,
+  Box,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
@@ -22,22 +23,23 @@ import {
 import { useBadge } from "@/lib/context/BadgeContext";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-interface Schema {
+export interface Schema {
   index: string;
   id: string;
 }
 
-interface BadgeData {
+export interface BadgeData {
   id: string;
   title: string;
   status: BadgeStatus;
-  comment: string;
+  comment?: string;
   timeCreated: number;
   attester: string;
   recipient: string;
   txid: string;
   schema: Schema;
   revoked: boolean;
+  responseId?: string;
 }
 
 interface BadgeCardProps {
@@ -73,7 +75,14 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
             pb="0.75rem"
           >
             <Flex gap={4} className={"items-center"}>
-              <HeartIcon className="w-4 h-4 opacity-50 text-slate-50" />
+              <Box
+                boxSize="24px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <HeartIcon className="w-5 h-5  opacity-50 text-slate-50" />
+              </Box>
               <Text fontSize="md" className="text-slate-50">
                 {badge.title}
               </Text>
