@@ -142,24 +142,24 @@ export const GiveBadgeSection = () => {
 
   // Get the current badge selected and move to state
   const handleBadgeSelectChange = (event: any) => {
+    let selectedBadge: BadgeTitle | undefined = undefined;
     ZUVILLAGE_BADGE_TITLES.map((badge) => {
       if (badge.title === event.target.value) {
-        setInputBadge(badge);
-      } else if (
-        badge.uid !== ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
-        badge.uid !== ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid
-      ) {
-        const customBadge: BadgeTitle = {
-          title: event.target.value,
-          uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
-          allowComment: true,
-          revocable: false,
-          data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
-          allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
-        };
-        setInputBadge(customBadge);
+        selectedBadge = badge;
       }
     });
+    if (!selectedBadge) {
+      const customBadge: BadgeTitle = {
+        title: event.target.value,
+        uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
+        allowComment: true,
+        revocable: false,
+        data: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data,
+        allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.allowedRole,
+      };
+      selectedBadge = customBadge;
+    }
+    setInputBadge(selectedBadge);
   };
 
   // Get the current comment and move to state
