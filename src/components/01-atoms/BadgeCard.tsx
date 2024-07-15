@@ -53,7 +53,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
   return (
     <SimpleGrid
       spacing={4}
-      templateColumns="repeat(auto-fill, minmax(255px, 1fr))"
+      templateColumns="repeat(auto-fill, minmax(280px, 1fr))"
     >
       {badgeData.map((badge) => (
         <Card
@@ -89,7 +89,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <BadgeTagIcon status={badge.status} />
-              <ArrowIcon variant={ArrowIconVariant.RIGHT} />
+              {/* <ArrowIcon variant={ArrowIconVariant.RIGHT} /> */}
             </Flex>
           </CardHeader>
           <Divider color={"#F5FFFF14"} />
