@@ -23,16 +23,16 @@ import {
 import { useBadge } from "@/lib/context/BadgeContext";
 import { getEllipsedAddress } from "@/utils/formatters";
 
-interface Schema {
+export interface Schema {
   index: string;
   id: string;
 }
 
-interface BadgeData {
+export interface BadgeData {
   id: string;
   title: string;
   status: BadgeStatus;
-  comment: string;
+  comment?: string;
   timeCreated: number;
   attester: string;
   recipient: string;
