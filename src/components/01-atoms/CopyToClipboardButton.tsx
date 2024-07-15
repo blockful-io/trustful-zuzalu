@@ -6,20 +6,26 @@ import { useAccount } from "wagmi";
 
 export const CopyToClipboardButton = ({
   isUserAddress = false,
+  isShare = false,
   label,
 }: {
   isUserAddress: boolean;
+  isShare?: boolean;
   label?: string;
 }) => {
   const { address } = useAccount();
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const prefixToGiveBadge = "https://trustful.ing/give-badge";
+  const linkToGiveBadgeAddress = `${prefixToGiveBadge}?address=${address}`;
 
   const handleCopy = () => {
     if (isUserAddress) {
       navigator.clipboard.writeText(address as `0x${string}`);
     } else if (label) {
       navigator.clipboard.writeText(label);
+    } else if (isShare) {
+      navigator.clipboard.writeText(linkToGiveBadgeAddress);
     }
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000); // Revert icon back after 2 seconds
