@@ -153,7 +153,7 @@ export const DropdownProfile = ({
                   ({getEllipsedAddress(address)})
                 </Text>
                 <Flex color={"white"}>
-                  <CopyToClipboardButton isUserAddress />
+                  <CopyToClipboardButton isUserAddress showSvg />
                 </Flex>
               </Flex>
               <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">

@@ -106,7 +106,11 @@ export const CheckinSection = () => {
                         className="justify-center items-center gap-2"
                       >
                         <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress={false} isShare />
+                        <CopyToClipboardButton
+                          isUserAddress={false}
+                          isShare
+                          showSvg
+                        />
                       </Flex>
                     </>
                   ) : (
@@ -143,7 +147,7 @@ export const CheckinSection = () => {
                 </Flex>
               </Flex>
               <Collapse in={isTrustfulVisible} animateOpacity>
-                <Box px={10} py={4} color="white">
+                <Box px={8} py={4} color="white">
                   Trustful is a reputation aggregator system designed to match
                   governance, participation, and efforts. Using the Ethereum
                   Attestation Service (EAS) and a badge system, we can attest to
