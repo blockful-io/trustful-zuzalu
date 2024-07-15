@@ -45,7 +45,7 @@ export const TheHeader: FC = () => {
 
         <HStack>
           {!isMobile && !isConnected && <ConnectButton label="Connect" />}
-          {isMobile && isConnected && <TheHeaderMenu />}
+          {isConnected && <TheHeaderMenu />}
         </HStack>
       </HStack>
       <Divider className="border-slate-50 opacity-10" />
