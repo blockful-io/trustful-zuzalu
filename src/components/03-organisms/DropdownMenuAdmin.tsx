@@ -597,7 +597,7 @@ export const DropdownMenuAdmin = () => {
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Select
               placeholder="Select Role"
-              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+              className="flex text-slate-50 opacity-70 font-normal leading-tight"
               color="white"
               onChange={handleRoleSelectChange}
               focusBorderColor={"#B1EF42"}
@@ -654,7 +654,7 @@ export const DropdownMenuAdmin = () => {
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Select
               placeholder="Select Role"
-              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+              className="flex text-slate-50 opacity-70 font-normal leading-tight"
               color="white"
               onChange={handleRoleSelectChange}
               focusBorderColor={"#B1EF42"}
@@ -748,7 +748,7 @@ export const DropdownMenuAdmin = () => {
         <Flex className="w-full flex-col">
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Textarea
-              className="text-slate-50 opacity-80 text-base font-normal leading-snug"
+              className="text-slate-50 opacity-70 text-base font-normal leading-snug"
               color="white"
               placeholder="Set the Badge Title..."
               _placeholder={{
@@ -764,7 +764,7 @@ export const DropdownMenuAdmin = () => {
           </Flex>
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Select
-              className="flex opacity-80 text-slate-50 text-sm font-normal leading-tight"
+              className="flex opacity-70 text-slate-50 font-normal leading-tight"
               color="white"
               placeholder="Select an option"
               onChange={handleAttestationValidBadge}
@@ -779,9 +779,9 @@ export const DropdownMenuAdmin = () => {
               <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                 Badge Validity:
                 <br />
-                Yes = Can be emitted/created/attested on the contract.
+                {`Yes = Can be emitted/created/attested on the contract.`}
                 <br />
-                No = Cannot be emitted/created/attested on the contract.
+                {`No = Cannot be emitted/created/attested on the contract.`}
               </Text>
             </Flex>
           </Box>
@@ -811,10 +811,10 @@ export const DropdownMenuAdmin = () => {
         <Flex className="w-full flex-col">
           <Flex className="gap-4 pb-4 justify-start items-center">
             <Textarea
-              className="text-slate-50 text-base font-normal leading-snug"
+              className="text-slate-50 opacity-70 text-base font-normal leading-snug"
               placeholder="Set Schema UID"
               _placeholder={{
-                className: "text-slate-50 opacity-30",
+                className: "text-slate-50",
               }}
               focusBorderColor={"#B1EF42"}
               value={schemaUID}
@@ -878,13 +878,13 @@ export const DropdownMenuAdmin = () => {
             background={"#F5FFFF0D"}
             className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
           >
-            <Text className="text-slate-50 mb-2 text-sm font-medium leading-none">
+            <Text className="text-slate-50 mb-2 font-medium leading-none">
               Select a function
             </Text>
             {connectedRole === ROLES.ROOT ? (
               <Select
                 placeholder="Select option"
-                className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                className="flex text-slate-50 opacity-70 font-normal leading-tight"
                 color="white"
                 onChange={handleAdminActionSelectChange}
                 focusBorderColor={"#B1EF42"}
@@ -898,7 +898,7 @@ export const DropdownMenuAdmin = () => {
             ) : connectedRole === ROLES.MANAGER ? (
               <Select
                 placeholder="Select option"
-                className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+                className="flex text-slate-50 opacity-70 font-normal leading-tight"
                 color="white"
                 onChange={handleManagerActionSelectChange}
                 focusBorderColor={"#B1EF42"}
