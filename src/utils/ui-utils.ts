@@ -38,34 +38,22 @@ export enum ADMIN_ACTION {
 
 export interface AdminActions {
   action: ADMIN_ACTION;
-  allowComment: boolean;
-  allowChangeRole: boolean;
 }
 
 export const ADMIN_OPTIONS: AdminActions[] = [
   {
     action: ADMIN_ACTION.GRANT_ROLE,
-    allowComment: false,
-    allowChangeRole: true,
   },
   {
     action: ADMIN_ACTION.REVOKE_ROLE,
-    allowComment: false,
-    allowChangeRole: true,
   },
   {
     action: ADMIN_ACTION.REVOKE_MANAGER,
-    allowComment: false,
-    allowChangeRole: true,
   },
   {
     action: ADMIN_ACTION.SET_ATTESTATION_TITLE,
-    allowComment: false,
-    allowChangeRole: false,
   },
   {
     action: ADMIN_ACTION.SET_SCHEMA,
-    allowComment: false,
-    allowChangeRole: false,
   },
 ];

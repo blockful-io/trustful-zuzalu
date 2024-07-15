@@ -61,40 +61,9 @@ export const DropdownMenuAdmin = () => {
     }
   }, [inputAddress]);
 
-  // Handle the input change and validate the address
-  const handleInputChange = (value: string) => {
-    setInputAddress(value);
-  };
-
   useEffect(() => {
     setRole(null);
   }, [adminAction]);
-
-  // Get the current action selected and move to state
-  const handleActionSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    ADMIN_OPTIONS.filter((admin) => {
-      if (admin.action === event.target.value) {
-        setAdminAction(admin.action);
-      } else {
-        console.log("Selected action does not exist");
-      }
-    });
-  };
-
-  // Get the current role selected and move to state
-  const handleRoleSelectChange = (
-    event: ChangeEvent<HTMLSelectElement>,
-  ): void => {
-    const selectedRoleValue = event.target.value;
-    const rolesValues = Object.values(ROLES_OPTIONS);
-    const selectedRole = rolesValues.find((role) => role === selectedRoleValue);
-
-    if (selectedRole) {
-      setRole(selectedRole);
-    } else {
-      console.log("Selected role does not exist in ROLES_OPTIONS");
-    }
-  };
 
   // Call the grantRole function with the current state values
   const handleGrantRole = async () => {
@@ -163,254 +132,250 @@ export const DropdownMenuAdmin = () => {
   };
 
   // Call the revokeRole function with the current state values
-  const handleRevokeGrantRole = async () => {
-    if (address && inputAddress && role && validAddress) {
-      const userHasRole = await hasRole(
-        role,
-        validAddress.address as `0x${string}`,
-      );
-      if (userHasRole) {
-        const response = await revokeRole({
-          from: address,
-          role: role,
-          account: validAddress.address as `0x${string}`,
-          msgValue: BigInt(0),
-        });
-        if (response instanceof Error) {
-          setIsLoading(false);
-          notifyError({
-            title: "Transaction Rejected",
-            message: response.message,
-          });
-          return;
-        }
-
-        if (response.status !== "success") {
-          setIsLoading(false);
-          notifyError({
-            title: "Transaction Rejected",
-            message: "Contract execution reverted.",
-          });
-          return;
-        }
-
-        // TODO: Move to useNotify to create a notifySuccessWithLink function
-        toast({
-          position: "top-right",
-          duration: 4000,
-          isClosable: true,
-          render: () => (
-            <Box
-              color="white"
-              p={4}
-              bg="green.500"
-              borderRadius="md"
-              boxShadow="lg"
-              display="flex"
-              alignItems="center"
-            >
-              <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
-              <Box>
-                <Text fontWeight="bold">Success.</Text>
-                <Text>
-                  Badge sent at tx:{" "}
-                  <Link
-                    href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
-                    isExternal
-                    color="white"
-                    textDecoration="underline"
-                  >
-                    {getEllipsedAddress(response.transactionHash)}
-                  </Link>
-                </Text>
-              </Box>
-            </Box>
-          ),
-        });
-        response ? setIsLoading(true) : setIsLoading(false);
-      } else if (!userHasRole) {
-        setIsLoading(false);
-        notifyError({
-          title: `Address doesn't have the role`,
-          message: "Address doesn't have this badge.",
-        });
-        return;
-      }
+  const handleRevokeRole = async () => {
+    if (!address || !inputAddress || !role || !validAddress) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
+      });
+      return;
     }
+
+    const userHasRole = await hasRole(
+      role,
+      validAddress.address as `0x${string}`,
+    );
+
+    if (!userHasRole) {
+      setIsLoading(false);
+      notifyError({
+        title: `Address doesn't have the role`,
+        message: "Address doesn't have this badge.",
+      });
+      return;
+    }
+
+    const response = await revokeRole({
+      from: address,
+      role: role,
+      account: validAddress.address as `0x${string}`,
+      msgValue: BigInt(0),
+    });
+
+    if (response instanceof Error) {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
     setIsLoading(false);
-  };
 
-  // Get the current title and move to state. It also updates the textarea height based on the content
-  const handleTextareaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const textareaLineHeight = 22;
-    const scrollHeight = event.target.scrollHeight - 16;
-
-    const currentRows = Math.ceil(scrollHeight / textareaLineHeight);
-    if (currentRows >= 2) {
-      event.target.rows = currentRows;
-    }
-    setAttestationTitleText(event.target.value);
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
   };
 
   const handleAttestationTitle = async () => {
-    if (address) {
-      const response = await setAttestationTitle({
-        from: address,
-        isValid: attestationBadgeIsValid,
-        title: attestationTitleText,
-        value: BigInt(0),
+    if (!address) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
       });
-      if (response instanceof Error) {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: response.message,
-        });
-        return;
-      }
-
-      if (response.status !== "success") {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: "Contract execution reverted.",
-        });
-        return;
-      }
-
-      // TODO: Move to useNotify to create a notifySuccessWithLink function
-      toast({
-        position: "top-right",
-        duration: 4000,
-        isClosable: true,
-        render: () => (
-          <Box
-            color="white"
-            p={4}
-            bg="green.500"
-            borderRadius="md"
-            boxShadow="lg"
-            display="flex"
-            alignItems="center"
-          >
-            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
-            <Box>
-              <Text fontWeight="bold">Success.</Text>
-              <Text>
-                Badge sent at tx:{" "}
-                <Link
-                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
-                  isExternal
-                  color="white"
-                  textDecoration="underline"
-                >
-                  {getEllipsedAddress(response.transactionHash)}
-                </Link>
-              </Text>
-            </Box>
-          </Box>
-        ),
-      });
-      response ? setIsLoading(true) : setIsLoading(false);
+      return;
     }
+
+    const response = await setAttestationTitle({
+      from: address,
+      isValid: attestationBadgeIsValid,
+      title: attestationTitleText,
+      value: BigInt(0),
+    });
+
+    if (response instanceof Error) {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
     setIsLoading(false);
-  };
 
-  const handleAttestationValidBadge = (
-    event: ChangeEvent<HTMLSelectElement>,
-  ): void => {
-    const selectedRoleValue = event.target.value;
-
-    if (selectedRoleValue === "Yes") {
-      setAttestationBadgeIsValid(true);
-    } else if (selectedRoleValue === "No") {
-      setAttestationBadgeIsValid(false);
-    } else {
-      console.log("Selected Badge Is Valid does not exist in options");
-    }
-  };
-
-  // SCHEMA
-
-  // Get the current title and move to state. It also updates the textarea height based on the content
-  const handleTextareaSchemaUIDChange = (
-    event: ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setSchemaUID(event.target.value);
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
   };
 
   // Get the current role selected and move to state
-  const handleAction = (event: ChangeEvent<HTMLSelectElement>): void => {
-    const actionSchemaValue = event.target.value;
-    setAction(Number(actionSchemaValue));
+  const handleRoleSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ): void => {
+    const selectedRoleValue = event.target.value;
+    const rolesValues = Object.values(ROLES_OPTIONS);
+    const selectedRole = rolesValues.find((role) => role === selectedRoleValue);
+
+    if (selectedRole) {
+      setRole(selectedRole);
+    }
   };
 
   const handleSetSchema = async () => {
-    if (address) {
-      const response = await setSchema({
-        from: address,
-        uid: schemaUID as `0x${string}`,
-        action: action,
-        msgValue: BigInt(0),
+    if (!address) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
       });
-
-      if (response instanceof Error) {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: response.message,
-        });
-        return;
-      }
-
-      if (response.status !== "success") {
-        setIsLoading(false);
-        notifyError({
-          title: "Transaction Rejected",
-          message: "Contract execution reverted.",
-        });
-        return;
-      }
-
-      // TODO: Move to useNotify to create a notifySuccessWithLink function
-      toast({
-        position: "top-right",
-        duration: 4000,
-        isClosable: true,
-        render: () => (
-          <Box
-            color="white"
-            p={4}
-            bg="green.500"
-            borderRadius="md"
-            boxShadow="lg"
-            display="flex"
-            alignItems="center"
-          >
-            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
-            <Box>
-              <Text fontWeight="bold">Success.</Text>
-              <Text>
-                Badge sent at tx:{" "}
-                <Link
-                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
-                  isExternal
-                  color="white"
-                  textDecoration="underline"
-                >
-                  {getEllipsedAddress(response.transactionHash)}
-                </Link>
-              </Text>
-            </Box>
-          </Box>
-        ),
-      });
-      response ? setIsLoading(true) : setIsLoading(false);
+      return;
     }
+
+    const response = await setSchema({
+      from: address,
+      uid: schemaUID as `0x${string}`,
+      action: action,
+      msgValue: BigInt(0),
+    });
+
+    if (response instanceof Error) {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: response.message,
+      });
+      return;
+    }
+
+    if (response.status !== "success") {
+      setIsLoading(false);
+      notifyError({
+        title: "Transaction Rejected",
+        message: "Contract execution reverted.",
+      });
+      return;
+    }
+
+    // TODO: Move to useNotify to create a notifySuccessWithLink function
+    toast({
+      position: "top-right",
+      duration: 4000,
+      isClosable: true,
+      render: () => (
+        <Box
+          color="white"
+          p={4}
+          bg="green.500"
+          borderRadius="md"
+          boxShadow="lg"
+          display="flex"
+          alignItems="center"
+        >
+          <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+          <Box>
+            <Text fontWeight="bold">Success.</Text>
+            <Text>
+              Badge sent at tx:{" "}
+              <Link
+                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                isExternal
+                color="white"
+                textDecoration="underline"
+              >
+                {getEllipsedAddress(response.transactionHash)}
+              </Link>
+            </Text>
+          </Box>
+        </Box>
+      ),
+    });
+
     setIsLoading(false);
   };
 
-  const handleQuery = async () => {
+  const handleRevokeManagerRole = async () => {
     const queryVariables = {
       where: {
         schemaId: {
@@ -480,6 +445,8 @@ export const DropdownMenuAdmin = () => {
       return;
     }
 
+    setIsLoading(false);
+
     // TODO: Move to useNotify to create a notifySuccessWithLink function
     toast({
       position: "top-right",
@@ -515,215 +482,310 @@ export const DropdownMenuAdmin = () => {
     });
   };
 
-  const handleRevokeManagerRole = async () => {
-    await handleQuery();
-    setIsLoading(false);
+  // Handle the input change and validate the address
+  const handleInputChange = (value: string) => {
+    setInputAddress(value);
+  };
+
+  // Get the current title and move to state. It also updates the textarea height based on the content
+  const handleTextareaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const textareaLineHeight = 22;
+    const scrollHeight = event.target.scrollHeight - 16;
+
+    const currentRows = Math.ceil(scrollHeight / textareaLineHeight);
+    if (currentRows >= 2) {
+      event.target.rows = currentRows;
+    }
+    setAttestationTitleText(event.target.value);
+  };
+
+  // Get the current action selected and move to state
+  const handleActionSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    ADMIN_OPTIONS.filter((admin) => {
+      if (event.target.value === "") {
+        setAdminAction(null);
+      }
+      if (event.target.value === admin.action) {
+        setAdminAction(admin.action);
+      }
+    });
+  };
+
+  const handleAttestationValidBadge = (
+    event: ChangeEvent<HTMLSelectElement>,
+  ): void => {
+    const selectedRoleValue = event.target.value;
+
+    if (selectedRoleValue === "Yes") {
+      setAttestationBadgeIsValid(true);
+    } else if (selectedRoleValue === "No") {
+      setAttestationBadgeIsValid(false);
+    }
+  };
+
+  // Get the current title and move to state. It also updates the textarea height based on the content
+  const handleTextareaSchemaUIDChange = (
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    setSchemaUID(event.target.value);
+  };
+
+  // Get the current role selected and move to state
+  const handleAction = (event: ChangeEvent<HTMLSelectElement>): void => {
+    const actionSchemaValue = event.target.value;
+    setAction(Number(actionSchemaValue));
   };
 
   const renderAdminAction: Record<ADMIN_ACTION, React.JSX.Element> = {
     [ADMIN_ACTION.GRANT_ROLE]: (
-      <Flex className="w-full flex-col">
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Select
-            placeholder="Role"
-            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-            color="white"
-            onChange={handleRoleSelectChange}
+      <Card
+        background={"#F5FFFF0D"}
+        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+      >
+        <Flex className="w-full flex-col">
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Select
+              placeholder="Select Role"
+              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+              color="white"
+              onChange={handleRoleSelectChange}
+              focusBorderColor={"#B1EF42"}
+            >
+              {Object.entries(ROLES_OPTIONS).map(
+                ([roleName, roleValue], index) => (
+                  <option key={index} value={roleValue}>
+                    {roleName}
+                  </option>
+                ),
+              )}
+            </Select>
+          </Flex>
+          <InputAddressUser
+            label="Address to Grant Role"
+            onInputChange={handleInputChange}
+            inputAddress={String(inputAddress)}
+          />
+          <Button
+            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+            _hover={{ bg: "#B1EF42" }}
+            _active={{ bg: "#B1EF42" }}
+            isLoading={isloading}
+            isDisabled={!isAddress(inputAddress.toString()) || !role}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setIsLoading(true);
+              handleGrantRole();
+            }}
           >
-            {Object.entries(ROLES_OPTIONS).map(
-              ([roleName, roleValue], index) => (
-                <option key={index} value={roleValue}>
-                  {roleName}
-                </option>
-              ),
-            )}
-          </Select>
+            <CheckIcon className="w-[16px] h-[16px]" />
+            Confirm
+          </Button>
         </Flex>
-        <InputAddressUser
-          label="Address to Grant"
-          onInputChange={handleInputChange}
-          inputAddress={String(inputAddress)}
-        />
-        <Button
-          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-          _hover={{ bg: "#B1EF42" }}
-          _active={{ bg: "#B1EF42" }}
-          isLoading={isloading}
-          isDisabled={!isAddress(inputAddress.toString()) || !role}
-          spinner={<BeatLoader size={8} color="white" />}
-          onClick={() => {
-            setIsLoading(true);
-            handleGrantRole();
-          }}
-        >
-          <CheckIcon className="w-[16px] h-[16px]" />
-          Confirm
-        </Button>
-      </Flex>
+      </Card>
     ),
     [ADMIN_ACTION.REVOKE_ROLE]: (
-      <Flex className="w-full flex-col">
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Select
-            placeholder="Role"
-            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-            color="white"
-            onChange={handleRoleSelectChange}
+      <Card
+        background={"#F5FFFF0D"}
+        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+      >
+        <Flex className="w-full flex-col">
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Select
+              placeholder="Select Role"
+              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+              color="white"
+              onChange={handleRoleSelectChange}
+              focusBorderColor={"#B1EF42"}
+            >
+              {Object.entries(ROLES_OPTIONS).map(
+                ([roleName, roleValue], index) => (
+                  <option key={index} value={roleValue}>
+                    {roleName}
+                  </option>
+                ),
+              )}
+            </Select>
+          </Flex>
+          <InputAddressUser
+            onInputChange={handleInputChange}
+            inputAddress={String(inputAddress)}
+            label={"Address to Revoke Role"}
+          />
+          <Button
+            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+            _hover={{ bg: "#B1EF42" }}
+            _active={{ bg: "#B1EF42" }}
+            isLoading={isloading}
+            isDisabled={!isAddress(inputAddress.toString()) || !role}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setIsLoading(true);
+              handleRevokeRole();
+            }}
           >
-            {Object.entries(ROLES_OPTIONS).map(
-              ([roleName, roleValue], index) => (
-                <option key={index} value={roleValue}>
-                  {roleName}
-                </option>
-              ),
-            )}
-          </Select>
+            <CheckIcon className="w-[16px] h-[16px]" />
+            Confirm
+          </Button>
         </Flex>
-        <InputAddressUser
-          onInputChange={handleInputChange}
-          inputAddress={String(inputAddress)}
-          label={"Address to Revoke"}
-        />
-        <Button
-          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-          _hover={{ bg: "#B1EF42" }}
-          _active={{ bg: "#B1EF42" }}
-          isLoading={isloading}
-          isDisabled={!isAddress(inputAddress.toString()) || !role}
-          spinner={<BeatLoader size={8} color="white" />}
-          onClick={() => {
-            setIsLoading(true);
-            handleRevokeGrantRole();
-          }}
-        >
-          <CheckIcon className="w-[16px] h-[16px]" />
-          Confirm
-        </Button>
-      </Flex>
+      </Card>
     ),
     [ADMIN_ACTION.REVOKE_MANAGER]: (
-      <Flex className="w-full flex-col">
-        <InputAddressUser
-          onInputChange={handleInputChange}
-          inputAddress={String(inputAddress)}
-          label={"Address to Revoke"}
-        />
-        <Button
-          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-          _hover={{ bg: "#B1EF42" }}
-          _active={{ bg: "#B1EF42" }}
-          isLoading={isloading}
-          isDisabled={!isAddress(inputAddress.toString())}
-          spinner={<BeatLoader size={8} color="white" />}
-          onClick={() => {
-            setIsLoading(true);
-            handleRevokeManagerRole();
-          }}
-        >
-          <CheckIcon className="w-[16px] h-[16px]" />
-          Confirm
-        </Button>
-      </Flex>
+      <Card
+        background={"#F5FFFF0D"}
+        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+      >
+        <Flex className="w-full flex-col">
+          <InputAddressUser
+            onInputChange={handleInputChange}
+            inputAddress={String(inputAddress)}
+            label={"Address to Revoke"}
+          />
+          <Box>
+            <Flex className="pb-4 gap-4 items-center">
+              <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                &#x26A0;WARNING&#x26A0;
+                <br />
+                {`This action is irreversible. You are revoking the Manager badge from the address ${inputAddress ? inputAddress : "above"}. He will not be able to get this badge again and its status will show revoked for eternity. Are you sure you want to proceed?`}
+              </Text>
+            </Flex>
+          </Box>
+          <Button
+            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+            _hover={{ bg: "#B1EF42" }}
+            _active={{ bg: "#B1EF42" }}
+            isLoading={isloading}
+            isDisabled={!isAddress(inputAddress.toString())}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setIsLoading(true);
+              handleRevokeManagerRole();
+            }}
+          >
+            <CheckIcon className="w-[16px] h-[16px]" />
+            Confirm
+          </Button>
+        </Flex>
+      </Card>
     ),
     [ADMIN_ACTION.SET_ATTESTATION_TITLE]: (
-      <Flex className="w-full flex-col">
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Textarea
-            className="text-slate-50 text-base font-normal leading-snug border-none"
-            placeholder="Set the attestation title"
-            _placeholder={{
-              className: "text-slate-50 opacity-30",
+      <Card
+        background={"#F5FFFF0D"}
+        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+      >
+        <Flex className="w-full flex-col">
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Textarea
+              className="text-slate-50 opacity-80 text-base font-normal leading-snug"
+              color="white"
+              placeholder="Set the Badge Title..."
+              _placeholder={{
+                className: "text-slate-50",
+              }}
+              focusBorderColor={"#B1EF42"}
+              value={attestationTitleText}
+              onChange={handleTextareaChange}
+              rows={attestationTitleText.length > 50 ? 3 : 1}
+              minH="unset"
+              resize="none"
+            />
+          </Flex>
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Select
+              className="flex opacity-80 text-slate-50 text-sm font-normal leading-tight"
+              color="white"
+              placeholder="Select an option"
+              onChange={handleAttestationValidBadge}
+              focusBorderColor={"#B1EF42"}
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </Select>
+          </Flex>
+          <Flex className="w-full">
+            <Text
+              m={4}
+              className="text-slate-50 text-sm font-normal leading-snug items-center "
+            >
+              Badge Validity:
+              <br />
+              Yes = Can be emitted/created/attested on the contract.
+              <br />
+              No = Cannot be emitted/created/attested on the contract.
+            </Text>
+          </Flex>
+          <Button
+            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+            _hover={{ bg: "#B1EF42" }}
+            _active={{ bg: "#B1EF42" }}
+            isLoading={isloading}
+            isDisabled={!attestationTitleText}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setIsLoading(true);
+              handleAttestationTitle();
             }}
-            focusBorderColor={"#F5FFFF1A"}
-            value={attestationTitleText}
-            onChange={handleTextareaChange}
-            rows={attestationTitleText.length > 50 ? 3 : 1}
-            minH="unset"
-            resize="none"
-          />
-        </Flex>
-        <Flex className="w-full">
-          <Text className="text-slate-50 text-sm font-normal leading-snug items-center ">
-            Badge Valid ?
-          </Text>
-        </Flex>
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Select
-            placeholder="Role"
-            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-            color="white"
-            onChange={handleAttestationValidBadge}
           >
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </Select>
+            <CheckIcon className="w-[16px] h-[16px]" />
+            Confirm
+          </Button>
         </Flex>
-        <Button
-          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-          _hover={{ bg: "#B1EF42" }}
-          _active={{ bg: "#B1EF42" }}
-          isLoading={isloading}
-          isDisabled={!attestationTitleText}
-          spinner={<BeatLoader size={8} color="white" />}
-          onClick={() => {
-            setIsLoading(true);
-            handleAttestationTitle();
-          }}
-        >
-          <CheckIcon className="w-[16px] h-[16px]" />
-          Confirm
-        </Button>
-      </Flex>
+      </Card>
     ),
     [ADMIN_ACTION.SET_SCHEMA]: (
-      <Flex className="w-full flex-col">
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Textarea
-            className="text-slate-50 text-base font-normal leading-snug border-none"
-            placeholder="Set SCHEMA UID"
-            _placeholder={{
-              className: "text-slate-50 opacity-30",
+      <Card
+        background={"#F5FFFF0D"}
+        className="w-full border border-[#F5FFFF14] border-opacity-[8] p-4 gap-2"
+      >
+        <Flex className="w-full flex-col">
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Textarea
+              className="text-slate-50 text-base font-normal leading-snug"
+              placeholder="Set Schema UID"
+              _placeholder={{
+                className: "text-slate-50 opacity-30",
+              }}
+              focusBorderColor={"#B1EF42"}
+              value={schemaUID}
+              onChange={handleTextareaSchemaUIDChange}
+              rows={schemaUID.length > 50 ? 3 : 1}
+              minH="unset"
+              resize="none"
+            />
+          </Flex>
+          <Flex className="gap-4 pb-4 justify-start items-center">
+            <Select
+              placeholder="Action schema"
+              className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
+              color="white"
+              onChange={handleAction}
+              focusBorderColor={"#B1EF42"}
+            >
+              {Object.entries(ACTIONS_OPTIONS).map(
+                ([schemaUID, actionSchemaValue], index) => (
+                  <option key={index} value={actionSchemaValue}>
+                    {schemaUID}
+                  </option>
+                ),
+              )}
+            </Select>
+          </Flex>
+          <Button
+            className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
+            _hover={{ bg: "#B1EF42" }}
+            _active={{ bg: "#B1EF42" }}
+            isLoading={isloading}
+            isDisabled={!schemaUID}
+            spinner={<BeatLoader size={8} color="white" />}
+            onClick={() => {
+              setIsLoading(true);
+              handleSetSchema();
             }}
-            focusBorderColor={"#F5FFFF1A"}
-            value={schemaUID}
-            onChange={handleTextareaSchemaUIDChange}
-            rows={schemaUID.length > 50 ? 3 : 1}
-            minH="unset"
-            resize="none"
-          />
-        </Flex>
-        <Flex className="gap-4 pb-4 justify-start items-center">
-          <Select
-            placeholder="Action schema"
-            className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
-            color="white"
-            onChange={handleAction}
           >
-            {Object.entries(ACTIONS_OPTIONS).map(
-              ([schemaUID, actionSchemaValue], index) => (
-                <option key={index} value={actionSchemaValue}>
-                  {schemaUID}
-                </option>
-              ),
-            )}
-          </Select>
+            <CheckIcon className="w-[16px] h-[16px]" />
+            Confirm
+          </Button>
         </Flex>
-        <Button
-          className="w-full justify-center items-center gap-2 px-6 bg-[#B1EF42] text-[#161617] rounded-lg"
-          _hover={{ bg: "#B1EF42" }}
-          _active={{ bg: "#B1EF42" }}
-          isLoading={isloading}
-          isDisabled={!schemaUID}
-          spinner={<BeatLoader size={8} color="white" />}
-          onClick={() => {
-            setIsLoading(true);
-            handleSetSchema();
-          }}
-        >
-          <CheckIcon className="w-[16px] h-[16px]" />
-          Confirm
-        </Button>
-      </Flex>
+      </Card>
     ),
   };
 
@@ -741,6 +803,7 @@ export const DropdownMenuAdmin = () => {
           className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight"
           color="white"
           onChange={handleActionSelectChange}
+          focusBorderColor={"#B1EF42"}
         >
           {ADMIN_OPTIONS.map((admin, index) => (
             <option key={index} value={admin.action}>
