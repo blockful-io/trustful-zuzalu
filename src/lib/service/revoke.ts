@@ -12,7 +12,6 @@ import { wagmiConfig } from "@/wagmi";
 
 export interface RevocationRequestData {
   uid: `0x${string}`;
-  data: `0x${string}`;
   value: bigint;
 }
 
@@ -21,17 +20,19 @@ export interface RevocationRequest {
   data: RevocationRequestData;
 }
 
-export async function revoke({
-  from,
-  schemaUID,
-  revocationRequestData,
-}: {
-  from: `0x${string}`;
-  schemaUID: `0x${string}`;
-  revocationRequestData: RevocationRequestData;
-}): Promise<TransactionReceipt | Error> {
+export async function revoke(
+  from: `0x${string}`,
+  schemaUID: `0x${string}`,
+  uid: `0x${string}`,
+  value: bigint,
+): Promise<TransactionReceipt | Error> {
   const walletClient = await getWalletClient(wagmiConfig);
   let gasLimit;
+
+  const revocationRequestData = {
+    uid: uid,
+    value: value,
+  };
 
   const RevocationRequest: RevocationRequest = {
     schema: schemaUID,

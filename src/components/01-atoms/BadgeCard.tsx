@@ -38,6 +38,7 @@ interface BadgeData {
   txid: string;
   schema: Schema;
   revoked: boolean;
+  responseId?: string;
 }
 
 interface BadgeCardProps {
