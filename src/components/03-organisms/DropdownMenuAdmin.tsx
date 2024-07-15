@@ -167,13 +167,6 @@ export const DropdownMenuAdmin = () => {
   const handleTextareaSchemaUIDChange = (
     event: ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const textareaLineHeight = 22;
-    const scrollHeight = event.target.scrollHeight - 16;
-
-    const currentRows = Math.ceil(scrollHeight / textareaLineHeight);
-    if (currentRows >= 2) {
-      event.target.rows = currentRows;
-    }
     setSchemaUID(event.target.value);
   };
 
@@ -289,7 +282,7 @@ export const DropdownMenuAdmin = () => {
             focusBorderColor={"#F5FFFF1A"}
             value={attestationTitleText}
             onChange={handleTextareaChange}
-            rows={1}
+            rows={attestationTitleText.length > 50 ? 3 : 1}
             minH="unset"
             resize="none"
           />
@@ -332,14 +325,14 @@ export const DropdownMenuAdmin = () => {
         <Flex className="gap-4 pb-4 justify-start items-center">
           <Textarea
             className="text-slate-50 text-base font-normal leading-snug border-none"
-            placeholder="Set the attestation title"
+            placeholder="Set SCHEMA UID"
             _placeholder={{
               className: "text-slate-50 opacity-30",
             }}
             focusBorderColor={"#F5FFFF1A"}
             value={schemaUID}
             onChange={handleTextareaSchemaUIDChange}
-            rows={1}
+            rows={schemaUID.length > 50 ? 3 : 1}
             minH="unset"
             resize="none"
           />
