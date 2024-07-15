@@ -121,6 +121,7 @@ export const DropdownMenuAdmin = () => {
         return;
       }
 
+      // TODO: Move this function to only one place
       // TODO: Move to useNotify to create a notifySuccessWithLink function
       toast({
         position: "top-right",
