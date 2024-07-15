@@ -1,7 +1,18 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 
-import { CheckIcon } from "@chakra-ui/icons";
-import { Card, Text, Select, Flex, Button, Textarea } from "@chakra-ui/react";
+import { CheckCircleIcon, CheckIcon } from "@chakra-ui/icons";
+import {
+  Card,
+  Text,
+  Select,
+  Flex,
+  Button,
+  Textarea,
+  Box,
+  Icon,
+  Link,
+} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 import { isAddress } from "viem";
 import { useAccount } from "wagmi";
@@ -15,6 +26,7 @@ import { revokeRole } from "@/lib/service/revokeRole";
 import { setAttestationTitle } from "@/lib/service/setAttestationTitle";
 import { setSchema } from "@/lib/service/setSchema";
 import { EthereumAddress } from "@/lib/shared/types";
+import { getEllipsedAddress } from "@/utils/formatters";
 import {
   ACTIONS_OPTIONS,
   ADMIN_ACTION,
@@ -38,6 +50,7 @@ export const DropdownMenuAdmin = () => {
 
   const { address } = useAccount();
   const { notifyError } = useNotify();
+  const toast = useToast();
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -84,13 +97,64 @@ export const DropdownMenuAdmin = () => {
   // Call the grantRole function with the current state values
   const handleGrantRole = async () => {
     if (address && inputAddress && role && validAddress) {
-      const transactionGrantRole = await grantRole({
+      const response = await grantRole({
         from: address,
         role: role,
         account: validAddress.address as `0x${string}`,
         msgValue: BigInt(0),
       });
-      transactionGrantRole ? setIsLoading(true) : setIsLoading(false);
+      if (response instanceof Error) {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: response.message,
+        });
+        return;
+      }
+
+      if (response.status !== "success") {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: "Contract execution reverted.",
+        });
+        return;
+      }
+
+      // TODO: Move to useNotify to create a notifySuccessWithLink function
+      toast({
+        position: "top-right",
+        duration: 4000,
+        isClosable: true,
+        render: () => (
+          <Box
+            color="white"
+            p={4}
+            bg="green.500"
+            borderRadius="md"
+            boxShadow="lg"
+            display="flex"
+            alignItems="center"
+          >
+            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+            <Box>
+              <Text fontWeight="bold">Success.</Text>
+              <Text>
+                Badge sent at tx:{" "}
+                <Link
+                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                  isExternal
+                  color="white"
+                  textDecoration="underline"
+                >
+                  {getEllipsedAddress(response.transactionHash)}
+                </Link>
+              </Text>
+            </Box>
+          </Box>
+        ),
+      });
+      response ? setIsLoading(true) : setIsLoading(false);
     }
     setIsLoading(false);
   };
@@ -103,13 +167,64 @@ export const DropdownMenuAdmin = () => {
         validAddress.address as `0x${string}`,
       );
       if (userHasRole) {
-        const transactionRevokeRole = await revokeRole({
+        const response = await revokeRole({
           from: address,
           role: role,
           account: validAddress.address as `0x${string}`,
           msgValue: BigInt(0),
         });
-        transactionRevokeRole ? setIsLoading(true) : setIsLoading(false);
+        if (response instanceof Error) {
+          setIsLoading(false);
+          notifyError({
+            title: "Transaction Rejected",
+            message: response.message,
+          });
+          return;
+        }
+
+        if (response.status !== "success") {
+          setIsLoading(false);
+          notifyError({
+            title: "Transaction Rejected",
+            message: "Contract execution reverted.",
+          });
+          return;
+        }
+
+        // TODO: Move to useNotify to create a notifySuccessWithLink function
+        toast({
+          position: "top-right",
+          duration: 4000,
+          isClosable: true,
+          render: () => (
+            <Box
+              color="white"
+              p={4}
+              bg="green.500"
+              borderRadius="md"
+              boxShadow="lg"
+              display="flex"
+              alignItems="center"
+            >
+              <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+              <Box>
+                <Text fontWeight="bold">Success.</Text>
+                <Text>
+                  Badge sent at tx:{" "}
+                  <Link
+                    href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                    isExternal
+                    color="white"
+                    textDecoration="underline"
+                  >
+                    {getEllipsedAddress(response.transactionHash)}
+                  </Link>
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+        response ? setIsLoading(true) : setIsLoading(false);
       } else if (!userHasRole) {
         setIsLoading(false);
         notifyError({
@@ -136,13 +251,64 @@ export const DropdownMenuAdmin = () => {
 
   const handleAttestationTitle = async () => {
     if (address) {
-      const transactionAttestationTitle = await setAttestationTitle({
+      const response = await setAttestationTitle({
         from: address,
         isValid: attestationBadgeIsValid,
         title: attestationTitleText,
         value: BigInt(0),
       });
-      transactionAttestationTitle ? setIsLoading(true) : setIsLoading(false);
+      if (response instanceof Error) {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: response.message,
+        });
+        return;
+      }
+
+      if (response.status !== "success") {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: "Contract execution reverted.",
+        });
+        return;
+      }
+
+      // TODO: Move to useNotify to create a notifySuccessWithLink function
+      toast({
+        position: "top-right",
+        duration: 4000,
+        isClosable: true,
+        render: () => (
+          <Box
+            color="white"
+            p={4}
+            bg="green.500"
+            borderRadius="md"
+            boxShadow="lg"
+            display="flex"
+            alignItems="center"
+          >
+            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+            <Box>
+              <Text fontWeight="bold">Success.</Text>
+              <Text>
+                Badge sent at tx:{" "}
+                <Link
+                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                  isExternal
+                  color="white"
+                  textDecoration="underline"
+                >
+                  {getEllipsedAddress(response.transactionHash)}
+                </Link>
+              </Text>
+            </Box>
+          </Box>
+        ),
+      });
+      response ? setIsLoading(true) : setIsLoading(false);
     }
     setIsLoading(false);
   };
@@ -178,13 +344,64 @@ export const DropdownMenuAdmin = () => {
 
   const handleSetSchema = async () => {
     if (address) {
-      const transactionAttestationTitle = await setSchema({
+      const response = await setSchema({
         from: address,
         uid: schemaUID as `0x${string}`,
         action: action,
         msgValue: BigInt(0),
       });
-      transactionAttestationTitle ? setIsLoading(true) : setIsLoading(false);
+      if (response instanceof Error) {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: response.message,
+        });
+        return;
+      }
+
+      if (response.status !== "success") {
+        setIsLoading(false);
+        notifyError({
+          title: "Transaction Rejected",
+          message: "Contract execution reverted.",
+        });
+        return;
+      }
+
+      // TODO: Move to useNotify to create a notifySuccessWithLink function
+      toast({
+        position: "top-right",
+        duration: 4000,
+        isClosable: true,
+        render: () => (
+          <Box
+            color="white"
+            p={4}
+            bg="green.500"
+            borderRadius="md"
+            boxShadow="lg"
+            display="flex"
+            alignItems="center"
+          >
+            <Icon as={CheckCircleIcon} w={6} h={6} mr={3} />
+            <Box>
+              <Text fontWeight="bold">Success.</Text>
+              <Text>
+                Badge sent at tx:{" "}
+                <Link
+                  href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                  isExternal
+                  color="white"
+                  textDecoration="underline"
+                >
+                  {getEllipsedAddress(response.transactionHash)}
+                </Link>
+              </Text>
+            </Box>
+          </Box>
+        ),
+      });
+      response ? setIsLoading(true) : setIsLoading(false);
     }
     setIsLoading(false);
   };
