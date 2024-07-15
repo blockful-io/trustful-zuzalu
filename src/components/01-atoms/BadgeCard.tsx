@@ -13,8 +13,6 @@ import {
 import { useRouter } from "next/navigation";
 
 import {
-  ArrowIcon,
-  ArrowIconVariant,
   BadgeStatus,
   BadgeTagIcon,
   CalendarIcon,
@@ -53,7 +51,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
   return (
     <SimpleGrid
       spacing={4}
-      templateColumns="repeat(auto-fill, minmax(255px, 1fr))"
+      templateColumns="repeat(auto-fill, minmax(280px, 1fr))"
     >
       {badgeData.map((badge) => (
         <Card
@@ -89,7 +87,6 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
             </Flex>
             <Flex className={"items-center"} gap={2}>
               <BadgeTagIcon status={badge.status} />
-              <ArrowIcon variant={ArrowIconVariant.RIGHT} />
             </Flex>
           </CardHeader>
           <Divider color={"#F5FFFF14"} />
@@ -109,7 +106,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
               <Avatar className="w-5 h-5" />
               <Flex gap={2} alignItems={"center"}>
                 <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                  Issued by
+                  Issuer
                 </Text>
                 <Text className="text-slate-50 text-sm font-normal ">
                   {getEllipsedAddress(badge.attester as `0x${string}`)}

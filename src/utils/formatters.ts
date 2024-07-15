@@ -8,6 +8,11 @@ export const getEllipsedAddress = (
   return "Undefined Address";
 };
 
+const bytes32Regex = /^0x[0-9a-fA-F]{64}$/;
+export function isBytes32(value: string): boolean {
+  return bytes32Regex.test(value);
+}
+
 export const getReadableData = (data: number): string => {
   // Convert Unix timestamp to JavaScript Date object
   const date = new Date(data * 1000);
