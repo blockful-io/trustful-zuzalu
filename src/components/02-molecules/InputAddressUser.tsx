@@ -1,6 +1,6 @@
 import { Flex, Input } from "@chakra-ui/react";
 
-import { UserIcon, CopyToClipboardButton } from "@/components/01-atoms";
+import { UserIcon } from "@/components/01-atoms";
 
 interface InputAddressUserProps {
   onInputChange: (value: string) => void;
@@ -26,13 +26,6 @@ export const InputAddressUser = ({
         value={inputAddress}
         onChange={(e) => onInputChange(e.target.value)}
       />
-      <Flex className="w-8" color="white">
-        <CopyToClipboardButton
-          isUserAddress={false}
-          label={inputAddress}
-          showSvg
-        />
-      </Flex>
     </Flex>
   );
 };
