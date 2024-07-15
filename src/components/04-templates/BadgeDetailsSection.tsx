@@ -40,6 +40,7 @@ import {
   type AttestationRequestData,
 } from "../../lib/service/attest";
 import { revoke } from "../../lib/service/revoke";
+import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -245,7 +246,7 @@ export const BadgeDetailsSection = () => {
                   </Text>
                 </Box>
                 <Flex gap={2} className="items-center">
-                  <Text className="text-slate-50 text-sm font-normal  leading-tight">
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
                     {new Date(
                       selectedBadge.timeCreated * 1000,
                     ).toLocaleString()}
@@ -266,13 +267,22 @@ export const BadgeDetailsSection = () => {
                     gap={2}
                     justifyContent={"center"}
                   >
-                    <Text className="text-slate-50 text-sm font-medium  leading-none">
-                      Issued by
+                    <Text className="text-slate-50 text-sm font-medium leading-none">
+                      Issuer
                     </Text>
-                    <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
-                      {getEllipsedAddress(
-                        selectedBadge.attester as `0x${string}`,
-                      )}
+                    <Text className="flex flex-row items-center justify-content text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                      <CopyToClipboardButton
+                        label={selectedBadge.attester}
+                        isUserAddress={true}
+                      >
+                        {getEllipsedAddress(
+                          selectedBadge.attester as `0x${string}`,
+                        )}
+                      </CopyToClipboardButton>
+                      <OutboundLinkButton
+                        label={`https://optimistic.etherscan.io/address/${selectedBadge.attester}`}
+                        className="cursor-pointer text-center ml-1"
+                      />
                     </Text>
                   </Flex>
                 </Flex>
@@ -284,13 +294,22 @@ export const BadgeDetailsSection = () => {
                     gap={2}
                     justifyContent={"center"}
                   >
-                    <Text className="text-slate-50 text-sm font-medium  leading-none">
+                    <Text className="text-slate-50 text-sm font-medium leading-none">
                       Receiver
                     </Text>
-                    <Text className="text-slate-50 opacity-70 text-sm font-normal  leading-tight">
-                      {getEllipsedAddress(
-                        selectedBadge.recipient as `0x${string}`,
-                      )}
+                    <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                      <CopyToClipboardButton
+                        label={selectedBadge.recipient}
+                        isUserAddress={true}
+                      >
+                        {getEllipsedAddress(
+                          selectedBadge.recipient as `0x${string}`,
+                        )}
+                      </CopyToClipboardButton>
+                      <OutboundLinkButton
+                        label={`https://optimistic.etherscan.io/address/${selectedBadge.recipient}`}
+                        className="cursor-pointer text-center ml-1"
+                      />
                     </Text>
                   </Flex>
                 </Flex>
@@ -327,47 +346,62 @@ export const BadgeDetailsSection = () => {
               className="w-full rounded-lg border border-[#F5FFFF14] border-opacity-[8]"
             >
               <Flex flexDirection={"column"} gap={2} p={4}>
-                <Text className="flex text-slate-50 text-sm font-medium  leading-none">
+                <Text className="flex text-slate-50 text-sm font-medium leading-none">
                   Attestation
                 </Text>
                 <Flex color="white" className="gap-2">
-                  <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
+                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    <CopyToClipboardButton
+                      label={selectedBadge.id}
+                      isUserAddress={false}
+                    >
+                      {getEllipsedAddress(selectedBadge.id as `0x${string}`)}
+                    </CopyToClipboardButton>
+                    <OutboundLinkButton
+                      label={`https://optimism.easscan.org/attestation/view/${selectedBadge.id}`}
+                      className="cursor-pointer text-center ml-1"
+                    />
                   </Text>
-                  <CopyToClipboardButton
-                    label={selectedBadge.id}
-                    isUserAddress={false}
-                  />
                 </Flex>
               </Flex>
               <Flex flexDirection={"column"} gap={2} p={4}>
-                <Text className="flex text-slate-50 text-sm font-medium  leading-none">
+                <Text className="flex text-slate-50 text-sm font-medium leading-none">
                   Transaction
                 </Text>
                 <Flex color="white" className="gap-2">
-                  <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {getEllipsedAddress(selectedBadge.txid as `0x${string}`)}
+                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    <CopyToClipboardButton
+                      label={selectedBadge.txid}
+                      isUserAddress={false}
+                    >
+                      {getEllipsedAddress(selectedBadge.txid as `0x${string}`)}
+                    </CopyToClipboardButton>
+                    <OutboundLinkButton
+                      label={`https://optimistic.etherscan.io/tx/${selectedBadge.txid}`}
+                      className="cursor-pointer text-center ml-1"
+                    />
                   </Text>
-                  <CopyToClipboardButton
-                    label={selectedBadge.txid}
-                    isUserAddress={false}
-                  />
                 </Flex>
               </Flex>
               <Flex flexDirection={"column"} gap={2} p={4}>
-                <Text className="flex text-slate-50 text-sm font-medium  leading-none">
+                <Text className="flex text-slate-50 text-sm font-medium leading-none">
                   Scheme
                 </Text>
                 <Flex color="white" className="gap-2">
-                  <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {getEllipsedAddress(
-                      selectedBadge.schema.id as `0x${string}`,
-                    )}
+                  <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                    <CopyToClipboardButton
+                      label={selectedBadge.schema.id}
+                      isUserAddress={false}
+                    >
+                      {getEllipsedAddress(
+                        selectedBadge.schema.id as `0x${string}`,
+                      )}
+                    </CopyToClipboardButton>
+                    <OutboundLinkButton
+                      label={`https://optimism.easscan.org/schema/view/${selectedBadge.schema.id}`}
+                      className="cursor-pointer text-center ml-1"
+                    />
                   </Text>
-                  <CopyToClipboardButton
-                    label={selectedBadge.schema.id}
-                    isUserAddress={false}
-                  />
                 </Flex>
               </Flex>
             </Card>

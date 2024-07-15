@@ -53,6 +53,8 @@ import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress } from "@/utils/formatters";
 
+import { OutboundLinkButton } from "../01-atoms/OutboundLink";
+
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
   INSERT_BADGE_AND_COMMENT = "INSERT_BADGE_AND_COMMENT",
@@ -437,10 +439,19 @@ export const GiveBadgeSection = () => {
                       justifyContent={"center"}
                     >
                       <Text className="text-slate-50 text-sm font-medium leading-none">
-                        Issued by
+                        Issuer
                       </Text>
                       <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        {getEllipsedAddress(address)}
+                        <CopyToClipboardButton
+                          label={address}
+                          isUserAddress={true}
+                        >
+                          {getEllipsedAddress(address)}
+                        </CopyToClipboardButton>
+                        <OutboundLinkButton
+                          label={`https://optimistic.etherscan.io/address/${address}`}
+                          className="cursor-pointer text-center ml-1"
+                        />
                       </Text>
                     </Flex>
                   </Flex>
@@ -456,7 +467,16 @@ export const GiveBadgeSection = () => {
                         Receiver
                       </Text>
                       <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        {getEllipsedAddress(badgeInputAddress?.address)}
+                        <CopyToClipboardButton
+                          label={badgeInputAddress?.address}
+                          isUserAddress={true}
+                        >
+                          {getEllipsedAddress(badgeInputAddress?.address)}
+                        </CopyToClipboardButton>
+                        <OutboundLinkButton
+                          label={`https://optimistic.etherscan.io/address/${badgeInputAddress?.address}`}
+                          className="cursor-pointer text-center ml-1"
+                        />
                       </Text>
                     </Flex>
                   </Flex>
