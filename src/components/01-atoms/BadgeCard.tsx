@@ -8,6 +8,7 @@ import {
   Divider,
   Flex,
   Avatar,
+  Box,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
@@ -74,7 +75,14 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
             pb="0.75rem"
           >
             <Flex gap={4} className={"items-center"}>
-              <HeartIcon className="w-4 h-4 opacity-50 text-slate-50" />
+              <Box
+                boxSize="24px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <HeartIcon className="w-5 h-5  opacity-50 text-slate-50" />
+              </Box>
               <Text fontSize="md" className="text-slate-50">
                 {badge.title}
               </Text>
