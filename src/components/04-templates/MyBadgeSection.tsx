@@ -160,6 +160,7 @@ export const MyBadgeSection: React.FC = () => {
             txid: attestation.txid,
             schema: attestation.schema,
             status: badgeStatus,
+            revoked: attestation.revoked,
           };
         });
 

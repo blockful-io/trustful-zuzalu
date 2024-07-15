@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 
 import { CloseIcon } from "@chakra-ui/icons";
@@ -16,9 +17,8 @@ import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
 
 import { AdminIcon, LogoutIcon, UserIcon } from "@/components/01-atoms";
-import { ZUVILLAGE_BADGE_TITLES } from "@/lib/client/constants";
-
-import { hasRole } from "../../lib/service/hasRole";
+import { ROLES } from "@/lib/client/constants";
+import { hasRole } from "@/lib/service/hasRole";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -33,29 +33,24 @@ export const DropdownProfile = ({
 
   const [isRoot, setIsRoot] = useState<boolean>(false);
 
-  //TODO: Need Refadtoring.The `admin` page is delayed to display
-  //Checks if the user has the `Manager` badge
+  //Checks if the user has the `Manager` or `Root` badge
   useEffect(() => {
-    if (address) {
-      const checkUserRole = async () => {
-        let isAdminRole = false;
-        for (const badge of ZUVILLAGE_BADGE_TITLES) {
-          if (badge.title === "Manager") {
-            const hasManagerRole = await hasRole(badge.allowedRole, address);
-
-            if (hasManagerRole) {
-              isAdminRole = true;
-              break;
-            }
-          }
-        }
-
-        setIsRoot(isAdminRole);
-      };
-      checkUserRole();
-    }
+    checkUserRole();
   }, [address]);
 
+  const checkUserRole = async () => {
+    if (!address) {
+      return;
+    }
+    if (await hasRole(ROLES.ROOT, address)) {
+      setIsRoot(true);
+      return;
+    }
+    if (await hasRole(ROLES.MANAGER, address)) {
+      setIsRoot(true);
+      return;
+    }
+  };
   return (
     <>
       <div

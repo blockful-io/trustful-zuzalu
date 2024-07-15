@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -33,12 +34,11 @@ import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { useBadge } from "@/lib/context/BadgeContext";
 import { WalletContext } from "@/lib/context/WalletContext";
-import { getEllipsedAddress } from "@/utils/formatters";
-
 import {
   submitAttest,
   type AttestationRequestData,
-} from "../../lib/service/attest";
+} from "@/lib/service/attest";
+import { getEllipsedAddress } from "@/utils/formatters";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -173,7 +173,7 @@ export const BadgeDetailsSection = () => {
           ? BadgeStatus.REJECTED
           : selectedBadge && selectedBadge.status
             ? selectedBadge.status
-            : "Inexistent";
+            : BadgeStatus.DEFAULT;
 
   return (
     <Flex flexDirection="column" minHeight="100vh" marginBottom="100px">
