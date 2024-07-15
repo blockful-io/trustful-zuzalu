@@ -17,10 +17,8 @@ import { BADGE_QUERY } from "@/lib/client/schemaQueries";
 import { WalletContext } from "@/lib/context/WalletContext";
 import { fetchEASData } from "@/lib/service/fetchEASData";
 
-interface Schema {
-  index: string;
-  id: string;
-}
+import { type BadgeData } from "../01-atoms/BadgeCard";
+import { type Schema } from "../01-atoms/BadgeCard";
 
 interface Attestation {
   decodedDataJson: string;
@@ -33,20 +31,6 @@ interface Attestation {
   schema: Schema;
   refUID: string;
   status: boolean;
-}
-
-interface BadgeData {
-  id: string;
-  title: string;
-  status: BadgeStatus;
-  comment?: string;
-  timeCreated: number;
-  attester: string;
-  recipient: string;
-  txid: string;
-  schema: Schema;
-  revoked: boolean;
-  responseId?: string;
 }
 
 export const MyBadgeSection: React.FC = () => {
