@@ -13,8 +13,6 @@ import {
 import { useRouter } from "next/navigation";
 
 import {
-  ArrowIcon,
-  ArrowIconVariant,
   BadgeStatus,
   BadgeTagIcon,
   CalendarIcon,
