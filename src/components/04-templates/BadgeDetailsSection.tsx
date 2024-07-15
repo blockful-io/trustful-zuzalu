@@ -41,24 +41,6 @@ import {
 } from "../../lib/service/attest";
 import { revoke } from "../../lib/service/revoke";
 
-interface Schema {
-  index: string;
-  id: string;
-}
-
-interface Attestation {
-  decodedDataJson: string;
-  timeCreated: number;
-  attester: string;
-  revoked: boolean;
-  id: string;
-  recipient: string;
-  txid: string;
-  schema: Schema;
-  refUID: string;
-  status: boolean;
-}
-
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
   const { selectedBadge } = useBadge();
@@ -80,7 +62,7 @@ export const BadgeDetailsSection = () => {
     if (selectedBadge) {
       setBadgeStatus(selectedBadge?.status);
       setAttestResponseId(selectedBadge?.responseId);
-    }else{
+    } else {
       push("/my-badges");
     }
   }, [villagerAttestationCount]);
@@ -116,7 +98,10 @@ export const BadgeDetailsSection = () => {
     return true;
   };
 
-  const processAttestationResponse = async (response: any, isConfirm: boolean | null) => {
+  const processAttestationResponse = async (
+    response: any,
+    isConfirm: boolean | null,
+  ) => {
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -175,13 +160,13 @@ export const BadgeDetailsSection = () => {
       ),
     });
 
-    if(isConfirm === null){
+    if (isConfirm === null) {
       setBadgeStatus(BadgeStatus.PENDING);
-    }else{     
+    } else {
       if (!(response instanceof Error)) {
-        if (isConfirm){
+        if (isConfirm) {
           setBadgeStatus(BadgeStatus.CONFIRMED);
-        }else{
+        } else {
           setBadgeStatus(BadgeStatus.REJECTED);
         }
         setAttestResponseId(response.logs[0].data);
@@ -229,7 +214,6 @@ export const BadgeDetailsSection = () => {
       0n,
     );
     processAttestationResponse(response, null);
-   
   };
 
   return (
