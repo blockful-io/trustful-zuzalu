@@ -33,7 +33,7 @@ import {
   TheFooterNavbar,
   ArrowIcon,
   ArrowIconVariant,
-  CopyToClipboardButton,
+  PasteToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import {
@@ -367,9 +367,8 @@ export const GiveBadgeSection = () => {
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
                       <Flex className="w-8" color="white">
-                        <CopyToClipboardButton
-                          isUserAddress={false}
-                          label={inputAddress}
+                        <PasteToClipboardButton
+                          onPaste={(text) => setInputAddress(text)}
                         />
                       </Flex>
                     </Flex>
