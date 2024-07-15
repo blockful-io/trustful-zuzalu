@@ -39,7 +39,7 @@ interface BadgeData {
   id: string;
   title: string;
   status: BadgeStatus;
-  comment: string;
+  comment?: string;
   timeCreated: number;
   attester: string;
   recipient: string;
@@ -83,7 +83,7 @@ export const MyBadgeSection: React.FC = () => {
       null,
     );
     if (responseAttestBadges) {
-      const decodedData: BadgeData[] = responseAttestBadges
+      const decodedDataPromises: Promise<BadgeData>[] = responseAttestBadges
         .filter((attestation: Attestation) => attestation.decodedDataJson)
         .map(async (attestation: Attestation) => {
           const parsedJson = JSON.parse(attestation.decodedDataJson);
@@ -92,7 +92,7 @@ export const MyBadgeSection: React.FC = () => {
           if (!title) {
             title = parsedJson.find((item: any) => item.name === "status")
               ?.value.value;
-
+    
             if (!title) {
               title = parsedJson.find((item: any) => item.name === "role")
                 ?.value.value;
@@ -102,7 +102,7 @@ export const MyBadgeSection: React.FC = () => {
             (item: any) => item.name === "comment",
           )?.value.value;
           let badgeStatus = BadgeStatus.PENDING;
-          let responseId = null;
+          let responseId: string | undefined = undefined;
           const responseAttestResponse: Attestation[] = await handleQuery(
             true,
             attestation.attester,
@@ -118,14 +118,12 @@ export const MyBadgeSection: React.FC = () => {
               (item: any) => item.name === "status",
             )?.value.value;
             const revoked = lastItem.revoked;
-            responseId = lastItem.id;
+            responseId = lastItem.id ?? undefined;
             if (!revoked && !status) {
               badgeStatus = BadgeStatus.REJECTED;
             } else if (!revoked && status) {
               badgeStatus = BadgeStatus.CONFIRMED;
-            } else {
-              badgeStatus = BadgeStatus.PENDING;
-            }
+            } 
           } else if (
             attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
             (attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
@@ -138,7 +136,7 @@ export const MyBadgeSection: React.FC = () => {
           ) {
             badgeStatus = BadgeStatus.REJECTED;
           }
-
+    
           return {
             id: attestation.id,
             title,
@@ -153,9 +151,11 @@ export const MyBadgeSection: React.FC = () => {
             responseId: responseId,
           };
         });
-
-      setBadgeData(await Promise.all(decodedData));
+    
+      const decodedData = await Promise.all(decodedDataPromises);
+      setBadgeData(decodedData);
     }
+    
     setLoading(false);
   };
 
