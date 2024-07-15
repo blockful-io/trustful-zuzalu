@@ -92,7 +92,7 @@ export const MyBadgeSection: React.FC = () => {
           if (!title) {
             title = parsedJson.find((item: any) => item.name === "status")
               ?.value.value;
-    
+
             if (!title) {
               title = parsedJson.find((item: any) => item.name === "role")
                 ?.value.value;
@@ -123,7 +123,7 @@ export const MyBadgeSection: React.FC = () => {
               badgeStatus = BadgeStatus.REJECTED;
             } else if (!revoked && status) {
               badgeStatus = BadgeStatus.CONFIRMED;
-            } 
+            }
           } else if (
             attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
             (attestation.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
@@ -136,7 +136,7 @@ export const MyBadgeSection: React.FC = () => {
           ) {
             badgeStatus = BadgeStatus.REJECTED;
           }
-    
+
           return {
             id: attestation.id,
             title,
@@ -151,11 +151,11 @@ export const MyBadgeSection: React.FC = () => {
             responseId: responseId,
           };
         });
-    
+
       const decodedData = await Promise.all(decodedDataPromises);
       setBadgeData(decodedData);
     }
-    
+
     setLoading(false);
   };
 

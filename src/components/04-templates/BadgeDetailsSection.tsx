@@ -31,10 +31,8 @@ import {
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
-import { BADGE_QUERY } from "@/lib/client/schemaQueries";
 import { useBadge } from "@/lib/context/BadgeContext";
 import { WalletContext } from "@/lib/context/WalletContext";
-import { fetchEASData } from "@/lib/service/fetchEASData";
 import { getEllipsedAddress } from "@/utils/formatters";
 
 import {
@@ -82,6 +80,8 @@ export const BadgeDetailsSection = () => {
     if (selectedBadge) {
       setBadgeStatus(selectedBadge?.status);
       setAttestResponseId(selectedBadge?.responseId);
+    }else{
+      push("/my-badges");
     }
   }, [villagerAttestationCount]);
 
@@ -116,7 +116,7 @@ export const BadgeDetailsSection = () => {
     return true;
   };
 
-  const processAttestationResponse = async (response: any) => {
+  const processAttestationResponse = async (response: any, isConfirm: boolean | null) => {
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -175,6 +175,18 @@ export const BadgeDetailsSection = () => {
       ),
     });
 
+    if(isConfirm === null){
+      setBadgeStatus(BadgeStatus.PENDING);
+    }else{     
+      if (!(response instanceof Error)) {
+        if (isConfirm){
+          setBadgeStatus(BadgeStatus.CONFIRMED);
+        }else{
+          setBadgeStatus(BadgeStatus.REJECTED);
+        }
+        setAttestResponseId(response.logs[0].data);
+      }
+    }
     setLoadingConfirm(false);
     setLoadingDeny(false);
 
@@ -203,9 +215,8 @@ export const BadgeDetailsSection = () => {
       ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
       attestationRequestData,
     );
-
-    processAttestationResponse(response);
-    fetchAttestationResponse();
+    processAttestationResponse(response, isConfirm);
+    //fetchAttestationResponse();
   };
 
   // Submit revoke
@@ -214,87 +225,11 @@ export const BadgeDetailsSection = () => {
     const response = await revoke(
       address as `0x${string}`,
       ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-      attestResponseId as  `0x${string}`,
+      attestResponseId as `0x${string}`,
       0n,
     );
-    processAttestationResponse(response);
-    fetchAttestationResponse();
-  };
-
-  const fetchAttestationResponse = async () => {
-    const responseAttestResponse: Attestation[] = await handleQuery();
-    if (selectedBadge) {
-      let selectedStatus = BadgeStatus.PENDING;
-      if (responseAttestResponse.length > 0) {
-        responseAttestResponse.sort((a, b) => b.timeCreated - a.timeCreated);
-        const lastItem = responseAttestResponse[0];
-        const parsedJson = JSON.parse(lastItem.decodedDataJson);
-        const status = parsedJson.find((item: any) => item.name === "status")
-          ?.value.value;
-        const revoked = lastItem.revoked;
-        setAttestResponseId(lastItem.id);
-        if (!revoked && !status) {
-          selectedStatus = BadgeStatus.REJECTED;
-        } else if (!revoked && status) {
-          selectedStatus = BadgeStatus.CONFIRMED;
-        }
-      } else if (
-        selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid ||
-        (selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
-          !selectedBadge.revoked)
-      ) {
-        selectedStatus = BadgeStatus.CONFIRMED;
-      } else if (
-        selectedBadge.schema.id === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
-        selectedBadge.revoked
-      ) {
-        selectedStatus = BadgeStatus.REJECTED;
-      }
-      setBadgeStatus(selectedStatus);
-    }
-  };
-
-  const handleQuery = async () => {
-    let queryVariables = {};
-    queryVariables = {
-      where: {
-        schemaId: {
-          equals: ZUVILLAGE_SCHEMAS.ATTEST_RESPONSE.uid,
-        },
-        recipient: {
-          equals: selectedBadge?.attester,
-        },
-        refUID: {
-          equals: selectedBadge?.id,
-        },
-      },
-      orderBy: [
-        {
-          timeCreated: "desc",
-        },
-      ],
-    };
-
-    try {
-      const { response } = await fetchEASData(BADGE_QUERY, queryVariables);
-      const attestations = response?.data?.data.attestations;
-      if (!attestations) {
-        notifyError({
-          title: "Cannot fetch EAS",
-          message: "Subgraph returned error with current query",
-        });
-        return null;
-      }
-
-      return attestations;
-    } catch (error) {
-      notifyError({
-        title: "Cannot fetch EAS",
-        message: "Error while fetching Attestation data from Subgraphs",
-      });
-      console.error("Error in handleQuery:", error);
-      return null;
-    }
+    processAttestationResponse(response, null);
+   
   };
 
   return (
@@ -441,7 +376,9 @@ export const BadgeDetailsSection = () => {
                 </Text>
                 <Flex color="white" className="gap-2">
                   <Text className="flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {getEllipsedAddress(selectedBadge.schema.id as `0x${string}`)}
+                    {getEllipsedAddress(
+                      selectedBadge.schema.id as `0x${string}`,
+                    )}
                   </Text>
                   <CopyToClipboardButton
                     label={selectedBadge.schema.id}
