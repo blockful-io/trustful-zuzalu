@@ -72,7 +72,7 @@ export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
   {
     title: "Check-out",
     uid: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid,
-    allowComment: false,
+    allowComment: true,
     revocable: false,
     data: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data,
     allowedRole: ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.allowedRole,

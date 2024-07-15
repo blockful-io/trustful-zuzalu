@@ -51,7 +51,7 @@ import {
 } from "@/lib/service";
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
-import { getEllipsedAddress } from "@/utils/formatters";
+import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 
 import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 
@@ -142,10 +142,13 @@ export const GiveBadgeSection = () => {
 
   // Get the current badge selected and move to state
   const handleBadgeSelectChange = (event: any) => {
-    ZUVILLAGE_BADGE_TITLES.filter((badge) => {
+    ZUVILLAGE_BADGE_TITLES.map((badge) => {
       if (badge.title === event.target.value) {
         setInputBadge(badge);
-      } else {
+      } else if (
+        badge.uid !== ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid &&
+        badge.uid !== ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.uid
+      ) {
         const customBadge: BadgeTitle = {
           title: event.target.value,
           uid: ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid,
@@ -244,6 +247,14 @@ export const GiveBadgeSection = () => {
       } else if (inputBadge.title === "Check-out") {
         encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_VILLAGER.data;
         encodeArgs = ["Check-out"];
+        if (!isBytes32(commentBadge as `0x${string}`)) {
+          setLoading(false);
+          notifyError({
+            title: "Invalid reference UID",
+            message: "The format provided is not a valid bytes32.",
+          });
+          return;
+        }
         const isCheckedOut = await checkedOutVillagers(
           badgeInputAddress.address,
         );
@@ -278,7 +289,9 @@ export const GiveBadgeSection = () => {
       expirationTime: BigInt(0),
       revocable: inputBadge.revocable,
       refUID:
-        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        inputBadge.title === "Check-out"
+          ? (commentBadge as `0x${string}`)
+          : "0x0000000000000000000000000000000000000000000000000000000000000000",
       data: data,
       value: BigInt(0),
     };
@@ -512,7 +525,11 @@ export const GiveBadgeSection = () => {
                     <CommentIcon />
                     <Textarea
                       className="text-slate-50 text-base font-normal leading-snug border-none"
-                      placeholder="Share your experience!"
+                      placeholder={
+                        inputBadge && inputBadge.title === "Check-out"
+                          ? `Rereferenced attestation`
+                          : `Share your experience!`
+                      }
                       _placeholder={{
                         className: "text-slate-50 opacity-30",
                       }}
@@ -619,7 +636,7 @@ export const GiveBadgeSection = () => {
                   </Flex>
                 </Flex>
                 <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-                {commentBadge && (
+                {commentBadge && !isBytes32(commentBadge as `0x${string}`) && (
                   <Flex className="py-4 gap-4 items-center">
                     <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                       Comment
