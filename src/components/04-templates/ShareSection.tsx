@@ -101,11 +101,7 @@ export const ShareSection = () => {
                             ? authUserPrimaryName
                             : getEllipsedAddress(address)}
                         </Text>
-                        <CopyToClipboardButton
-                          isUserAddress={false}
-                          isShare
-                          showSvg
-                        />
+                        <CopyToClipboardButton isShare={true} showSvg={true} />
                       </Flex>
                     </>
                   ) : (

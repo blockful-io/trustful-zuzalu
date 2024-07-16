@@ -4,15 +4,15 @@ import Link from "next/link";
 
 export const OutboundLinkButton = ({
   label,
-  className = "",
+  svgClassName = "",
 }: {
   label: string;
-  className?: string;
+  svgClassName?: string;
 }) => {
   return (
     <Tooltip label={"View on explorer"} hasArrow placement="bottom">
       <Link href={label} target="_blank">
-        <ExternalLinkIcon className={className} />
+        <ExternalLinkIcon className={svgClassName} />
       </Link>
     </Tooltip>
   );

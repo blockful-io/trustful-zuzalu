@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 
 import { CloseIcon } from "@chakra-ui/icons";
 import {
@@ -16,18 +16,12 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
 
-import {
-  AdminIcon,
-  CopyToClipboardButton,
-  LogoutIcon,
-  UserIcon,
-} from "@/components/01-atoms";
-import { useWindowSize } from "@/hooks";
+import { AdminIcon, LogoutIcon } from "@/components/01-atoms";
 import { ROLES } from "@/lib/client/constants";
-import { WalletContext } from "@/lib/context/WalletContext";
 import { hasRole } from "@/lib/service/hasRole";
-import { getEllipsedAddress } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
+
+import { EnsAvatar, EnsName } from "../02-molecules";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -39,9 +33,6 @@ export const DropdownProfile = ({
   const { disconnect } = useDisconnect({ config: wagmiConfig });
   const { push } = useRouter();
   const { address } = useAccount();
-  const { isMobile } = useWindowSize();
-
-  const { authUserPrimaryName } = useContext(WalletContext);
 
   const [isRoot, setIsRoot] = useState<boolean>(false);
 
@@ -133,7 +124,7 @@ export const DropdownProfile = ({
                   push("/admin");
                 }}
               >
-                <AdminIcon className="w-6 h-6 text-[#F5FFFF80]" />
+                <AdminIcon className="w-6 h-6 text-[#F5FFFF80] opacity-70" />
                 <Flex gap={2} alignItems={"center"}>
                   <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight ">
                     Admin
@@ -141,47 +132,13 @@ export const DropdownProfile = ({
                 </Flex>
               </Flex>
             )}
-            <Flex
-              gap={4}
-              alignItems={"center"}
-              flexDirection={"row"}
-              p={4}
-              justifyContent={"space-between"}
-            >
-              <Flex gap={3} alignItems={"center"}>
-                <UserIcon className="w-6 h-6 text-[#F5FFFF80]" />
-                {!isMobile && (
-                  <>
-                    <Flex>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        Profile
-                      </Text>
-                    </Flex>
-                    <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                      {authUserPrimaryName
-                        ? authUserPrimaryName
-                        : getEllipsedAddress(address)}
-                    </Text>
-                  </>
-                )}
-                {isMobile && (
-                  <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {authUserPrimaryName
-                      ? authUserPrimaryName
-                      : getEllipsedAddress(address)}
-                  </Text>
-                )}
-                <Flex color={"white"}>
-                  <CopyToClipboardButton
-                    isUserAddress
-                    showSvg
-                    svgClassName="opacity-70"
-                  />
-                </Flex>
-              </Flex>
-              <Text className="h-6 p-2 bg-slate-50 bg-opacity-10 rounded-full justify-center items-center inline-flex text-slate-50 text-xs font-medium uppercase leading-[13.20px] tracking-wide">
-                coming soon
-              </Text>
+            <Flex gap={4} alignItems={"center"} flexDirection={"row"} p={4}>
+              <EnsAvatar size={"xs"} ensAddress={address as `0x${string}`} />
+              <EnsName
+                ensAddress={address as `0x${string}`}
+                copyToClipboard={true}
+                externalLink={true}
+              />
             </Flex>
           </CardBody>
         </Card>
