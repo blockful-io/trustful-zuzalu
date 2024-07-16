@@ -39,7 +39,10 @@ export const CopyToClipboardButton = ({
       navigator.clipboard.writeText(linkToGiveBadgeAddress);
     }
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000); // Revert icon back after 2 seconds
+    setTimeout(() => {
+      setIsCopied(false);
+      setIsVisible(false);
+    }, 2000); // Revert icon back after 2 seconds
   };
 
   const handleMouseEnter = () => {
@@ -47,43 +50,69 @@ export const CopyToClipboardButton = ({
   };
 
   const handleMouseLeave = () => {
-    setIsVisible(false);
-    setIsCopied(false);
+    if (!isCopied) {
+      setIsVisible(false);
+    }
   };
 
   return (
-    <Tooltip
-      label={isCopied ? "Copied!" : "Copy to clipboard"}
-      backgroundColor={"#B1EF42"}
-      color={"black"}
-      fontSize={"12px"}
-      hasArrow
-      placement="bottom"
-      closeOnClick={false}
-      isOpen={isVisible}
-    >
-      <div
-        onClick={handleCopy}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={className}
-        style={{
-          cursor: "pointer",
-          display: "inline-flex",
-          alignItems: "center",
-        }}
-      >
-        {children}
-        {showSvg && (
-          <>
-            {isCopied ? (
-              <CheckIcon className={svgClassName} />
-            ) : (
-              <CopyIcon className={svgClassName} />
+    <>
+      {showSvg ? (
+        <Tooltip
+          label={"Copy to clipboard"}
+          backgroundColor={"#B1EF42"}
+          color={"black"}
+          fontSize={"12px"}
+          hasArrow
+          placement="bottom"
+        >
+          <div
+            onClick={handleCopy}
+            className={className}
+            style={{
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            {children}
+            {showSvg && (
+              <>
+                {isCopied ? (
+                  <CheckIcon className={svgClassName} />
+                ) : (
+                  <CopyIcon className={svgClassName} />
+                )}
+              </>
             )}
-          </>
-        )}
-      </div>
-    </Tooltip>
+          </div>
+        </Tooltip>
+      ) : (
+        <Tooltip
+          label={isCopied ? "Copied!" : "Copy to clipboard"}
+          backgroundColor={"#B1EF42"}
+          color={"black"}
+          fontSize={"12px"}
+          hasArrow
+          placement="bottom"
+          closeOnClick={false}
+          isOpen={isVisible}
+        >
+          <div
+            onClick={handleCopy}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className={className}
+            style={{
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            {children}
+          </div>
+        </Tooltip>
+      )}
+    </>
   );
 };
