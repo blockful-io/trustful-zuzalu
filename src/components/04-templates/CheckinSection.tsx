@@ -101,13 +101,18 @@ export const CheckinSection = () => {
                   {address && chain ? (
                     <>
                       <QRCodeGiveBadge />
-
                       <Flex
                         color="white"
                         className="justify-center items-center gap-2"
                       >
-                        <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress={false} isShare />
+                        <CopyToClipboardButton
+                          isUserAddress={false}
+                          isShare={true}
+                          showSvg={true}
+                          svgClassName="ml-1"
+                        >
+                          {getEllipsedAddress(address)}
+                        </CopyToClipboardButton>
                       </Flex>
                     </>
                   ) : (
@@ -130,7 +135,7 @@ export const CheckinSection = () => {
                 <CircleQuestion />
                 <Flex flexDirection={"column"} justifyContent={"center"}>
                   <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What Trustful is?
+                    What is Trustul?
                   </Text>
                 </Flex>
               </Flex>
@@ -138,10 +143,10 @@ export const CheckinSection = () => {
                 <Box p="40px" color="white" pt="20px" pb="20px">
                   Trustful is a reputation aggregator system designed to match
                   governance, participation, and efforts. Using the Ethereum
-                  Attestation Service (EAS) and a badge system, we can attest to
-                  specific participation and ensure that this on-chain
-                  information results in a scoring system. This system can be
-                  used for resource allocation, governance, and more.
+                  Attestation Service (EAS) and a badge system. We can attest to
+                  specific participations and ensure that this information
+                  on-chain results in a scoring system. This system can be used
+                  for resource allocation, governance etc.
                 </Box>
               </Collapse>
               <Divider className="border-slate-50 opacity-10 w-full" />
@@ -153,20 +158,67 @@ export const CheckinSection = () => {
                 <CircleQuestion />
                 <Flex flexDirection={"column"} justifyContent={"center"}>
                   <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    How it works in ZuVillage?
+                    How does it work in ZuVillage?
                   </Text>
                 </Flex>
               </Flex>
               <Collapse in={isZuVillageVisible} animateOpacity>
                 <Box p="40px" color="white" pt="20px" pb="20px">
                   In ZuVillage, your interactions and contributions will be
-                  attested to and stored on-chain. This promotes dialogue,
-                  avoids echo chambers, and encourages active participation. In
-                  the future, this aggregated reputation can be used to benefit
+                  attested and stored on-chain. This promotes dialogue, avoids
+                  echo chambers, and encourages participation. In the future,
+                  this aggregated reputation can be used to benefit
                   participants, providing them with recognition.
                 </Box>
               </Collapse>
               <Divider className="border-slate-50 opacity-10 w-full" />
+
+              <Flex
+                className="w-full flex-row py-3 cursor-pointer"
+                gap={4}
+                onClick={() => setIsBadgeVisible(!isBadgeVisible)}
+              >
+                <CircleQuestion />
+                <Flex flexDirection={"column"} justifyContent={"center"}>
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                    What is a badge?
+                  </Text>
+                </Flex>
+              </Flex>
+              <Collapse in={isBadgeVisible} animateOpacity>
+                <Box p="40px" color="white" pt="20px" pb="20px">
+                  The badges are created with EAS and managed by Trustful, it
+                  aggregates reputation based on interactions and contributions
+                  during ZuVillage Georgia. It allows members to give and
+                  receive badges recognizing their contributions and knowledge,
+                  fostering real connections and deep dialogues, therefore
+                  helping to build reputation scores.
+                </Box>
+              </Collapse>
+              <Divider className="border-slate-50 opacity-10 w-full" />
+              <Flex
+                className="w-full flex-row py-3 cursor-pointer"
+                gap={4}
+                onClick={() => setIsCheckoutForVisible(!isCheckoutForVisible)}
+              >
+                <CircleQuestion />
+                <Flex flexDirection={"column"} justifyContent={"center"}>
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                    What is the check-out for?
+                  </Text>
+                </Flex>
+              </Flex>
+              <Collapse in={isCheckoutForVisible} animateOpacity>
+                <Box p="40px" color="white" pt="20px" pb="20px">
+                  The check-out badge confirms that you are ending your stay at
+                  ZuVillage Georgia. It will be used to calculate how long you
+                  lived in our ZuVillage, which will aggregate to your
+                  ZuVillager reputation score. It will also help us keep track
+                  of how many people are currently present.
+                </Box>
+              </Collapse>
+              <Divider className="border-slate-50 opacity-10 w-full" />
+
               <Flex
                 className="w-full flex-row py-3 cursor-pointer"
                 gap={4}
@@ -175,7 +227,7 @@ export const CheckinSection = () => {
                 <CircleQuestion />
                 <Flex flexDirection={"column"} justifyContent={"center"}>
                   <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What to do now
+                    What to do now?
                   </Text>
                 </Flex>
               </Flex>
@@ -192,65 +244,19 @@ export const CheckinSection = () => {
                     </ListItem>
                     <ListItem>
                       {" "}
-                      By interacting with the event, whether by disagreeing with
-                      someone, actively participating in talks, or creating
-                      sessions, you can create or attest to badges.
+                      By engaging with the event—whether you agree or disagree
+                      with someone, participate in talks, or create sessions—you
+                      can earn badges or respond to them.
                     </ListItem>
                     <ListItem>
                       {" "}
-                      This process builds your reputation, tied to your wallet,
-                      based on your interactions.
+                      This process builds your reputation, ties to your address
+                      and based on your interactions shapes your reputation
+                      score.
                     </ListItem>
                   </UnorderedList>
                 </Box>
               </Collapse>
-              <Divider className="border-slate-50 opacity-10 w-full" />
-              <Flex
-                className="w-full flex-row py-3 cursor-pointer"
-                gap={4}
-                onClick={() => setIsCheckoutForVisible(!isCheckoutForVisible)}
-              >
-                <CircleQuestion />
-                <Flex flexDirection={"column"} justifyContent={"center"}>
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What is the check out for?
-                  </Text>
-                </Flex>
-              </Flex>
-              <Collapse in={isCheckoutForVisible} animateOpacity>
-                <Box p="40px" color="white" pt="20px" pb="20px">
-                  The check out badge confirms that you are ending your stay at
-                  ZuVillage Georgia. It will be used to calculate how long you
-                  lived in our ZuVillage, which will contribute to your
-                  ZuVillager reputation score. It also helps us keep track of
-                  how many people are currently present. Thank you for joining
-                  us at ZuVillage Georgia!
-                </Box>
-              </Collapse>
-              <Divider className="border-slate-50 opacity-10 w-full" />
-              <Flex
-                className="w-full flex-row py-3 cursor-pointer"
-                gap={4}
-                onClick={() => setIsBadgeVisible(!isBadgeVisible)}
-              >
-                <CircleQuestion />
-                <Flex flexDirection={"column"} justifyContent={"center"}>
-                  <Text className="text-slate-50 text-sm font-normal leading-tight">
-                    What is a badge?
-                  </Text>
-                </Flex>
-              </Flex>
-              <Collapse in={isBadgeVisible} animateOpacity>
-                <Box p="40px" color="white" pt="20px" pb="20px">
-                  The badges, created by Trustful, aggregates reputation based
-                  on interactions and contributions at ZuVillage Georgia. It
-                  allows members to give and receive badges recognizing their
-                  contributions and knowledge, fostering real connections and
-                  deep dialogues, and helping to build reputation scores within
-                  the community.
-                </Box>
-              </Collapse>
-              <Divider className="border-slate-50 opacity-10 w-full" />
             </Flex>
           </Box>
           <TheFooterNavbar />
