@@ -97,7 +97,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
                 <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   Date
                 </Text>
-                <Text className="text-slate-50 text-sm font-normal ">
+                <Text className="text-slate-50 opacity-70 text-sm font-normal ">
                   {new Date(badge.timeCreated * 1000).toLocaleString()}
                 </Text>
               </Flex>
