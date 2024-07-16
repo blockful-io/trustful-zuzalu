@@ -18,6 +18,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
@@ -51,6 +52,7 @@ import {
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 import { EnsName, EnsAvatar } from "../02-molecules";
 
@@ -65,6 +67,9 @@ export const GiveBadgeSection = () => {
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
+  const unwatch = watchAccount(wagmiConfig, {
+    onChange() {},
+  });
   const {
     addressStep,
     setAddressStep,
@@ -96,7 +101,19 @@ export const GiveBadgeSection = () => {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
     };
+    unwatch();
   }, []);
+
+  useEffect(() => {
+    // User changes account
+    if (address) {
+      setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+      setBadgeInputAddress(null);
+    }
+    return () => {
+      unwatch();
+    };
+  }, [address]);
 
   const searchParams = useSearchParams();
   const addressShared = searchParams.get("address");
@@ -390,7 +407,7 @@ export const GiveBadgeSection = () => {
                         value={inputAddress}
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
-                      <Flex className="w-8" color="white">
+                      <Flex className="w-8" color="#B1EF42">
                         <PasteToClipboardButton
                           onPaste={(text) => setInputAddress(text)}
                         />
@@ -581,13 +598,14 @@ export const GiveBadgeSection = () => {
                   <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                     Receiver
                   </Text>
-                  <Flex gap={2}>
-                    <Text
-                      color="white"
-                      className="pl-4 text-slate-50 text-sm font-normal leading-tight"
-                    >
-                      {badgeInputAddress?.getEllipsedAddress()}
-                    </Text>
+                  <Flex gap={2} className="w-full">
+                    <EnsName
+                      ensAddress={badgeInputAddress}
+                      customClassName={true}
+                      clipboardClassName={
+                        "text-opacity-100 px-4 py-2 w-full disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                      }
+                    />
                   </Flex>
                 </Flex>
                 <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />

@@ -10,7 +10,7 @@ import React, {
 } from "react";
 
 import { watchAccount } from "@wagmi/core";
-import { useAccount, useEnsName } from "wagmi";
+import { useAccount } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
 import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
@@ -23,15 +23,11 @@ import { wagmiConfig } from "@/wagmi";
 interface WalletContextProps {
   villagerAttestationCount: number | null;
   setVillagerAttestationCount: Dispatch<SetStateAction<number | null>>;
-  authUserPrimaryName?: string | null;
-  setAuthUserPrimaryName?: Dispatch<SetStateAction<string | null>>;
 }
 
 const defaultContextValue: WalletContextProps = {
   villagerAttestationCount: null,
   setVillagerAttestationCount: () => {},
-  authUserPrimaryName: null,
-  setAuthUserPrimaryName: () => {},
 };
 
 export const WalletContext =
@@ -47,50 +43,24 @@ export const WalletContextProvider = ({
     number | null
   >(null);
 
-  const [authUserPrimaryName, setAuthUserPrimaryName] = useState<string | null>(
-    null,
-  );
-
   const [walletContextData, setWalletContextData] =
     useState<WalletContextProps>({
       villagerAttestationCount,
       setVillagerAttestationCount,
-      authUserPrimaryName,
-      setAuthUserPrimaryName,
     });
 
   useEffect(() => {
     setWalletContextData({
       villagerAttestationCount,
       setVillagerAttestationCount,
-      authUserPrimaryName,
-      setAuthUserPrimaryName,
     });
-  }, [villagerAttestationCount, authUserPrimaryName]);
+  }, [villagerAttestationCount]);
 
   const { address } = useAccount();
   const { notifyError, notifySuccess } = useNotify();
   const unwatch = watchAccount(wagmiConfig, {
     onChange() {},
   });
-
-  const ensname = useEnsName({
-    address: address,
-    chainId: 1,
-  });
-
-  useEffect(() => {
-    if (
-      ensname.isSuccess &&
-      ensname.data !== null &&
-      authUserPrimaryName === null
-    ) {
-      setAuthUserPrimaryName(ensname.data);
-    }
-    return () => {
-      unwatch();
-    };
-  }, [ensname]);
 
   useEffect(() => {
     // First Time user in page
@@ -106,9 +76,7 @@ export const WalletContextProvider = ({
       handleQuery();
       notifySuccess({
         title: "Account Changed",
-        message: `Connected to your account ${
-          ensname.isSuccess ? ensname.data : getEllipsedAddress(address)
-        }`,
+        message: `Connected to your account ${getEllipsedAddress(address)}`,
       });
     }
     return () => {
