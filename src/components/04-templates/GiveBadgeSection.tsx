@@ -390,7 +390,7 @@ export const GiveBadgeSection = () => {
                         value={inputAddress}
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
-                      <Flex className="w-8" color="white">
+                      <Flex className="w-8" color="#B1EF42">
                         <PasteToClipboardButton
                           onPaste={(text) => setInputAddress(text)}
                         />
@@ -581,13 +581,14 @@ export const GiveBadgeSection = () => {
                   <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                     Receiver
                   </Text>
-                  <Flex gap={2}>
-                    <Text
-                      color="white"
-                      className="pl-4 text-slate-50 text-sm font-normal leading-tight"
-                    >
-                      {badgeInputAddress?.getEllipsedAddress()}
-                    </Text>
+                  <Flex gap={2} className="w-full">
+                    <EnsName
+                      ensAddress={badgeInputAddress}
+                      customClassName={true}
+                      clipboardClassName={
+                        "text-opacity-100 px-4 py-2 w-full disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                      }
+                    />
                   </Flex>
                 </Flex>
                 <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />

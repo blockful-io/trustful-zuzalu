@@ -11,6 +11,8 @@ interface EnsNameProps {
   ensAddress: EthereumAddress | `0x${string}` | null;
   copyToClipboard?: boolean;
   showClipboardSvg?: boolean;
+  customClassName?: boolean;
+  clipboardClassName?: string;
   externalLink?: boolean;
 }
 
@@ -18,6 +20,8 @@ export const EnsName = ({
   ensAddress,
   copyToClipboard = false,
   showClipboardSvg = false,
+  customClassName = false,
+  clipboardClassName = "",
   externalLink = false,
 }: EnsNameProps) => {
   if (typeof ensAddress === "string") {
@@ -30,7 +34,13 @@ export const EnsName = ({
 
   return (
     <Flex gap={4} justifyContent="start" alignItems="center">
-      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+      <Text
+        className={
+          customClassName
+            ? clipboardClassName
+            : "text-slate-50 opacity-70 text-sm font-normal leading-tight"
+        }
+      >
         {copyToClipboard ? (
           <CopyToClipboardButton
             showSvg={showClipboardSvg}
