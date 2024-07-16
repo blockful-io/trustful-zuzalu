@@ -59,9 +59,7 @@ export const WalletContextProvider = ({
   const { address } = useAccount();
   const { notifyError, notifySuccess } = useNotify();
   const unwatch = watchAccount(wagmiConfig, {
-    onChange(account) {
-      console.log("Account changed!", account);
-    },
+    onChange() {},
   });
 
   useEffect(() => {
@@ -93,6 +91,12 @@ export const WalletContextProvider = ({
       if (isRoot) {
         setVillagerAttestationCount(2);
         return;
+      } else {
+        const isManager = await hasRole(ROLES.MANAGER, address);
+        if (isManager) {
+          setVillagerAttestationCount(2);
+          return;
+        }
       }
     }
 

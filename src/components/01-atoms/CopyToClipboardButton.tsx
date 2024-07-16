@@ -18,14 +18,15 @@ export const CopyToClipboardButton = ({
   isUserAddress = false,
   isShare = false,
   showSvg = false,
-  label,
   className = "",
   svgClassName = "",
+  label,
   children,
 }: CopyToClipboardButtonProps) => {
   const { address } = useAccount();
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState(false);
   const prefixToGiveBadge = "https://trustful.ing/give-badge";
   const linkToGiveBadgeAddress = `${prefixToGiveBadge}?address=${address}`;
 
@@ -41,10 +42,30 @@ export const CopyToClipboardButton = ({
     setTimeout(() => setIsCopied(false), 2000); // Revert icon back after 2 seconds
   };
 
+  const handleMouseEnter = () => {
+    setIsVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsVisible(false);
+    setIsCopied(false);
+  };
+
   return (
-    <Tooltip label={"Copy to clipboard"} hasArrow placement="bottom">
+    <Tooltip
+      label={isCopied ? "Copied!" : "Copy to clipboard"}
+      backgroundColor={"#B1EF42"}
+      color={"black"}
+      fontSize={"12px"}
+      hasArrow
+      placement="bottom"
+      closeOnClick={false}
+      isOpen={isVisible}
+    >
       <div
         onClick={handleCopy}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={className}
         style={{
           cursor: "pointer",

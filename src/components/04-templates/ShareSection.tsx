@@ -15,16 +15,15 @@ import { BeatLoader } from "react-spinners";
 import { useAccount } from "wagmi";
 
 import {
-  CopyToClipboardButton,
   BlockfulLogo,
   QRCodeGiveBadge,
   ShareIcon,
   TheFooterNavbar,
   TheHeader,
 } from "@/components/01-atoms";
+import { EnsName } from "@/components/02-molecules";
 import { useNotify } from "@/hooks";
 import { WalletContext } from "@/lib/context/WalletContext";
-import { getEllipsedAddress } from "@/utils/formatters";
 
 export const ShareSection = () => {
   const { address, chain } = useAccount();
@@ -92,11 +91,14 @@ export const ShareSection = () => {
                     <>
                       <QRCodeGiveBadge />
                       <Flex
-                        color="white"
+                        color={"white"}
                         className="justify-center items-center gap-2"
                       >
-                        <Text>{getEllipsedAddress(address)}</Text>
-                        <CopyToClipboardButton isUserAddress={false} isShare />
+                        <EnsName
+                          ensAddress={address}
+                          copyToClipboard={true}
+                          showClipboardSvg={true}
+                        />
                       </Flex>
                     </>
                   ) : (

@@ -222,7 +222,6 @@ export const MyBadgeSection: React.FC = () => {
         title: "Cannot fetch EAS",
         message: "Error while fetching Attestation data from Subgraphs",
       });
-      console.error("Error in handleQuery:", error);
       return null;
     }
   };

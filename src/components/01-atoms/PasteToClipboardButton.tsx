@@ -18,7 +18,14 @@ export const PasteToClipboardButton = ({
   };
 
   return (
-    <Tooltip label={"Paste to clipboard"} hasArrow placement="bottom">
+    <Tooltip
+      label={paste ? "Pasted!" : "Paste to clipboard"}
+      backgroundColor={"#B1EF42"}
+      color={"black"}
+      fontSize={"12px"}
+      hasArrow
+      placement="bottom"
+    >
       {paste ? (
         <CheckIcon />
       ) : (

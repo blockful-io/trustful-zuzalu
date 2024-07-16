@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -19,6 +18,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
@@ -34,7 +34,6 @@ import {
   ArrowIcon,
   ArrowIconVariant,
   PasteToClipboardButton,
-  CopyToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import {
@@ -53,8 +52,9 @@ import {
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
-import { OutboundLinkButton } from "../01-atoms/OutboundLink";
+import { EnsName, EnsAvatar } from "../02-molecules";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -67,6 +67,9 @@ export const GiveBadgeSection = () => {
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
+  const unwatch = watchAccount(wagmiConfig, {
+    onChange() {},
+  });
   const {
     addressStep,
     setAddressStep,
@@ -98,7 +101,19 @@ export const GiveBadgeSection = () => {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
     };
+    unwatch();
   }, []);
+
+  useEffect(() => {
+    // User changes account
+    if (address) {
+      setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+      setBadgeInputAddress(null);
+    }
+    return () => {
+      unwatch();
+    };
+  }, [address]);
 
   const searchParams = useSearchParams();
   const addressShared = searchParams.get("address");
@@ -392,7 +407,7 @@ export const GiveBadgeSection = () => {
                         value={inputAddress}
                         onChange={(e) => setInputAddress(e.target.value)}
                       />
-                      <Flex className="w-8" color="white">
+                      <Flex className="w-8" color="#B1EF42">
                         <PasteToClipboardButton
                           onPaste={(text) => setInputAddress(text)}
                         />
@@ -445,7 +460,10 @@ export const GiveBadgeSection = () => {
               >
                 <Flex flexDirection={"column"} className="w-full items-center">
                   <Flex className="w-full flex-row p-4" gap={4}>
-                    <Avatar />
+                    <EnsAvatar
+                      size={"md"}
+                      ensAddress={address as `0x${string}`}
+                    />
                     <Flex
                       flexDirection={"column"}
                       gap={2}
@@ -454,23 +472,12 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Issuer
                       </Text>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        <CopyToClipboardButton
-                          label={address}
-                          isUserAddress={true}
-                        >
-                          {getEllipsedAddress(address)}
-                        </CopyToClipboardButton>
-                        <OutboundLinkButton
-                          label={`https://optimistic.etherscan.io/address/${address}`}
-                          className="cursor-pointer text-center ml-1"
-                        />
-                      </Text>
+                      <EnsName ensAddress={address as `0x${string}`} />
                     </Flex>
                   </Flex>
                   <Divider className="border-slate-50 opacity-10 w-full" />
                   <Flex className="w-full flex-row p-4" gap={4}>
-                    <Avatar />
+                    <EnsAvatar size={"md"} ensAddress={badgeInputAddress} />
                     <Flex
                       flexDirection={"column"}
                       gap={2}
@@ -479,18 +486,7 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Receiver
                       </Text>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        <CopyToClipboardButton
-                          label={badgeInputAddress?.address}
-                          isUserAddress={true}
-                        >
-                          {getEllipsedAddress(badgeInputAddress?.address)}
-                        </CopyToClipboardButton>
-                        <OutboundLinkButton
-                          label={`https://optimistic.etherscan.io/address/${badgeInputAddress?.address}`}
-                          className="cursor-pointer text-center ml-1"
-                        />
-                      </Text>
+                      <EnsName ensAddress={badgeInputAddress} />
                     </Flex>
                   </Flex>
                 </Flex>
@@ -602,13 +598,14 @@ export const GiveBadgeSection = () => {
                   <Text className="flex min-w-[80px] text-slate-50 opacity-70 text-sm font-normal leading-tight">
                     Receiver
                   </Text>
-                  <Flex gap={2}>
-                    <Text
-                      color="white"
-                      className="pl-4 text-slate-50 text-sm font-normal leading-tight"
-                    >
-                      {badgeInputAddress?.getEllipsedAddress()}
-                    </Text>
+                  <Flex gap={2} className="w-full">
+                    <EnsName
+                      ensAddress={badgeInputAddress}
+                      customClassName={true}
+                      clipboardClassName={
+                        "text-opacity-100 px-4 py-2 w-full disabled text-slate-50 opacity-100 text-sm font-normal border-none"
+                      }
+                    />
                   </Flex>
                 </Flex>
                 <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />

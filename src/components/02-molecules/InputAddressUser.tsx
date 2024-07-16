@@ -1,6 +1,6 @@
 import { Flex, Input } from "@chakra-ui/react";
 
-import { UserIcon, CopyToClipboardButton } from "@/components/01-atoms";
+import { UserIcon } from "@/components/01-atoms";
 
 interface InputAddressUserProps {
   onInputChange: (value: string) => void;
@@ -17,18 +17,15 @@ export const InputAddressUser = ({
     <Flex className="gap-4 pb-4 justify-start items-center">
       <UserIcon className="text-[#B1EF42]" />
       <Input
-        className="text-slate-50 text-base font-normal leading-snug border-none"
+        className="text-slate-50 text-base font-normal leading-snug border opacity-70"
         placeholder={label}
         _placeholder={{
-          className: "text-slate-50 opacity-30",
+          className: "text-slate-50",
         }}
-        focusBorderColor={"#F5FFFF1A"}
+        focusBorderColor={"#B1EF42"}
         value={inputAddress}
         onChange={(e) => onInputChange(e.target.value)}
       />
-      <Flex className="w-8" color="white">
-        <CopyToClipboardButton isUserAddress={false} label={inputAddress} />
-      </Flex>
     </Flex>
   );
 };
