@@ -35,6 +35,8 @@ export const CheckinSection = () => {
   const [isTrustfulVisible, setIsTrustfulVisible] = useState(false);
   const [isZuVillageVisible, setIsZuVillageVisible] = useState(false);
   const [isToDoNowVisible, setToDoNowVisible] = useState(false);
+  const [isCheckoutForVisible, setIsCheckoutForVisible] = useState(false);
+  const [isBadgeVisible, setIsBadgeVisible] = useState(false);
   const { notifyError } = useNotify();
   const { push } = useRouter();
 
@@ -133,7 +135,7 @@ export const CheckinSection = () => {
                 </Flex>
               </Flex>
               <Collapse in={isTrustfulVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box p="40px" color="white" pt="20px" pb="20px">
                   Trustful is a reputation aggregator system designed to match
                   governance, participation, and efforts. Using the Ethereum
                   Attestation Service (EAS) and a badge system, we can attest to
@@ -156,7 +158,7 @@ export const CheckinSection = () => {
                 </Flex>
               </Flex>
               <Collapse in={isZuVillageVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box p="40px" color="white" pt="20px" pb="20px">
                   In ZuVillage, your interactions and contributions will be
                   attested to and stored on-chain. This promotes dialogue,
                   avoids echo chambers, and encourages active participation. In
@@ -178,7 +180,7 @@ export const CheckinSection = () => {
                 </Flex>
               </Flex>
               <Collapse in={isToDoNowVisible} animateOpacity>
-                <Box p="40px" color="white">
+                <Box p="40px" color="white" pt="20px" pb="20px">
                   Now that you have connected your wallet, you need to do the
                   check-in.
                   <UnorderedList styleType="disc" pl={4}>
@@ -200,6 +202,52 @@ export const CheckinSection = () => {
                       based on your interactions.
                     </ListItem>
                   </UnorderedList>
+                </Box>
+              </Collapse>
+              <Divider className="border-slate-50 opacity-10 w-full" />
+              <Flex
+                className="w-full flex-row py-3 cursor-pointer"
+                gap={4}
+                onClick={() => setIsCheckoutForVisible(!isCheckoutForVisible)}
+              >
+                <CircleQuestion />
+                <Flex flexDirection={"column"} justifyContent={"center"}>
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                    What is the check out for?
+                  </Text>
+                </Flex>
+              </Flex>
+              <Collapse in={isCheckoutForVisible} animateOpacity>
+                <Box p="40px" color="white" pt="20px" pb="20px">
+                  The check out badge confirms that you are ending your stay at
+                  ZuVillage Georgia. It will be used to calculate how long you
+                  lived in our ZuVillage, which will contribute to your
+                  ZuVillager reputation score. It also helps us keep track of
+                  how many people are currently present. Thank you for joining
+                  us at ZuVillage Georgia!
+                </Box>
+              </Collapse>
+              <Divider className="border-slate-50 opacity-10 w-full" />
+              <Flex
+                className="w-full flex-row py-3 cursor-pointer"
+                gap={4}
+                onClick={() => setIsBadgeVisible(!isBadgeVisible)}
+              >
+                <CircleQuestion />
+                <Flex flexDirection={"column"} justifyContent={"center"}>
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                    What is a badge?
+                  </Text>
+                </Flex>
+              </Flex>
+              <Collapse in={isBadgeVisible} animateOpacity>
+                <Box p="40px" color="white" pt="20px" pb="20px">
+                  The badges, created by Trustful, aggregates reputation based
+                  on interactions and contributions at ZuVillage Georgia. It
+                  allows members to give and receive badges recognizing their
+                  contributions and knowledge, fostering real connections and
+                  deep dialogues, and helping to build reputation scores within
+                  the community.
                 </Box>
               </Collapse>
               <Divider className="border-slate-50 opacity-10 w-full" />
