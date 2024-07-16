@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { Menu, MenuButton, IconButton, Avatar, Flex } from "@chakra-ui/react";
+import { Menu, MenuButton, IconButton, Flex } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 
 import {
   ArrowIcon,
@@ -8,9 +9,12 @@ import {
   DropdownProfile,
 } from "@/components/01-atoms";
 
+import { EnsAvatar } from "../02-molecules";
+
 export const TheHeaderMenu = () => {
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const { address } = useAccount();
   const closeMenu = () => setIsOpenMenu(false);
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
 
   return (
     <>
@@ -20,7 +24,7 @@ export const TheHeaderMenu = () => {
           aria-label="Options"
           icon={
             <Flex className="p-[6px] gap-2 items-center">
-              <Avatar className="w-6 h-6" />
+              <EnsAvatar size={"xs"} ensAddress={address as `0x${string}`} />
               <ArrowIcon
                 variant={ArrowIconVariant.DOWN}
                 props={{ className: "w-3 h-3 text-[#F5FFFF80]" }}

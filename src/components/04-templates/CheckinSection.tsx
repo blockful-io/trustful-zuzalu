@@ -32,14 +32,15 @@ import { getEllipsedAddress } from "@/utils/formatters";
 
 export const CheckinSection = () => {
   const { address, chain } = useAccount();
+  const { notifyError } = useNotify();
+  const { push } = useRouter();
+
+  const { villagerAttestationCount, authUserPrimaryName } =
+    useContext(WalletContext);
 
   const [isTrustfulVisible, setIsTrustfulVisible] = useState(false);
   const [isZuVillageVisible, setIsZuVillageVisible] = useState(false);
   const [isToDoNowVisible, setToDoNowVisible] = useState(false);
-  const { notifyError } = useNotify();
-  const { push } = useRouter();
-
-  const { villagerAttestationCount } = useContext(WalletContext);
 
   useEffect(() => {
     if (villagerAttestationCount) {
@@ -105,7 +106,11 @@ export const CheckinSection = () => {
                         color="white"
                         className="justify-center items-center gap-2"
                       >
-                        <Text>{getEllipsedAddress(address)}</Text>
+                        <Text>
+                          {authUserPrimaryName
+                            ? authUserPrimaryName
+                            : getEllipsedAddress(address)}
+                        </Text>
                         <CopyToClipboardButton
                           isUserAddress={false}
                           isShare

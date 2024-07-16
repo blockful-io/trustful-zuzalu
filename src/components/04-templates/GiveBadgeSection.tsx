@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -34,7 +33,6 @@ import {
   ArrowIcon,
   ArrowIconVariant,
   PasteToClipboardButton,
-  CopyToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import {
@@ -54,7 +52,7 @@ import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 
-import { OutboundLinkButton } from "../01-atoms/OutboundLink";
+import { EnsName, EnsAvatar } from "../02-molecules";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -445,7 +443,10 @@ export const GiveBadgeSection = () => {
               >
                 <Flex flexDirection={"column"} className="w-full items-center">
                   <Flex className="w-full flex-row p-4" gap={4}>
-                    <Avatar />
+                    <EnsAvatar
+                      size={"md"}
+                      ensAddress={address as `0x${string}`}
+                    />
                     <Flex
                       flexDirection={"column"}
                       gap={2}
@@ -454,23 +455,12 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Issuer
                       </Text>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        <CopyToClipboardButton
-                          label={address}
-                          isUserAddress={true}
-                        >
-                          {getEllipsedAddress(address)}
-                        </CopyToClipboardButton>
-                        <OutboundLinkButton
-                          label={`https://optimistic.etherscan.io/address/${address}`}
-                          className="cursor-pointer text-center ml-1"
-                        />
-                      </Text>
+                      <EnsName ensAddress={address as `0x${string}`} />
                     </Flex>
                   </Flex>
                   <Divider className="border-slate-50 opacity-10 w-full" />
                   <Flex className="w-full flex-row p-4" gap={4}>
-                    <Avatar />
+                    <EnsAvatar size={"md"} ensAddress={badgeInputAddress} />
                     <Flex
                       flexDirection={"column"}
                       gap={2}
@@ -479,18 +469,7 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Receiver
                       </Text>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                        <CopyToClipboardButton
-                          label={badgeInputAddress?.address}
-                          isUserAddress={true}
-                        >
-                          {getEllipsedAddress(badgeInputAddress?.address)}
-                        </CopyToClipboardButton>
-                        <OutboundLinkButton
-                          label={`https://optimistic.etherscan.io/address/${badgeInputAddress?.address}`}
-                          className="cursor-pointer text-center ml-1"
-                        />
-                      </Text>
+                      <EnsName ensAddress={badgeInputAddress} />
                     </Flex>
                   </Flex>
                 </Flex>

@@ -7,7 +7,6 @@ import {
   Text,
   Divider,
   Flex,
-  Avatar,
   Box,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
@@ -19,7 +18,8 @@ import {
   HeartIcon,
 } from "@/components/01-atoms";
 import { useBadge } from "@/lib/context/BadgeContext";
-import { getEllipsedAddress } from "@/utils/formatters";
+
+import { EnsAvatar, EnsName } from "../02-molecules";
 
 export interface Schema {
   index: string;
@@ -74,12 +74,12 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           >
             <Flex gap={4} className={"items-center"}>
               <Box
-                boxSize="24px"
+                boxSize="16px"
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
               >
-                <HeartIcon className="w-5 h-5  opacity-50 text-slate-50" />
+                <HeartIcon className="w-4 h-4 opacity-50 text-slate-50" />
               </Box>
               <Text fontSize="md" className="text-slate-50">
                 {badge.title}
@@ -92,7 +92,7 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
           <Divider color={"#F5FFFF14"} />
           <CardBody gap={4} display={"flex"} flexDirection={"column"}>
             <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
-              <CalendarIcon className="w-5 h-5 " />
+              <CalendarIcon className="w-4 h-4" />
               <Flex gap={2} alignItems={"center"}>
                 <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   Date
@@ -103,14 +103,15 @@ export const BadgeCard: React.FC<BadgeCardProps> = ({ badgeData }) => {
               </Flex>
             </Flex>
             <Flex gap={4} alignItems={"center"} flexDirection={"row"}>
-              <Avatar className="w-5 h-5" />
+              <EnsAvatar
+                size={"xxs"}
+                ensAddress={badge.attester as `0x${string}`}
+              />
               <Flex gap={2} alignItems={"center"}>
                 <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                   Issuer
                 </Text>
-                <Text className="text-slate-50 text-sm font-normal ">
-                  {getEllipsedAddress(badge.attester as `0x${string}`)}
-                </Text>
+                <EnsName ensAddress={badge.attester as `0x${string}`} />
               </Flex>
             </Flex>
           </CardBody>

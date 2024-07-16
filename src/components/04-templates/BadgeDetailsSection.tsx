@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -41,6 +40,7 @@ import {
 } from "../../lib/service/attest";
 import { revoke } from "../../lib/service/revoke";
 import { OutboundLinkButton } from "../01-atoms/OutboundLink";
+import { EnsAvatar, EnsName } from "../02-molecules";
 
 export const BadgeDetailsSection = () => {
   const { address } = useAccount();
@@ -261,7 +261,10 @@ export const BadgeDetailsSection = () => {
             >
               <Flex flexDirection={"column"} className="w-full items-center">
                 <Flex className="w-full flex-row p-4" gap={4}>
-                  <Avatar />
+                  <EnsAvatar
+                    size={"md"}
+                    ensAddress={selectedBadge.attester as `0x${string}`}
+                  />
                   <Flex
                     flexDirection={"column"}
                     gap={2}
@@ -270,25 +273,19 @@ export const BadgeDetailsSection = () => {
                     <Text className="text-slate-50 text-sm font-medium leading-none">
                       Issuer
                     </Text>
-                    <Text className="flex flex-row items-center justify-content text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                      <CopyToClipboardButton
-                        label={selectedBadge.attester}
-                        isUserAddress={true}
-                      >
-                        {getEllipsedAddress(
-                          selectedBadge.attester as `0x${string}`,
-                        )}
-                      </CopyToClipboardButton>
-                      <OutboundLinkButton
-                        label={`https://optimistic.etherscan.io/address/${selectedBadge.attester}`}
-                        className="cursor-pointer text-center ml-1"
-                      />
-                    </Text>
+                    <EnsName
+                      ensAddress={selectedBadge.attester as `0x${string}`}
+                      copyToClipboard={true}
+                      externalLink={true}
+                    />
                   </Flex>
                 </Flex>
                 <Divider className="border-slate-50 opacity-10 w-full" />
                 <Flex className="w-full flex-row p-4" gap={4}>
-                  <Avatar />
+                  <EnsAvatar
+                    size={"md"}
+                    ensAddress={selectedBadge.recipient as `0x${string}`}
+                  />
                   <Flex
                     flexDirection={"column"}
                     gap={2}
@@ -297,20 +294,11 @@ export const BadgeDetailsSection = () => {
                     <Text className="text-slate-50 text-sm font-medium leading-none">
                       Receiver
                     </Text>
-                    <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                      <CopyToClipboardButton
-                        label={selectedBadge.recipient}
-                        isUserAddress={true}
-                      >
-                        {getEllipsedAddress(
-                          selectedBadge.recipient as `0x${string}`,
-                        )}
-                      </CopyToClipboardButton>
-                      <OutboundLinkButton
-                        label={`https://optimistic.etherscan.io/address/${selectedBadge.recipient}`}
-                        className="cursor-pointer text-center ml-1"
-                      />
-                    </Text>
+                    <EnsName
+                      ensAddress={selectedBadge.recipient as `0x${string}`}
+                      copyToClipboard={true}
+                      externalLink={true}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -359,7 +347,7 @@ export const BadgeDetailsSection = () => {
                     </CopyToClipboardButton>
                     <OutboundLinkButton
                       label={`https://optimism.easscan.org/attestation/view/${selectedBadge.id}`}
-                      className="cursor-pointer text-center ml-1"
+                      svgClassName="cursor-pointer text-center ml-1"
                     />
                   </Text>
                 </Flex>
@@ -378,7 +366,7 @@ export const BadgeDetailsSection = () => {
                     </CopyToClipboardButton>
                     <OutboundLinkButton
                       label={`https://optimistic.etherscan.io/tx/${selectedBadge.txid}`}
-                      className="cursor-pointer text-center ml-1"
+                      svgClassName="cursor-pointer text-center ml-1"
                     />
                   </Text>
                 </Flex>
@@ -399,7 +387,7 @@ export const BadgeDetailsSection = () => {
                     </CopyToClipboardButton>
                     <OutboundLinkButton
                       label={`https://optimism.easscan.org/schema/view/${selectedBadge.schema.id}`}
-                      className="cursor-pointer text-center ml-1"
+                      svgClassName="cursor-pointer text-center ml-1"
                     />
                   </Text>
                 </Flex>
