@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -34,7 +33,6 @@ import {
   ArrowIcon,
   ArrowIconVariant,
   PasteToClipboardButton,
-  CopyToClipboardButton,
 } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import {
@@ -54,7 +52,6 @@ import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 
-import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 import { EnsName, EnsAvatar } from "../02-molecules";
 
 export enum GiveBadgeStepAddress {
@@ -75,8 +72,7 @@ export const GiveBadgeSection = () => {
     setBadgeInputAddress,
     inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
-  const { villagerAttestationCount, authUserPrimaryName } =
-    useContext(WalletContext);
+  const { villagerAttestationCount } = useContext(WalletContext);
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -448,7 +444,7 @@ export const GiveBadgeSection = () => {
                 <Flex flexDirection={"column"} className="w-full items-center">
                   <Flex className="w-full flex-row p-4" gap={4}>
                     <EnsAvatar
-                      size={"medium"}
+                      size={"md"}
                       ensAddress={address as `0x${string}`}
                     />
                     <Flex
@@ -464,7 +460,7 @@ export const GiveBadgeSection = () => {
                   </Flex>
                   <Divider className="border-slate-50 opacity-10 w-full" />
                   <Flex className="w-full flex-row p-4" gap={4}>
-                    <EnsAvatar size={"medium"} ensAddress={badgeInputAddress} />
+                    <EnsAvatar size={"md"} ensAddress={badgeInputAddress} />
                     <Flex
                       flexDirection={"column"}
                       gap={2}

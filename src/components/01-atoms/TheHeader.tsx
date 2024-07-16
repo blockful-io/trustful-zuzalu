@@ -42,7 +42,6 @@ export const TheHeader: FC = () => {
             Trustful
           </Heading>
         </HStack>
-
         <HStack>
           {!isMobile && !isConnected && <ConnectButton label="Connect" />}
           {isConnected && <TheHeaderMenu />}

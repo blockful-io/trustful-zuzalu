@@ -6,14 +6,30 @@ import { ENSAvatarQueryStatus } from "@/hooks/useEnsData";
 import { EthereumAddress } from "@/lib/shared/types";
 
 const sizeMap = {
-  small: 24,
-  medium: 48,
-  big: 72,
+  xxs: 16,
+  xs: 24,
+  sm: 32,
+  md: 48,
+  lg: 64,
+  xl: 72,
+  xxl: 128,
+  full: "100%",
+};
+
+const chakraAvatarMap = {
+  xxs: "2xs",
+  xs: "xs",
+  sm: "sm",
+  md: "md",
+  lg: "lg",
+  xl: "xl",
+  xxl: "2xl",
+  full: "100%",
 };
 
 interface EnsAvatarProps {
   ensAddress: EthereumAddress | `0x${string}` | null;
-  size: "small" | "medium" | "big";
+  size: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "full";
 }
 
 export const EnsAvatar = ({ ensAddress, size }: EnsAvatarProps) => {
@@ -59,12 +75,21 @@ export const EnsAvatar = ({ ensAddress, size }: EnsAvatarProps) => {
           bg="#F5FFFF0D"
         >
           <BeatLoader
-            size={size === "small" ? 3 : size === "medium" ? 5 : 8}
+            size={
+              size === "lg" ||
+              size === "xl" ||
+              size === "xxl" ||
+              size === "full"
+                ? 8
+                : size === "md" || size === "sm"
+                  ? 5
+                  : 3
+            }
             color="#B1EF42"
           />
         </Box>
       ) : (
-        <Avatar />
+        <Avatar size={chakraAvatarMap[size]} />
       )}
     </>
   );
