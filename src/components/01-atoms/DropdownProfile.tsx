@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { CloseIcon } from "@chakra-ui/icons";
 import {
@@ -24,6 +24,7 @@ import {
 } from "@/components/01-atoms";
 import { useWindowSize } from "@/hooks";
 import { ROLES } from "@/lib/client/constants";
+import { WalletContext } from "@/lib/context/WalletContext";
 import { hasRole } from "@/lib/service/hasRole";
 import { getEllipsedAddress } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
@@ -39,6 +40,9 @@ export const DropdownProfile = ({
   const { push } = useRouter();
   const { address } = useAccount();
   const { isMobile } = useWindowSize();
+
+  const { authUserPrimaryName } = useContext(WalletContext);
+
   const [isRoot, setIsRoot] = useState<boolean>(false);
 
   //Checks if the user has the `Manager` or `Root` badge
@@ -59,6 +63,7 @@ export const DropdownProfile = ({
       return;
     }
   };
+
   return (
     <>
       <div
@@ -153,13 +158,17 @@ export const DropdownProfile = ({
                       </Text>
                     </Flex>
                     <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                      ({getEllipsedAddress(address)})
+                      {authUserPrimaryName
+                        ? authUserPrimaryName
+                        : getEllipsedAddress(address)}
                     </Text>
                   </>
                 )}
                 {isMobile && (
                   <Text className="justify-center items-center inline-flex text-slate-50 opacity-70 text-sm font-normal leading-tight">
-                    {getEllipsedAddress(address)}
+                    {authUserPrimaryName
+                      ? authUserPrimaryName
+                      : getEllipsedAddress(address)}
                   </Text>
                 )}
                 <Flex color={"white"}>

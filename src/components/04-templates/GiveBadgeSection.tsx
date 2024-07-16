@@ -55,6 +55,7 @@ import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 
 import { OutboundLinkButton } from "../01-atoms/OutboundLink";
+import { EnsNameAndAvatar } from "../02-molecules/EnsNameAndAvatar";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -74,7 +75,8 @@ export const GiveBadgeSection = () => {
     setBadgeInputAddress,
     inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
-  const { villagerAttestationCount } = useContext(WalletContext);
+  const { villagerAttestationCount, authUserPrimaryName } =
+    useContext(WalletContext);
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -459,7 +461,9 @@ export const GiveBadgeSection = () => {
                           label={address}
                           isUserAddress={true}
                         >
-                          {getEllipsedAddress(address)}
+                          {authUserPrimaryName
+                            ? authUserPrimaryName
+                            : getEllipsedAddress(address)}
                         </CopyToClipboardButton>
                         <OutboundLinkButton
                           label={`https://optimistic.etherscan.io/address/${address}`}
@@ -479,7 +483,8 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Receiver
                       </Text>
-                      <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
+                      <EnsNameAndAvatar ensAddress={badgeInputAddress} />
+                      {/* <Text className="text-slate-50 opacity-70 text-sm font-normal leading-tight">
                         <CopyToClipboardButton
                           label={badgeInputAddress?.address}
                           isUserAddress={true}
@@ -490,7 +495,7 @@ export const GiveBadgeSection = () => {
                           label={`https://optimistic.etherscan.io/address/${badgeInputAddress?.address}`}
                           className="cursor-pointer text-center ml-1"
                         />
-                      </Text>
+                      </Text> */}
                     </Flex>
                   </Flex>
                 </Flex>

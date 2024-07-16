@@ -31,7 +31,8 @@ export const ShareSection = () => {
   const { notifyError } = useNotify();
   const { push } = useRouter();
 
-  const { villagerAttestationCount } = useContext(WalletContext);
+  const { villagerAttestationCount, authUserPrimaryName } =
+    useContext(WalletContext);
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -95,7 +96,11 @@ export const ShareSection = () => {
                         color={"white"}
                         className="justify-center items-center gap-2"
                       >
-                        <Text>{getEllipsedAddress(address)}</Text>
+                        <Text>
+                          {authUserPrimaryName
+                            ? authUserPrimaryName
+                            : getEllipsedAddress(address)}
+                        </Text>
                         <CopyToClipboardButton
                           isUserAddress={false}
                           isShare
