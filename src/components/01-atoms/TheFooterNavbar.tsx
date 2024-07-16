@@ -39,7 +39,7 @@ export const TheFooterNavbar = () => {
         <Flex gap={4} className="w-full justify-center">
           {villagerAttestationCount > 0 && (
             <Box
-              className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "my-badges" ? "border-[#B1EF42]" : "border-transparent"}`}
+              className={`flex flex-col min-w-16 justify-center items-center cursor-pointer py-3 gap-2 border-t ${params.slug == "my-badges" ? "border-[#B1EF42]" : "border-transparent"}`}
               onClick={() => push("/my-badges")}
             >
               <BadgeIcon
@@ -54,7 +54,7 @@ export const TheFooterNavbar = () => {
           )}
           {villagerAttestationCount > 0 && (
             <Box
-              className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "give-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
+              className={`flex flex-col min-w-16 justify-center items-center cursor-pointer py-3 gap-2 border-t ${params.slug == "give-badge" ? "border-[#B1EF42]" : "border-transparent"}`}
               onClick={() => push("/give-badge")}
             >
               <HeartIcon
@@ -69,7 +69,7 @@ export const TheFooterNavbar = () => {
           )}
           {villagerAttestationCount > 0 && (
             <Box
-              className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "share" ? "border-[#B1EF42]" : "border-transparent"}`}
+              className={`flex flex-col min-w-16 justify-center items-center cursor-pointer py-3 gap-2 border-t ${params.slug == "share" ? "border-[#B1EF42]" : "border-transparent"}`}
               onClick={() => push("/share")}
             >
               <QrCodeIcon
@@ -83,7 +83,7 @@ export const TheFooterNavbar = () => {
             </Box>
           )}
           <Box
-            className={`flex flex-col min-w-16 justify-center items-center py-3 gap-2 border-t ${params.slug == "checkout" || params.slug == "checkin" ? "border-[#B1EF42]" : "border-transparent"}`}
+            className={`flex flex-col min-w-16 justify-center items-center cursor-pointer py-3 gap-2 border-t ${params.slug == "checkout" || params.slug == "checkin" ? "border-[#B1EF42]" : "border-transparent"}`}
             onClick={() => {
               if (checkInStatus === "Check In") push("/checkin");
               if (

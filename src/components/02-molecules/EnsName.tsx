@@ -45,6 +45,7 @@ export const EnsName = ({
           <CopyToClipboardButton
             showSvg={showClipboardSvg}
             label={ensAddress?.address}
+            svgClassName={showClipboardSvg ? "ml-1" : ""}
           >
             {primaryName
               ? primaryName

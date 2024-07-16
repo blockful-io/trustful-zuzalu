@@ -15,24 +15,22 @@ import { BeatLoader } from "react-spinners";
 import { useAccount } from "wagmi";
 
 import {
-  CopyToClipboardButton,
   BlockfulLogo,
   QRCodeGiveBadge,
   ShareIcon,
   TheFooterNavbar,
   TheHeader,
 } from "@/components/01-atoms";
+import { EnsName } from "@/components/02-molecules";
 import { useNotify } from "@/hooks";
 import { WalletContext } from "@/lib/context/WalletContext";
-import { getEllipsedAddress } from "@/utils/formatters";
 
 export const ShareSection = () => {
   const { address, chain } = useAccount();
   const { notifyError } = useNotify();
   const { push } = useRouter();
 
-  const { villagerAttestationCount, authUserPrimaryName } =
-    useContext(WalletContext);
+  const { villagerAttestationCount } = useContext(WalletContext);
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -96,12 +94,11 @@ export const ShareSection = () => {
                         color={"white"}
                         className="justify-center items-center gap-2"
                       >
-                        <Text>
-                          {authUserPrimaryName
-                            ? authUserPrimaryName
-                            : getEllipsedAddress(address)}
-                        </Text>
-                        <CopyToClipboardButton isShare={true} showSvg={true} />
+                        <EnsName
+                          ensAddress={address}
+                          copyToClipboard={true}
+                          showClipboardSvg={true}
+                        />
                       </Flex>
                     </>
                   ) : (

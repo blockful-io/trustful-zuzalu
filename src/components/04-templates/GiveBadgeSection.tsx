@@ -18,6 +18,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
@@ -51,6 +52,7 @@ import {
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
+import { wagmiConfig } from "@/wagmi";
 
 import { EnsName, EnsAvatar } from "../02-molecules";
 
@@ -65,6 +67,9 @@ export const GiveBadgeSection = () => {
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
+  const unwatch = watchAccount(wagmiConfig, {
+    onChange() {},
+  });
   const {
     addressStep,
     setAddressStep,
@@ -96,7 +101,19 @@ export const GiveBadgeSection = () => {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
     };
+    unwatch();
   }, []);
+
+  useEffect(() => {
+    // User changes account
+    if (address) {
+      setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
+      setBadgeInputAddress(null);
+    }
+    return () => {
+      unwatch();
+    };
+  }, [address]);
 
   const searchParams = useSearchParams();
   const addressShared = searchParams.get("address");
