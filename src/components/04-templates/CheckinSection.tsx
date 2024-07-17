@@ -106,8 +106,7 @@ export const CheckinSection = () => {
                         className="justify-center items-center gap-2"
                       >
                         <CopyToClipboardButton
-                          isUserAddress={false}
-                          isShare={true}
+                          isUserAddress={true}
                           showSvg={true}
                           svgClassName="ml-1"
                         >
