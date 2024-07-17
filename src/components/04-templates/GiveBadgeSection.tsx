@@ -51,7 +51,6 @@ import {
   hasRole,
   fetchENSData,
 } from "@/lib/service";
-import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
 import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
@@ -318,10 +317,11 @@ export const GiveBadgeSection = () => {
           });
           return;
         }
-        const isCheckedOut = await checkedOutVillagers(
+        const isVillager = await hasRole(
+          ROLES.VILLAGER,
           badgeInputAddress.address,
         );
-        if (isCheckedOut) {
+        if (!isVillager) {
           setLoading(false);
           notifyError({
             title: "Address already checked-out",
@@ -519,7 +519,11 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Issuer
                       </Text>
-                      <EnsName ensAddress={address as `0x${string}`} />
+                      <EnsName
+                        ensAddress={address as `0x${string}`}
+                        copyToClipboard={true}
+                        externalLink={true}
+                      />
                     </Flex>
                   </Flex>
                   <Divider className="border-slate-50 opacity-10 w-full" />
@@ -533,7 +537,11 @@ export const GiveBadgeSection = () => {
                       <Text className="text-slate-50 text-sm font-medium leading-none">
                         Receiver
                       </Text>
-                      <EnsName ensAddress={badgeInputAddress} />
+                      <EnsName
+                        ensAddress={badgeInputAddress}
+                        copyToClipboard={true}
+                        externalLink={true}
+                      />
                     </Flex>
                   </Flex>
                 </Flex>
