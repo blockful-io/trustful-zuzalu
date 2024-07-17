@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useEnsName } from "wagmi";
 
+import { ENS_REVERSE_QUERY } from "@/lib/client/schemaQueries";
+import { fetchENSData } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
 
 export enum ENSAvatarQueryStatus {
@@ -26,17 +28,49 @@ export const useEnsData = ({ ensAddress }: Props) => {
   const [avatarQueryStatus, setAvatarQueryStatus] =
     useState<ENSAvatarQueryStatus>(ENSAvatarQueryStatus.LOADING);
 
+  const emergencyEnsPrimaryName = async () => {
+    const queryVariables = {
+      address: ensAddress?.address,
+    };
+    const { response, success } = await fetchENSData(
+      ENS_REVERSE_QUERY,
+      queryVariables,
+    );
+
+    // Behold the pyramid of doom. Where no error shall pass.
+    if (
+      !success ||
+      response === null ||
+      response.data === null ||
+      response.data.data === null ||
+      response.data.data.domains === null ||
+      response.data.data.domains.length === 0 ||
+      response.data.data.domains[0] === null ||
+      response.data.data.domains[0].name === null
+    ) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    }
+
+    const name = response.data.data.domains[0].name;
+    setPrimaryName(name);
+    setAvatarQueryStatus(ENSAvatarQueryStatus.SUCCESS);
+  };
+
   useEffect(() => {
     if (ensname.isSuccess) {
       setAvatarQueryStatus(ENSAvatarQueryStatus.SUCCESS);
       setPrimaryName(ensname.data);
-    } else if (ensname.isError) {
-      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
-      setPrimaryName(null);
-    } else if (ensname.isLoading || ensname.isFetching) {
-      setAvatarQueryStatus(ENSAvatarQueryStatus.LOADING);
-      setPrimaryName(null);
+    } else {
+      emergencyEnsPrimaryName();
     }
+    // } else if (ensname.isError) {
+    //   emergencyEnsPrimaryName();
+    // } else if (ensname.isLoading || ensname.isFetching) {
+    //   setAvatarQueryStatus(ENSAvatarQueryStatus.LOADING);
+    //   setPrimaryName(null);
+    // }
   }, [ensname]);
 
   return {

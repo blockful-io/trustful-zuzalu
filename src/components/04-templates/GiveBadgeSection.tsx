@@ -42,12 +42,14 @@ import {
   ROLES,
   type BadgeTitle,
 } from "@/lib/client/constants";
+import { ENS_ADDR_QUERY } from "@/lib/client/schemaQueries";
 import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { WalletContext } from "@/lib/context/WalletContext";
 import {
   submitAttest,
   type AttestationRequestData,
   hasRole,
+  fetchENSData,
 } from "@/lib/service";
 import { checkedOutVillagers } from "@/lib/service/checkedOutVillagers";
 import { EthereumAddress } from "@/lib/shared/types";
@@ -101,7 +103,6 @@ export const GiveBadgeSection = () => {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
     };
-    unwatch();
   }, []);
 
   useEffect(() => {
@@ -134,19 +135,61 @@ export const GiveBadgeSection = () => {
   useEffect(() => {
     if (inputAddress && isAddress(inputAddress)) {
       setBadgeInputAddress(new EthereumAddress(inputAddress));
+    } else {
+      handleResolveEns();
     }
   }, [inputAddress]);
 
+  const handleResolveEns = async () => {
+    if (!inputAddress) return;
+    if (!/\.eth$/.test(inputAddress)) {
+      setBadgeInputAddress(null);
+      return;
+    }
+
+    const queryVariables = {
+      where: {
+        name: inputAddress,
+      },
+    };
+    const { response, success } = await fetchENSData(
+      ENS_ADDR_QUERY,
+      queryVariables,
+    );
+
+    // Behold the pyramid of doom. Where no error shall pass.
+    if (!success) {
+      setBadgeInputAddress(null);
+      return;
+    } else if (
+      response === null ||
+      response.data === null ||
+      response.data.data === null ||
+      response.data.data.domains === null ||
+      response.data.data.domains.length === 0 ||
+      response.data.data.domains.resolvedAddress === null
+    ) {
+      return;
+    }
+
+    const ensAddress = response?.data.data.domains[0].resolvedAddress.id;
+    if (isAddress(ensAddress)) {
+      const ethAddress = new EthereumAddress(ensAddress);
+      setBadgeInputAddress(ethAddress);
+    }
+  };
+
   // Do not allow invalid Ethereum addresses to move into the next step
-  const handleInputAddressChange = () => {
-    if (!inputAddress || !isAddress(inputAddress)) {
+  const handleInputAddressConfirm = () => {
+    if (badgeInputAddress && isAddress(badgeInputAddress?.address)) {
+      setAddressStep(GiveBadgeStepAddress.INSERT_BADGE_AND_COMMENT);
+    } else if (!inputAddress || !isAddress(inputAddress)) {
       notifyError({
         title: "Field is empty",
         message: "Please provide a valid Ethereum address.",
       });
       return;
-    }
-    if (inputAddress && !isAddress(inputAddress)) {
+    } else if (inputAddress && !isAddress(inputAddress)) {
       notifyError({
         title: "Invalid Ethereum Address",
         message: "Wrong Ethereum address format. Please try again.",
@@ -195,11 +238,15 @@ export const GiveBadgeSection = () => {
 
   // Changes the continue arrow color based on the status of a valid input address
   const iconColor =
-    inputAddress && isAddress(inputAddress)
+    (inputAddress && isAddress(inputAddress)) ||
+    (badgeInputAddress && isAddress(badgeInputAddress?.address))
       ? "text-[#000000  ]"
       : "text-[#F5FFFFB2]";
   const iconBg =
-    inputAddress && isAddress(inputAddress) ? "bg-[#B1EF42B2]" : "bg-[#37383A]";
+    (inputAddress && isAddress(inputAddress)) ||
+    (badgeInputAddress && isAddress(badgeInputAddress?.address))
+      ? "bg-[#B1EF42B2]"
+      : "bg-[#37383A]";
 
   // Submit attestation
   const handleAttest = async () => {
@@ -425,7 +472,7 @@ export const GiveBadgeSection = () => {
                     </Text>
                     <button
                       className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                      onClick={() => handleInputAddressChange()}
+                      onClick={() => handleInputAddressConfirm()}
                     >
                       <ArrowIcon
                         variant={ArrowIconVariant.RIGHT}
