@@ -280,7 +280,6 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
@@ -337,6 +336,18 @@ export const GiveBadgeSection = () => {
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
+
+      if (villagerAttestationCount! > 1) {
+        const isCheckedOut = await checkedOutVillagers(address);
+        if (isCheckedOut) {
+          setLoading(false);
+          notifyError({
+            title: "You already checked-out",
+            message: "You can not send badges after check-out.",
+          });
+          return;
+        }
+      }
     } else {
       setLoading(false);
       notifyError({
