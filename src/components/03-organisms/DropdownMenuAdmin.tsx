@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useContext, useEffect, useState, type ChangeEvent } from "react";
 
 import { CheckCircleIcon, CheckIcon } from "@chakra-ui/icons";
 import {
@@ -37,6 +37,7 @@ import {
   MANAGER_OPTIONS,
   ROLES_OPTIONS,
 } from "@/utils/ui-utils";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 
 export const DropdownMenuAdmin = () => {
   const { address } = useAccount();
@@ -57,6 +58,7 @@ export const DropdownMenuAdmin = () => {
     useState<boolean>(false);
   const [schemaUID, setSchemaUID] = useState<string | `0x${string}`>("");
   const [action, setAction] = useState<number>(0);
+  const { setNewTitleAdded } = useContext(GiveBadgeContext);
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -304,6 +306,7 @@ export const DropdownMenuAdmin = () => {
         </Box>
       ),
     });
+    setNewTitleAdded(true);
   };
 
   // Get the current role selected and move to state
