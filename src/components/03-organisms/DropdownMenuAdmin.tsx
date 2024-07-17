@@ -22,6 +22,7 @@ import { InputAddressUser } from "@/components/02-molecules/";
 import { useNotify } from "@/hooks";
 import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { ID_CHECK_IN_QUERY } from "@/lib/client/schemaQueries";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { fetchEASData, hasRole } from "@/lib/service";
 import { grantRole } from "@/lib/service/grantRole";
 import { revoke } from "@/lib/service/revoke";
@@ -37,7 +38,6 @@ import {
   MANAGER_OPTIONS,
   ROLES_OPTIONS,
 } from "@/utils/ui-utils";
-import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 
 export const DropdownMenuAdmin = () => {
   const { address } = useAccount();
