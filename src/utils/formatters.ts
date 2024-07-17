@@ -1,3 +1,5 @@
+import { start } from "repl";
+
 export const getEllipsedAddress = (
   str: `0x${string}` | undefined,
   n: number = 6,
@@ -45,16 +47,20 @@ export const formatTimeDifference = (
     }
 
     // Calculate the difference
+    console.log("startTimediff", startTime * 1000);
     diff = now - startTime * 1000;
+    console.log(`now: ${now} - startTime: ${startTime} = diff: ${diff}`);
   } else {
-    // Calculate the difference
     diff = endTime * 1000 - startTime * 1000;
   }
 
   // Get all the time units
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  console.log("days", days);
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  console.log("hours", hours);
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  console.log("minutes", minutes);
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
   return [String(days), String(hours), String(minutes), String(seconds)];

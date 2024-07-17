@@ -64,6 +64,7 @@ export const CheckoutSection = () => {
   const [eventTime, setEventTime] = useState<string[] | null>(null);
   const [checkInTxId, setCheckInTxId] = useState<`0x${string}` | null>(null);
 
+  //Ja sei se o usuario tem chacking, ou checking e checkout
   useEffect(() => {
     if (address) {
       handleQuery();
@@ -165,10 +166,13 @@ export const CheckoutSection = () => {
       ),
     });
 
-    const now = Date.now();
+    //unixtimestamp in seconds
+    const now = Math.floor(Date.now() / 1000);
+
     if (checkInDate) {
       setCheckOutDate(now);
-      setEventTime(formatTimeDifference(checkInDate, now / 1000));
+      setEventTime(formatTimeDifference(checkInDate, now));
+      console.log("eventTime", eventTime);
     }
     handleThankYou();
     setLoading(false);
@@ -253,6 +257,14 @@ export const CheckoutSection = () => {
       setEventTime(formatTimeDifference(Number(timeCreated)));
     }
   };
+
+  console.log("CheckinDate", checkInDate);
+
+  console.log("CheckoutData:", checkOutDate);
+  console.log(
+    "CheckoutDataConvertedToDats:",
+    getReadableData(Number(checkOutDate)),
+  );
 
   // Subgraph may take some time to update, so we force a check straight to the blockchain
   // to see if the user role has been updated, changing the view accordingly
