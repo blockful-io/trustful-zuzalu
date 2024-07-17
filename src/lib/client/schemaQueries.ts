@@ -61,3 +61,18 @@ export const ID_CHECK_IN_QUERY = `query Query($where: AttestationWhereInput) {
     revoked
   }
 }`;
+
+// Check ENS name
+export const ENS_ADDR_QUERY = `query Query($where: Domain_filter) {
+  domains(where: $where) {
+    resolvedAddress {
+      id
+    }
+  }
+}`;
+
+export const ENS_REVERSE_QUERY = `query getReverseRecord($address: String!) {
+  domains(where: { resolvedAddress: $address }) {
+    name
+  }
+}`;
