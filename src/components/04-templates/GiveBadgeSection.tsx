@@ -110,6 +110,10 @@ export const GiveBadgeSection = () => {
     if (address) {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
+      setInputAddress("");
+      setInputBadge(undefined);
+      setCommentBadge("");
+      setText("");
     }
     return () => {
       unwatch();
