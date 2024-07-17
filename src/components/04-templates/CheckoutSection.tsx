@@ -165,10 +165,12 @@ export const CheckoutSection = () => {
       ),
     });
 
-    const now = Date.now();
+    //unixtimestamp in seconds
+    const now = Math.floor(Date.now() / 1000);
+
     if (checkInDate) {
       setCheckOutDate(now);
-      setEventTime(formatTimeDifference(checkInDate, now / 1000));
+      setEventTime(formatTimeDifference(checkInDate, now));
     }
     handleThankYou();
     setLoading(false);
