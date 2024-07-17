@@ -255,9 +255,6 @@ export const CheckoutSection = () => {
       setEventTime(formatTimeDifference(Number(timeCreated)));
     }
   };
-    "CheckoutDataConvertedToDats:",
-    getReadableData(Number(checkOutDate)),
-  );
 
   // Subgraph may take some time to update, so we force a check straight to the blockchain
   // to see if the user role has been updated, changing the view accordingly
