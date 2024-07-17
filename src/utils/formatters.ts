@@ -36,7 +36,7 @@ export const formatTimeDifference = (
 ): string[] => {
   let diff;
   if (!endTime) {
-    // Get current time in miliseconds
+    // Get current time in milliseconds
     const now = Date.now();
 
     // Return a placeholder if the timestamp is in the future
@@ -47,12 +47,11 @@ export const formatTimeDifference = (
     // Calculate the difference
     diff = now - startTime * 1000;
   } else {
-    // Calculate the difference
     diff = endTime * 1000 - startTime * 1000;
   }
 
   // Get all the time units
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));  
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
