@@ -309,96 +309,45 @@ export const CheckoutSection = () => {
                 p={0}
               >
                 <Flex className={"items-center"}>
-                  {villagerAttestationCount === 1 && (
+                  {villagerAttestationCount === 1 ? (
                     <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
                       Check out of
                       <br />
                       ZuVillage Georgia
                     </Text>
-                  )}
-                  {villagerAttestationCount === 2 && (
+                  ) : villagerAttestationCount === 2 ? (
                     <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
                       Thank You!
+                    </Text>
+                  ) : (
+                    <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                      Hmm I see
                     </Text>
                   )}
                 </Flex>
                 <Flex className={"items-center"}>
-                  {villagerAttestationCount === 1 && (
+                  {villagerAttestationCount === 1 ? (
                     <Text className="text-center py-4 text-slate-50 text-base font-normal leading-snug">
                       Are you sure you want to check out?
                       <br />
                       This proccess is irreversible.
                     </Text>
-                  )}
-                  {villagerAttestationCount === 2 && (
+                  ) : villagerAttestationCount === 2 ? (
                     <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                       For being a cherished member of ZuVillage Georgia.
+                    </Text>
+                  ) : (
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      So you couldn&apos;t just check-out and be on your way
+                      huh?
+                      <br />
+                      You had to come back because you missed us.
                     </Text>
                   )}
                 </Flex>
               </CardHeader>
               <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-              <Box
-                gap={6}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-                flexDirection={"column"}
-                className="px-6 py-4 sm:px-[60px] w-full"
-              >
-                {checkInDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Checked-in at:
-                      <br />
-                      {getReadableData(Number(checkInDate))}
-                    </Text>
-                  </Flex>
-                )}
-                {checkOutDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Checked-out at:
-                      <br />
-                      {getReadableData(Number(checkOutDate))}
-                    </Text>
-                  </Flex>
-                )}
-                {!checkInDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Fetching check-in data...
-                    </Text>
-                  </Flex>
-                )}
-                {villagerAttestationCount !== 2 && checkInDate && eventTime && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      You are with us for:
-                      <br />
-                      {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                      minutes
-                    </Text>
-                  </Flex>
-                )}
-                {villagerAttestationCount === 2 &&
-                  checkInDate &&
-                  checkOutDate &&
-                  eventTime && (
-                    <Flex className={"items-center"}>
-                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                        You stayed with us for:
-                        <br />
-                        {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                        minutes
-                      </Text>
-                    </Flex>
-                  )}
-              </Box>
-              {villagerAttestationCount === 1 && (
-                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-              )}
-              {villagerAttestationCount === 1 && (
+              {villagerAttestationCount <= 2 ? (
                 <Box
                   gap={6}
                   display={"flex"}
@@ -407,6 +356,99 @@ export const CheckoutSection = () => {
                   flexDirection={"column"}
                   className="px-6 py-4 sm:px-[60px] w-full"
                 >
+                  {checkInDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Checked-in at:
+                        <br />
+                        {getReadableData(Number(checkInDate))}
+                      </Text>
+                    </Flex>
+                  )}
+                  {checkOutDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Checked-out at:
+                        <br />
+                        {getReadableData(Number(checkOutDate))}
+                      </Text>
+                    </Flex>
+                  )}
+                  {!checkInDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Fetching check-in data...
+                      </Text>
+                    </Flex>
+                  )}
+                  {villagerAttestationCount === 1 &&
+                    checkInDate &&
+                    eventTime && (
+                      <Flex className={"items-center"}>
+                        <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                          You are with us for:
+                          <br />
+                          {eventTime[0]} days {eventTime[1]} hours{" "}
+                          {eventTime[2]} minutes
+                        </Text>
+                      </Flex>
+                    )}
+                  {villagerAttestationCount === 2 &&
+                    checkInDate &&
+                    checkOutDate &&
+                    eventTime && (
+                      <Flex className={"items-center"}>
+                        <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                          You stayed with us for:
+                          <br />
+                          {eventTime[0]} days {eventTime[1]} hours{" "}
+                          {eventTime[2]} minutes
+                        </Text>
+                      </Flex>
+                    )}
+                </Box>
+              ) : (
+                <Box
+                  gap={6}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  flexDirection={"column"}
+                  className="px-6 py-4 sm:px-[60px] w-full"
+                >
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      Unfortunately we don&apos;t have enough technology to
+                      calculate multiple check-ins and check-outs.
+                      <br />
+                      We apologize for the inconvenience and promise to improve
+                      our services in the future.
+                    </Text>
+                  </Flex>
+                </Box>
+              )}
+              {(villagerAttestationCount === 1 ||
+                villagerAttestationCount % 2 !== 0) && (
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+              )}
+              {(villagerAttestationCount === 1 ||
+                villagerAttestationCount % 2 !== 0) && (
+                <Box
+                  gap={6}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  flexDirection={"column"}
+                  className="px-6 py-4 sm:px-[60px] w-full"
+                >
+                  {villagerAttestationCount > 2 && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        You can still check-out bellow but we won&apos;t be able
+                        to calculate your stay at the moment.
+                      </Text>
+                    </Flex>
+                  )}
                   <Button
                     className="w-full px-6 py-4 bg-[#ef4343] text-white rounded-lg"
                     _hover={{ bg: "#ef4343" }}
