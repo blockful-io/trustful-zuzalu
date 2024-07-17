@@ -12,7 +12,7 @@ import { useAccount } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
 import { useNotify } from "@/hooks";
-import { ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
+import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { hasRole, getAllAttestationTitles } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
 
@@ -101,10 +101,8 @@ export const GiveBadgeContextProvider = ({
     }
 
     if (
-      await hasRole(
-        ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.allowedRole[0] as `0x${string}`,
-        address,
-      )
+      (await hasRole(ROLES.ROOT as `0x${string}`, address)) ||
+      (await hasRole(ROLES.MANAGER as `0x${string}`, address))
     ) {
       filteredBadges.push("Manager");
     }
