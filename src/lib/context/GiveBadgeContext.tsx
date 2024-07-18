@@ -23,6 +23,8 @@ interface GiveBadgeContextProps {
   setAddressStep: Dispatch<SetStateAction<GiveBadgeStepAddress>>;
   inputBadgeTitleList: string[] | null;
   setInputBadgeTitleList: Dispatch<SetStateAction<string[] | null>>;
+  newTitleAdded: boolean;
+  setNewTitleAdded: Dispatch<SetStateAction<boolean>>;
 }
 
 const defaultContextValue: GiveBadgeContextProps = {
@@ -32,6 +34,8 @@ const defaultContextValue: GiveBadgeContextProps = {
   setAddressStep: () => {},
   inputBadgeTitleList: null,
   setInputBadgeTitleList: () => {},
+  newTitleAdded: false,
+  setNewTitleAdded: () => {},
 };
 
 export const GiveBadgeContext =
@@ -50,6 +54,7 @@ export const GiveBadgeContextProvider = ({
   const [inputBadgeTitleList, setInputBadgeTitleList] = useState<
     string[] | null
   >(null);
+  const [newTitleAdded, setNewTitleAdded] = useState<boolean>(false);
 
   const [giveBadgeContextData, setGiveBadgeContextData] =
     useState<GiveBadgeContextProps>({
@@ -59,6 +64,8 @@ export const GiveBadgeContextProvider = ({
       setAddressStep,
       inputBadgeTitleList,
       setInputBadgeTitleList,
+      newTitleAdded,
+      setNewTitleAdded,
     });
 
   useEffect(() => {
@@ -69,8 +76,10 @@ export const GiveBadgeContextProvider = ({
       setAddressStep,
       inputBadgeTitleList,
       setInputBadgeTitleList,
+      newTitleAdded,
+      setNewTitleAdded,
     });
-  }, [badgeInputAddress, addressStep, inputBadgeTitleList]);
+  }, [badgeInputAddress, addressStep, inputBadgeTitleList, newTitleAdded]);
 
   const { address } = useAccount();
   const { notifyError } = useNotify();
@@ -79,7 +88,7 @@ export const GiveBadgeContextProvider = ({
     if (address) {
       handleBadgeDropdown();
     }
-  }, [address]);
+  }, [address, newTitleAdded]);
 
   const handleBadgeDropdown = async () => {
     if (!address) {

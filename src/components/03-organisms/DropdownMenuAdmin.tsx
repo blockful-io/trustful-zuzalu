@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useContext, useEffect, useState, type ChangeEvent } from "react";
 
 import { CheckCircleIcon, CheckIcon } from "@chakra-ui/icons";
 import {
@@ -22,6 +22,7 @@ import { InputAddressUser } from "@/components/02-molecules/";
 import { useNotify } from "@/hooks";
 import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { ID_CHECK_IN_QUERY } from "@/lib/client/schemaQueries";
+import { GiveBadgeContext } from "@/lib/context/GiveBadgeContext";
 import { fetchEASData, hasRole } from "@/lib/service";
 import { grantRole } from "@/lib/service/grantRole";
 import { revoke } from "@/lib/service/revoke";
@@ -57,6 +58,7 @@ export const DropdownMenuAdmin = () => {
     useState<boolean>(false);
   const [schemaUID, setSchemaUID] = useState<string | `0x${string}`>("");
   const [action, setAction] = useState<number>(0);
+  const { setNewTitleAdded } = useContext(GiveBadgeContext);
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -304,6 +306,7 @@ export const DropdownMenuAdmin = () => {
         </Box>
       ),
     });
+    setNewTitleAdded(true);
   };
 
   // Get the current role selected and move to state

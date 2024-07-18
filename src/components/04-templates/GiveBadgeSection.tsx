@@ -284,7 +284,6 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
