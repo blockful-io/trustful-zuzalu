@@ -132,15 +132,6 @@ export const WalletContextProvider = ({
       return;
     }
 
-    if (address) {
-      const isRoot = await hasRole(ROLES.ROOT, address);
-      if (isRoot) {
-        setVillagerAttestationCount(2);
-      } else {
-        setVillagerAttestationCount(response.data.data.attestations.length);
-      }
-    }
-
     setVillagerAttestationCount(response.data.data.attestations.length);
   };
 
