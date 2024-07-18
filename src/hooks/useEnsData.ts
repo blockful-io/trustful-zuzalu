@@ -37,17 +37,39 @@ export const useEnsData = ({ ensAddress }: Props) => {
       queryVariables,
     );
 
+    // Oh lord of code just please pardon me but this solved the problem. I swear Ill fix it if I have more time.
     // Behold the pyramid of doom. Where no error shall pass.
-    if (
-      !success ||
-      response === null ||
-      response.data === null ||
-      response.data.data === null ||
-      response.data.data.domains === null ||
-      response.data.data.domains.length === 0 ||
-      response.data.data.domains[0] === null ||
-      response.data.data.domains[0].name === null
-    ) {
+    if (!success) {
+      return;
+    } else if (response === undefined) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response === null) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data === undefined) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data.data === undefined) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data.data.domains === undefined) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data.data.domains.length === 0) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data.data.domains[0] === undefined) {
+      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
+      setPrimaryName(null);
+      return;
+    } else if (response.data.data.domains[0].name === undefined) {
       setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
       setPrimaryName(null);
       return;

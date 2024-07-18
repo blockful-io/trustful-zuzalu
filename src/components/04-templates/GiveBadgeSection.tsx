@@ -90,6 +90,8 @@ export const GiveBadgeSection = () => {
     }
   }, [villagerAttestationCount]);
 
+  const [badgeReceiverAddress, setBadgeReceiverAddress] =
+    useState<EthereumAddress | null>(null);
   const [inputAddress, setInputAddress] = useState<string>();
   const [inputBadge, setInputBadge] = useState<BadgeTitle>();
   const [commentBadge, setCommentBadge] = useState<string>();
@@ -101,6 +103,7 @@ export const GiveBadgeSection = () => {
     return () => {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
+      setBadgeReceiverAddress(null);
     };
   }, []);
 
@@ -109,6 +112,7 @@ export const GiveBadgeSection = () => {
     if (address) {
       setAddressStep(GiveBadgeStepAddress.INSERT_ADDRESS);
       setBadgeInputAddress(null);
+      setBadgeReceiverAddress(null);
       setInputAddress("");
       setInputBadge(undefined);
       setCommentBadge("");
@@ -137,7 +141,9 @@ export const GiveBadgeSection = () => {
   // Updates the badgeInputAddress when the inputAddress changes
   useEffect(() => {
     if (inputAddress && isAddress(inputAddress)) {
-      setBadgeInputAddress(new EthereumAddress(inputAddress));
+      const ethAddress = new EthereumAddress(inputAddress);
+      setBadgeInputAddress(ethAddress);
+      setBadgeReceiverAddress(ethAddress);
     } else {
       handleResolveEns();
     }
@@ -147,6 +153,7 @@ export const GiveBadgeSection = () => {
     if (!inputAddress) return;
     if (!/\.eth$/.test(inputAddress)) {
       setBadgeInputAddress(null);
+      setBadgeReceiverAddress(null);
       return;
     }
 
@@ -163,15 +170,19 @@ export const GiveBadgeSection = () => {
     // Behold the pyramid of doom. Where no error shall pass.
     if (!success) {
       setBadgeInputAddress(null);
+      setBadgeReceiverAddress(null);
       return;
-    } else if (
-      response === null ||
-      response.data === null ||
-      response.data.data === null ||
-      response.data.data.domains === null ||
-      response.data.data.domains.length === 0 ||
-      response.data.data.domains.resolvedAddress === null
-    ) {
+    } else if (response === null) {
+      return;
+    } else if (response.data === null) {
+      return;
+    } else if (response.data.data === null) {
+      return;
+    } else if (response.data.data.domains === null) {
+      return;
+    } else if (response.data.data.domains.length === 0) {
+      return;
+    } else if (response.data.data.domains.resolvedAddress === null) {
       return;
     }
 
@@ -179,6 +190,7 @@ export const GiveBadgeSection = () => {
     if (isAddress(ensAddress)) {
       const ethAddress = new EthereumAddress(ensAddress);
       setBadgeInputAddress(ethAddress);
+      setBadgeReceiverAddress(ethAddress);
     }
   };
 
@@ -437,6 +449,7 @@ export const GiveBadgeSection = () => {
     setLoading(false);
     setText("");
     setInputAddress("");
+    setBadgeInputAddress(null);
 
     return;
   };
@@ -488,7 +501,10 @@ export const GiveBadgeSection = () => {
                     </Text>
                     <button
                       className={`flex rounded-full ${iconBg} justify-center items-center w-8 h-8`}
-                      onClick={() => handleInputAddressConfirm()}
+                      onClick={() => {
+                        handleInputAddressConfirm();
+                        setInputBadge(undefined);
+                      }}
                     >
                       <ArrowIcon
                         variant={ArrowIconVariant.RIGHT}
@@ -594,7 +610,7 @@ export const GiveBadgeSection = () => {
                       className="text-slate-50 text-base font-normal leading-snug border-none"
                       placeholder={
                         inputBadge && inputBadge.title === "Check-out"
-                          ? `Rereferenced attestation`
+                          ? `Please refer the UID of the check-in badge`
                           : `Share your experience!`
                       }
                       _placeholder={{
@@ -671,7 +687,7 @@ export const GiveBadgeSection = () => {
                   </Text>
                   <Flex gap={2} className="w-full">
                     <EnsName
-                      ensAddress={badgeInputAddress}
+                      ensAddress={badgeReceiverAddress}
                       customClassName={true}
                       clipboardClassName={
                         "text-opacity-100 px-4 py-2 w-full disabled text-slate-50 opacity-100 text-sm font-normal border-none"
