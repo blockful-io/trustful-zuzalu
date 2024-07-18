@@ -337,6 +337,18 @@ export const GiveBadgeSection = () => {
     } else if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_EVENT.uid) {
       encodeParam = ZUVILLAGE_SCHEMAS.ATTEST_EVENT.data;
       encodeArgs = [inputBadge.title, commentBadge ?? ""];
+      const isVillager = await hasRole(
+        ROLES.VILLAGER,
+        badgeInputAddress.address,
+      );
+      if (!isVillager) {
+        setLoading(false);
+        notifyError({
+          title: "Address Can't Receive Badges",
+          message: "Checked-out Villagers cannot send/receive badges.",
+        });
+        return;
+      }
     } else {
       setLoading(false);
       notifyError({

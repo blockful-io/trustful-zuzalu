@@ -21,13 +21,14 @@ import {
   Icon,
   Link,
   useToast,
+  Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem/utils";
 import { useAccount } from "wagmi";
 
-import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
+import { CommentIcon, TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
 import { VILLAGER_QUERY } from "@/lib/client/schemaQueries";
@@ -42,6 +43,7 @@ import {
   formatTimeDifference,
   getEllipsedAddress,
   getReadableData,
+  isBytes32,
 } from "@/utils/formatters";
 
 export const CheckoutSection = () => {
@@ -63,10 +65,12 @@ export const CheckoutSection = () => {
   const [checkOutDate, setCheckOutDate] = useState<number | null>(null);
   const [eventTime, setEventTime] = useState<string[] | null>(null);
   const [checkInTxId, setCheckInTxId] = useState<`0x${string}` | null>(null);
+  const [refUID, setRefUID] = useState<string>();
 
   useEffect(() => {
     if (address) {
       handleQuery();
+      setRefUID("");
     }
   }, [address]);
 
@@ -98,11 +102,20 @@ export const CheckoutSection = () => {
       encodeArgs,
     );
 
+    if (refUID && !isBytes32(refUID)) {
+      setLoading(false);
+      notifyError({
+        title: "Invalid Ref UID Format",
+        message: "Please provide a valid 32 bytes reference UID.",
+      });
+      return;
+    }
+
     const attestationRequestData: AttestationRequestData = {
       recipient: address,
       expirationTime: BigInt(0),
       revocable: false,
-      refUID: checkInTxId,
+      refUID: refUID ? (refUID as `0x${string}`) : checkInTxId,
       data: data,
       value: BigInt(0),
     };
@@ -235,9 +248,6 @@ export const CheckoutSection = () => {
       }
     }
 
-    // Loop through the attestations to find the check-in and check-out timestamps
-    for (let i = 0; i < response.data.data.attestations.length; i++) {}
-
     // If the user has checked in, the attestation will return a length of 1
     const id = response.data.data.attestations[0].id;
     const timeCreated = response.data.data.attestations[0].timeCreated;
@@ -267,6 +277,12 @@ export const CheckoutSection = () => {
       });
       return;
     }
+
+    if (villagerAttestationCount && villagerAttestationCount > 2) {
+      setVillagerAttestationCount(4);
+      return;
+    }
+
     const isRoot = await hasRole(ROLES.ROOT, address);
     const isVillager = await hasRole(ROLES.VILLAGER, address);
     if (isRoot || !isVillager) {
@@ -280,6 +296,10 @@ export const CheckoutSection = () => {
       push("/pre-checkin");
       return;
     }
+  };
+
+  const handleRefUIDChange = (event: any) => {
+    setRefUID(event.target.value);
   };
 
   return (
@@ -457,6 +477,28 @@ export const CheckoutSection = () => {
                   >
                     Confirm
                   </Button>
+                  {villagerAttestationCount > 2 && (
+                    <Flex className="py-4 gap-4 w-full items-center">
+                      <Flex gap={2} className="w-full">
+                        <Flex className="gap-4 w-full pb-4 justify-start items-center">
+                          <CommentIcon />
+                          <Textarea
+                            className="text-slate-50 w-full text-base font-normal leading-snug border-none"
+                            placeholder={`Please refer your last check-in UID from EAS`}
+                            _placeholder={{
+                              className: "text-slate-50 opacity-30",
+                            }}
+                            focusBorderColor={"#F5FFFF1A"}
+                            value={refUID || ""}
+                            onChange={handleRefUIDChange}
+                            rows={1}
+                            minH="unset"
+                            resize="none"
+                          />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  )}
                 </Box>
               )}
             </Card>
