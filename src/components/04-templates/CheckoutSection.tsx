@@ -21,13 +21,14 @@ import {
   Icon,
   Link,
   useToast,
+  Textarea,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem/utils";
 import { useAccount } from "wagmi";
 
-import { TheFooterNavbar, TheHeader } from "@/components/01-atoms";
+import { CommentIcon, TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
 import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
 import { VILLAGER_QUERY } from "@/lib/client/schemaQueries";
@@ -42,6 +43,7 @@ import {
   formatTimeDifference,
   getEllipsedAddress,
   getReadableData,
+  isBytes32,
 } from "@/utils/formatters";
 
 export const CheckoutSection = () => {
@@ -63,10 +65,12 @@ export const CheckoutSection = () => {
   const [checkOutDate, setCheckOutDate] = useState<number | null>(null);
   const [eventTime, setEventTime] = useState<string[] | null>(null);
   const [checkInTxId, setCheckInTxId] = useState<`0x${string}` | null>(null);
+  const [refUID, setRefUID] = useState<string>();
 
   useEffect(() => {
     if (address) {
       handleQuery();
+      setRefUID("");
     }
   }, [address]);
 
@@ -98,11 +102,20 @@ export const CheckoutSection = () => {
       encodeArgs,
     );
 
+    if (refUID && !isBytes32(refUID)) {
+      setLoading(false);
+      notifyError({
+        title: "Invalid Ref UID Format",
+        message: "Please provide a valid 32 bytes reference UID.",
+      });
+      return;
+    }
+
     const attestationRequestData: AttestationRequestData = {
       recipient: address,
       expirationTime: BigInt(0),
       revocable: false,
-      refUID: checkInTxId,
+      refUID: refUID ? (refUID as `0x${string}`) : checkInTxId,
       data: data,
       value: BigInt(0),
     };
@@ -235,9 +248,6 @@ export const CheckoutSection = () => {
       }
     }
 
-    // Loop through the attestations to find the check-in and check-out timestamps
-    for (let i = 0; i < response.data.data.attestations.length; i++) {}
-
     // If the user has checked in, the attestation will return a length of 1
     const id = response.data.data.attestations[0].id;
     const timeCreated = response.data.data.attestations[0].timeCreated;
@@ -267,6 +277,12 @@ export const CheckoutSection = () => {
       });
       return;
     }
+
+    if (villagerAttestationCount && villagerAttestationCount > 2) {
+      setVillagerAttestationCount(4);
+      return;
+    }
+
     const isRoot = await hasRole(ROLES.ROOT, address);
     const isVillager = await hasRole(ROLES.VILLAGER, address);
     if (isRoot || !isVillager) {
@@ -280,6 +296,10 @@ export const CheckoutSection = () => {
       push("/pre-checkin");
       return;
     }
+  };
+
+  const handleRefUIDChange = (event: any) => {
+    setRefUID(event.target.value);
   };
 
   return (
@@ -309,96 +329,45 @@ export const CheckoutSection = () => {
                 p={0}
               >
                 <Flex className={"items-center"}>
-                  {villagerAttestationCount === 1 && (
+                  {villagerAttestationCount === 1 ? (
                     <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
                       Check out of
                       <br />
                       ZuVillage Georgia
                     </Text>
-                  )}
-                  {villagerAttestationCount === 2 && (
+                  ) : villagerAttestationCount === 2 ? (
                     <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
                       Thank You!
+                    </Text>
+                  ) : (
+                    <Text className="text-center text-lime-400 text-2xl font-normal font-['Space Grotesk'] leading-loose">
+                      Hmm I see
                     </Text>
                   )}
                 </Flex>
                 <Flex className={"items-center"}>
-                  {villagerAttestationCount === 1 && (
+                  {villagerAttestationCount === 1 ? (
                     <Text className="text-center py-4 text-slate-50 text-base font-normal leading-snug">
                       Are you sure you want to check out?
                       <br />
                       This proccess is irreversible.
                     </Text>
-                  )}
-                  {villagerAttestationCount === 2 && (
+                  ) : villagerAttestationCount === 2 ? (
                     <Text className="text-center text-slate-50 text-base font-normal leading-snug">
                       For being a cherished member of ZuVillage Georgia.
+                    </Text>
+                  ) : (
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      So you couldn&apos;t just check-out and be on your way
+                      huh?
+                      <br />
+                      You had to come back because you missed us.
                     </Text>
                   )}
                 </Flex>
               </CardHeader>
               <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-              <Box
-                gap={6}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-                flexDirection={"column"}
-                className="px-6 py-4 sm:px-[60px] w-full"
-              >
-                {checkInDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Checked-in at:
-                      <br />
-                      {getReadableData(Number(checkInDate))}
-                    </Text>
-                  </Flex>
-                )}
-                {checkOutDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Checked-out at:
-                      <br />
-                      {getReadableData(Number(checkOutDate))}
-                    </Text>
-                  </Flex>
-                )}
-                {!checkInDate && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      Fetching check-in data...
-                    </Text>
-                  </Flex>
-                )}
-                {villagerAttestationCount !== 2 && checkInDate && eventTime && (
-                  <Flex className={"items-center"}>
-                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                      You are with us for:
-                      <br />
-                      {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                      minutes
-                    </Text>
-                  </Flex>
-                )}
-                {villagerAttestationCount === 2 &&
-                  checkInDate &&
-                  checkOutDate &&
-                  eventTime && (
-                    <Flex className={"items-center"}>
-                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
-                        You stayed with us for:
-                        <br />
-                        {eventTime[0]} days {eventTime[1]} hours {eventTime[2]}{" "}
-                        minutes
-                      </Text>
-                    </Flex>
-                  )}
-              </Box>
-              {villagerAttestationCount === 1 && (
-                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
-              )}
-              {villagerAttestationCount === 1 && (
+              {villagerAttestationCount <= 2 ? (
                 <Box
                   gap={6}
                   display={"flex"}
@@ -407,6 +376,99 @@ export const CheckoutSection = () => {
                   flexDirection={"column"}
                   className="px-6 py-4 sm:px-[60px] w-full"
                 >
+                  {checkInDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Checked-in at:
+                        <br />
+                        {getReadableData(Number(checkInDate))}
+                      </Text>
+                    </Flex>
+                  )}
+                  {checkOutDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Checked-out at:
+                        <br />
+                        {getReadableData(Number(checkOutDate))}
+                      </Text>
+                    </Flex>
+                  )}
+                  {!checkInDate && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        Fetching check-in data...
+                      </Text>
+                    </Flex>
+                  )}
+                  {villagerAttestationCount === 1 &&
+                    checkInDate &&
+                    eventTime && (
+                      <Flex className={"items-center"}>
+                        <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                          You are with us for:
+                          <br />
+                          {eventTime[0]} days {eventTime[1]} hours{" "}
+                          {eventTime[2]} minutes
+                        </Text>
+                      </Flex>
+                    )}
+                  {villagerAttestationCount === 2 &&
+                    checkInDate &&
+                    checkOutDate &&
+                    eventTime && (
+                      <Flex className={"items-center"}>
+                        <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                          You stayed with us for:
+                          <br />
+                          {eventTime[0]} days {eventTime[1]} hours{" "}
+                          {eventTime[2]} minutes
+                        </Text>
+                      </Flex>
+                    )}
+                </Box>
+              ) : (
+                <Box
+                  gap={6}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  flexDirection={"column"}
+                  className="px-6 py-4 sm:px-[60px] w-full"
+                >
+                  <Flex className={"items-center"}>
+                    <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                      Unfortunately we don&apos;t have enough technology to
+                      calculate multiple check-ins and check-outs.
+                      <br />
+                      We apologize for the inconvenience and promise to improve
+                      our services in the future.
+                    </Text>
+                  </Flex>
+                </Box>
+              )}
+              {(villagerAttestationCount === 1 ||
+                villagerAttestationCount % 2 !== 0) && (
+                <Divider className="w-full border-t border-[#F5FFFF1A] border-opacity-10" />
+              )}
+              {(villagerAttestationCount === 1 ||
+                villagerAttestationCount % 2 !== 0) && (
+                <Box
+                  gap={6}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                  flexDirection={"column"}
+                  className="px-6 py-4 sm:px-[60px] w-full"
+                >
+                  {villagerAttestationCount > 2 && (
+                    <Flex className={"items-center"}>
+                      <Text className="text-center text-slate-50 text-base font-normal leading-snug">
+                        You can still check-out bellow but we won&apos;t be able
+                        to calculate your stay at the moment.
+                      </Text>
+                    </Flex>
+                  )}
                   <Button
                     className="w-full px-6 py-4 bg-[#ef4343] text-white rounded-lg"
                     _hover={{ bg: "#ef4343" }}
@@ -415,6 +477,28 @@ export const CheckoutSection = () => {
                   >
                     Confirm
                   </Button>
+                  {villagerAttestationCount > 2 && (
+                    <Flex className="py-4 gap-4 w-full items-center">
+                      <Flex gap={2} className="w-full">
+                        <Flex className="gap-4 w-full pb-4 justify-start items-center">
+                          <CommentIcon />
+                          <Textarea
+                            className="text-slate-50 w-full text-base font-normal leading-snug border-none"
+                            placeholder={`Please refer your last check-in UID from EAS`}
+                            _placeholder={{
+                              className: "text-slate-50 opacity-30",
+                            }}
+                            focusBorderColor={"#F5FFFF1A"}
+                            value={refUID || ""}
+                            onChange={handleRefUIDChange}
+                            rows={1}
+                            minH="unset"
+                            resize="none"
+                          />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  )}
                 </Box>
               )}
             </Card>
