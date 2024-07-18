@@ -168,21 +168,14 @@ export const GiveBadgeSection = () => {
     );
 
     // Behold the pyramid of doom. Where no error shall pass.
-    if (!success) {
+    if (
+      !success ||
+      response === null ||
+      response === undefined ||
+      response.data.data.domains.length === 0
+    ) {
       setBadgeInputAddress(null);
       setBadgeReceiverAddress(null);
-      return;
-    } else if (response === null) {
-      return;
-    } else if (response.data === null) {
-      return;
-    } else if (response.data.data === null) {
-      return;
-    } else if (response.data.data.domains === null) {
-      return;
-    } else if (response.data.data.domains.length === 0) {
-      return;
-    } else if (response.data.data.domains.resolvedAddress === null) {
       return;
     }
 
@@ -504,6 +497,7 @@ export const GiveBadgeSection = () => {
                       onClick={() => {
                         handleInputAddressConfirm();
                         setInputBadge(undefined);
+                        setCommentBadge("");
                       }}
                     >
                       <ArrowIcon
