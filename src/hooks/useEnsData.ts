@@ -37,16 +37,11 @@ export const useEnsData = ({ ensAddress }: Props) => {
       queryVariables,
     );
 
-    // Behold the pyramid of doom. Where no error shall pass.
     if (
       !success ||
       response === null ||
-      response.data === null ||
-      response.data.data === null ||
-      response.data.data.domains === null ||
-      response.data.data.domains.length === 0 ||
-      response.data.data.domains[0] === null ||
-      response.data.data.domains[0].name === null
+      response === undefined ||
+      response.data.data.domains.length === 0
     ) {
       setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
       setPrimaryName(null);
