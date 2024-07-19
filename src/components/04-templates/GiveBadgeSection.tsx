@@ -350,7 +350,7 @@ export const GiveBadgeSection = () => {
         setLoading(false);
         notifyError({
           title: "Address Can't Receive Badges",
-          message: "Checked-out Villagers cannot send/receive badges.",
+          message: "Non-Villagers cannot send/receive badges.",
         });
         return;
       }
