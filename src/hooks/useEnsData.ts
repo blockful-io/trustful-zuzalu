@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
-
 import { EthereumAddress } from "@/lib/shared/types";
-
-const rpcUrl = process.env.ALCHEMY_RPC_URL;
-console.log("rpc url", rpcUrl);
-const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(rpcUrl),
-});
+import { publicClientMainnet } from "@/lib/wallet/client";
 
 export enum ENSAvatarQueryStatus {
   LOADING,
@@ -34,7 +25,7 @@ export const useEnsData = ({ ensAddress }: Props) => {
       return;
     }
 
-    const name = await publicClient.getEnsName({
+    const name = await publicClientMainnet.getEnsName({
       address: ensAddress?.address,
     });
 
