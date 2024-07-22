@@ -15,5 +15,5 @@ export const walletClient = createWalletClient({
 
 export const publicClientMainnet = createPublicClient({
   chain: mainnet,
-  transport: http(),
+  transport: http(process.env.ALCHEMY_RPC_URL),
 });
