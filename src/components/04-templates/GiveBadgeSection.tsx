@@ -22,6 +22,7 @@ import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
+import { normalize } from "viem/ens";
 import { useAccount } from "wagmi";
 
 import {
@@ -159,9 +160,10 @@ export const GiveBadgeSection = () => {
 
     const queryVariables = {
       where: {
-        name: inputAddress,
+        name: normalize(inputAddress),
       },
     };
+
     const { response, success } = await fetchENSData(
       ENS_ADDR_QUERY,
       queryVariables,
