@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
 
 export async function fetchENSData(query: any, variables: any) {
-  const ENS_SUBGRAPH_URL = process.env.NEXT_PUBLIC_GRAPHQL_ENS_API_KEY;
+  const ENS_SUBGRAPH_URL = process.env.GRAPHQL_ENS_API_KEY;
+  console.log("ENS_SUBGRAPH_URL", ENS_SUBGRAPH_URL);
   try {
     const headers = {
       "Content-Type": "application/json",

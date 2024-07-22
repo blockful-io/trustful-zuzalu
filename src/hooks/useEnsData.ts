@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 
-import { useEnsName } from "wagmi";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
 
-import { ENS_REVERSE_QUERY } from "@/lib/client/schemaQueries";
-import { fetchENSData } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
+
+const rpcUrl = process.env.ALCHEMY_RPC_URL;
+console.log("rpc url", rpcUrl);
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(rpcUrl),
+});
 
 export enum ENSAvatarQueryStatus {
   LOADING,
@@ -17,56 +23,30 @@ interface Props {
 }
 
 export const useEnsData = ({ ensAddress }: Props) => {
-  const ensname = useEnsName({
-    address: ensAddress?.address,
-    chainId: 1,
-  });
-
   const [primaryName, setPrimaryName] = useState<string | null | undefined>(
     undefined,
   );
   const [avatarQueryStatus, setAvatarQueryStatus] =
     useState<ENSAvatarQueryStatus>(ENSAvatarQueryStatus.LOADING);
 
-  const emergencyEnsPrimaryName = async () => {
-    const queryVariables = {
-      address: ensAddress?.address,
-    };
-    const { response, success } = await fetchENSData(
-      ENS_REVERSE_QUERY,
-      queryVariables,
-    );
-
-    if (
-      !success ||
-      response === null ||
-      response === undefined ||
-      response.data.data.domains.length === 0
-    ) {
-      setAvatarQueryStatus(ENSAvatarQueryStatus.ERROR);
-      setPrimaryName(null);
+  const getEnsName = async () => {
+    if (!ensAddress) {
       return;
     }
 
-    const name = response.data.data.domains[0].name;
+    const name = await publicClient.getEnsName({
+      address: ensAddress?.address,
+    });
+
     setPrimaryName(name);
     setAvatarQueryStatus(ENSAvatarQueryStatus.SUCCESS);
   };
 
   useEffect(() => {
-    if (ensname.isSuccess) {
-      setAvatarQueryStatus(ENSAvatarQueryStatus.SUCCESS);
-      setPrimaryName(ensname.data);
-    } else {
-      emergencyEnsPrimaryName();
+    if (ensAddress) {
+      getEnsName();
     }
-    // } else if (ensname.isError) {
-    //   emergencyEnsPrimaryName();
-    // } else if (ensname.isLoading || ensname.isFetching) {
-    //   setAvatarQueryStatus(ENSAvatarQueryStatus.LOADING);
-    //   setPrimaryName(null);
-    // }
-  }, [ensname]);
+  }, []);
 
   return {
     primaryName,
