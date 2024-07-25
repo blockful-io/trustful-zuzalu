@@ -36,6 +36,7 @@ export const CheckinSection = () => {
   const [isZuVillageVisible, setIsZuVillageVisible] = useState(false);
   const [isToDoNowVisible, setToDoNowVisible] = useState(false);
   const [isCheckoutForVisible, setIsCheckoutForVisible] = useState(false);
+  const [isAboutPrivacyVisible, setIsAboutPrivacyVisible] = useState(false);
   const [isBadgeVisible, setIsBadgeVisible] = useState(false);
   const { notifyError } = useNotify();
   const { push } = useRouter();
@@ -254,6 +255,28 @@ export const CheckinSection = () => {
                       score.
                     </ListItem>
                   </UnorderedList>
+                </Box>
+              </Collapse>
+
+              <Divider className="border-slate-50 opacity-10 w-full" />
+              <Flex
+                className="w-full flex-row py-3 cursor-pointer"
+                gap={4}
+                onClick={() => setIsAboutPrivacyVisible(!isAboutPrivacyVisible)}
+              >
+                <CircleQuestion />
+                <Flex flexDirection={"column"} justifyContent={"center"}>
+                  <Text className="text-slate-50 text-sm font-normal leading-tight">
+                    About privacy
+                  </Text>
+                </Flex>
+              </Flex>
+              <Collapse in={isAboutPrivacyVisible} animateOpacity>
+                <Box p="40px" color="white" pt="20px" pb="20px">
+                  Trustful uses EAS to issue on-chain badges. Choose your wallet
+                  carefully and issue badges and comments, keeping blockchain
+                  permanence in mind. We are working to enhance it soon and keep
+                  the privacy-first core in our roadmap.
                 </Box>
               </Collapse>
             </Flex>
