@@ -16,6 +16,7 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress } from "viem";
+import { optimism } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { InputAddressUser } from "@/components/02-molecules/";
@@ -38,7 +39,6 @@ import {
   MANAGER_OPTIONS,
   ROLES_OPTIONS,
 } from "@/utils/ui-utils";
-import { optimism } from "viem/chains";
 
 export const DropdownMenuAdmin = () => {
   const { address, chainId } = useAccount();
@@ -162,6 +162,14 @@ export const DropdownMenuAdmin = () => {
 
   // Call the revokeRole function with the current state values
   const handleRevokeRole = async () => {
+    if (!address || !inputAddress || !role || !validAddress) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
+      });
+      return;
+    }
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -169,15 +177,6 @@ export const DropdownMenuAdmin = () => {
           "Please switch to the supported network to use this application.",
       });
       switchChain({ chainId: optimism.id });
-      return;
-    }
-
-    if (!address || !inputAddress || !role || !validAddress) {
-      setIsLoading(false);
-      notifyError({
-        title: "Please connect first",
-        message: "No address found.",
-      });
       return;
     }
 
@@ -258,6 +257,14 @@ export const DropdownMenuAdmin = () => {
   };
 
   const handleAttestationTitle = async () => {
+    if (!address) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
+      });
+      return;
+    }
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -265,14 +272,6 @@ export const DropdownMenuAdmin = () => {
           "Please switch to the supported network to use this application.",
       });
       switchChain({ chainId: optimism.id });
-      return;
-    }
-    if (!address) {
-      setIsLoading(false);
-      notifyError({
-        title: "Please connect first",
-        message: "No address found.",
-      });
       return;
     }
 
@@ -353,6 +352,14 @@ export const DropdownMenuAdmin = () => {
   };
 
   const handleSetSchema = async () => {
+    if (!address) {
+      setIsLoading(false);
+      notifyError({
+        title: "Please connect first",
+        message: "No address found.",
+      });
+      return;
+    }
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -362,15 +369,6 @@ export const DropdownMenuAdmin = () => {
       switchChain({ chainId: optimism.id });
       return;
     }
-    if (!address) {
-      setIsLoading(false);
-      notifyError({
-        title: "Please connect first",
-        message: "No address found.",
-      });
-      return;
-    }
-
     const response = await setSchema({
       from: address,
       uid: schemaUID as `0x${string}`,
@@ -552,16 +550,16 @@ export const DropdownMenuAdmin = () => {
 
   // Defines the connected user to use the admin menu
   const handleConnectedAddress = async () => {
-    if (chainId !== optimism.id) {
-      notifyError({
-        title: "Unsupported network",
-        message:
-          "Please switch to the supported network to use this application.",
-      });
-      switchChain({ chainId: optimism.id });
-      return;
-    }
     if (address) {
+      if (chainId !== optimism.id) {
+        notifyError({
+          title: "Unsupported network",
+          message:
+            "Please switch to the supported network to use this application.",
+        });
+        switchChain({ chainId: optimism.id });
+        return;
+      }
       const isRoot = await hasRole(ROLES.ROOT, address);
       if (isRoot) setConnectedRole(ROLES.ROOT);
       else {

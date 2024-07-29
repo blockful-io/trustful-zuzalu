@@ -13,17 +13,17 @@ import {
   Slide,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { optimism } from "viem/chains";
 import { useDisconnect } from "wagmi";
 import { useAccount, useSwitchChain } from "wagmi";
 
-import { useNotify } from "@/hooks";
 import { AdminIcon, LogoutIcon } from "@/components/01-atoms";
+import { useNotify } from "@/hooks";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
 import { wagmiConfig } from "@/wagmi";
 
 import { EnsAvatar, EnsName } from "../02-molecules";
-import { optimism } from "viem/chains";
 
 export const DropdownProfile = ({
   isOpenMenu,

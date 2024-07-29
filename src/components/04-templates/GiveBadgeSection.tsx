@@ -22,6 +22,7 @@ import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
+import { optimism } from "viem/chains";
 import { normalize } from "viem/ens";
 import { useAccount, useSwitchChain } from "wagmi";
 
@@ -57,7 +58,6 @@ import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
 
 import { EnsName, EnsAvatar } from "../02-molecules";
-import { optimism } from "viem/chains";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -288,6 +288,7 @@ export const GiveBadgeSection = () => {
       switchChain({ chainId: optimism.id });
       return;
     }
+
     if (!badgeInputAddress) {
       setLoading(false);
       notifyError({

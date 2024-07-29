@@ -17,6 +17,7 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
+import { optimism } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import {
@@ -41,7 +42,6 @@ import {
 import { revoke } from "../../lib/service/revoke";
 import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 import { EnsAvatar, EnsName } from "../02-molecules";
-import { optimism } from "viem/chains";
 
 export const BadgeDetailsSection = () => {
   const { address, chainId } = useAccount();

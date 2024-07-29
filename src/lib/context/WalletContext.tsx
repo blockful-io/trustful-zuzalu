@@ -10,6 +10,7 @@ import React, {
 } from "react";
 
 import { watchAccount } from "@wagmi/core";
+import { optimism } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
@@ -19,7 +20,6 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 import { hasRole } from "@/lib/service/hasRole";
 import { getEllipsedAddress } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
-import { optimism } from "viem/chains";
 
 interface WalletContextProps {
   villagerAttestationCount: number | null;

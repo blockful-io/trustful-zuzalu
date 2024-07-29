@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
+import { optimism } from "viem/chains";
 import { encodeAbiParameters, parseAbiParameters } from "viem/utils";
 import { useAccount, useSwitchChain } from "wagmi";
 
@@ -45,7 +46,6 @@ import {
   getReadableData,
   isBytes32,
 } from "@/utils/formatters";
-import { optimism } from "viem/chains";
 
 export const CheckoutSection = () => {
   const { address, chainId } = useAccount();

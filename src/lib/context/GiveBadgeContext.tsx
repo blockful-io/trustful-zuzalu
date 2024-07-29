@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 
+import { optimism } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
@@ -15,7 +16,6 @@ import { useNotify } from "@/hooks";
 import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { hasRole, getAllAttestationTitles } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
-import { optimism } from "viem/chains";
 
 interface GiveBadgeContextProps {
   badgeInputAddress: EthereumAddress | null;

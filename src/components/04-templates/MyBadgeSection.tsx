@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
+import { optimism } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import {
@@ -19,7 +20,6 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 
 import { type BadgeData } from "../01-atoms/BadgeCard";
 import { type Schema } from "../01-atoms/BadgeCard";
-import { optimism } from "viem/chains";
 
 interface Attestation {
   decodedDataJson: string;
