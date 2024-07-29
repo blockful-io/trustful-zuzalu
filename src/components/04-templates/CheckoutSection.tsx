@@ -26,7 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem/utils";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { CommentIcon, TheFooterNavbar, TheHeader } from "@/components/01-atoms";
 import { useNotify } from "@/hooks";
@@ -45,15 +45,17 @@ import {
   getReadableData,
   isBytes32,
 } from "@/utils/formatters";
+import { optimism } from "viem/chains";
 
 export const CheckoutSection = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
 
   const { villagerAttestationCount, setVillagerAttestationCount } =
     useContext(WalletContext);
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) push("/pre-checkin");
@@ -84,7 +86,15 @@ export const CheckoutSection = () => {
       });
       return;
     }
-
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (!checkInTxId) {
       setLoading(false);
       notifyError({
@@ -193,6 +203,16 @@ export const CheckoutSection = () => {
 
   // Check the user's check-in timestamp
   const handleQuery = async () => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
+
     const queryVariables = {
       where: {
         schemaId: {
@@ -277,7 +297,15 @@ export const CheckoutSection = () => {
       });
       return;
     }
-
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (villagerAttestationCount && villagerAttestationCount > 2) {
       setVillagerAttestationCount(4);
       return;

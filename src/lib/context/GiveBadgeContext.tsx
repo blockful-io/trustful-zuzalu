@@ -8,13 +8,14 @@ import React, {
   useEffect,
 } from "react";
 
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
 import { useNotify } from "@/hooks";
 import { ROLES, ZUVILLAGE_SCHEMAS } from "@/lib/client/constants";
 import { hasRole, getAllAttestationTitles } from "@/lib/service";
 import { EthereumAddress } from "@/lib/shared/types";
+import { optimism } from "viem/chains";
 
 interface GiveBadgeContextProps {
   badgeInputAddress: EthereumAddress | null;
@@ -81,8 +82,9 @@ export const GiveBadgeContextProvider = ({
     });
   }, [badgeInputAddress, addressStep, inputBadgeTitleList, newTitleAdded]);
 
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { notifyError } = useNotify();
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (address) {
@@ -96,6 +98,16 @@ export const GiveBadgeContextProvider = ({
         title: "No account connected",
         message: "Please connect your wallet.",
       });
+      return;
+    }
+
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
       return;
     }
 

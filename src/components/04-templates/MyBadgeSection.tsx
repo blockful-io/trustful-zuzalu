@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import {
   BadgeCard,
@@ -19,6 +19,7 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 
 import { type BadgeData } from "../01-atoms/BadgeCard";
 import { type Schema } from "../01-atoms/BadgeCard";
+import { optimism } from "viem/chains";
 
 interface Attestation {
   decodedDataJson: string;
@@ -34,11 +35,12 @@ interface Attestation {
 }
 
 export const MyBadgeSection: React.FC = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { notifyError } = useNotify();
   const { push } = useRouter();
 
   const { villagerAttestationCount } = useContext(WalletContext);
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -148,6 +150,15 @@ export const MyBadgeSection: React.FC = () => {
     recipient: string | null,
     attestation: string | null,
   ) => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     let queryVariables = {};
     queryVariables = {
       where: {

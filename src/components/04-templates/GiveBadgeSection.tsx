@@ -23,7 +23,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
 import { normalize } from "viem/ens";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -57,6 +57,7 @@ import { getEllipsedAddress, isBytes32 } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
 
 import { EnsName, EnsAvatar } from "../02-molecules";
+import { optimism } from "viem/chains";
 
 export enum GiveBadgeStepAddress {
   INSERT_ADDRESS = "INSERT_ADDRESS",
@@ -65,7 +66,7 @@ export enum GiveBadgeStepAddress {
 }
 
 export const GiveBadgeSection = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
@@ -80,6 +81,7 @@ export const GiveBadgeSection = () => {
     inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
   const { villagerAttestationCount } = useContext(WalletContext);
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -151,6 +153,15 @@ export const GiveBadgeSection = () => {
   }, [inputAddress]);
 
   const handleResolveEns = async () => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (!inputAddress) return;
     if (!/\.eth$/.test(inputAddress)) {
       setBadgeInputAddress(null);
@@ -268,7 +279,15 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (!badgeInputAddress) {
       setLoading(false);
       notifyError({

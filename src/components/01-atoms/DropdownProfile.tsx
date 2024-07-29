@@ -14,14 +14,16 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
+import { useNotify } from "@/hooks";
 import { AdminIcon, LogoutIcon } from "@/components/01-atoms";
 import { ROLES } from "@/lib/client/constants";
 import { hasRole } from "@/lib/service/hasRole";
 import { wagmiConfig } from "@/wagmi";
 
 import { EnsAvatar, EnsName } from "../02-molecules";
+import { optimism } from "viem/chains";
 
 export const DropdownProfile = ({
   isOpenMenu,
@@ -32,9 +34,11 @@ export const DropdownProfile = ({
 }) => {
   const { disconnect } = useDisconnect({ config: wagmiConfig });
   const { push } = useRouter();
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
+  const { notifyError } = useNotify();
 
   const [isRoot, setIsRoot] = useState<boolean>(false);
+  const { switchChain } = useSwitchChain();
 
   //Checks if the user has the `Manager` or `Root` badge
   useEffect(() => {
@@ -43,6 +47,15 @@ export const DropdownProfile = ({
 
   const checkUserRole = async () => {
     if (!address) {
+      return;
+    }
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the supported network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
       return;
     }
     if (await hasRole(ROLES.ROOT, address)) {

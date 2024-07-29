@@ -10,7 +10,7 @@ import React, {
 } from "react";
 
 import { watchAccount } from "@wagmi/core";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { useNotify } from "@/hooks/useNotify";
 import { ZUVILLAGE_SCHEMAS, ROLES } from "@/lib/client/constants";
@@ -19,6 +19,7 @@ import { fetchEASData } from "@/lib/service/fetchEASData";
 import { hasRole } from "@/lib/service/hasRole";
 import { getEllipsedAddress } from "@/utils/formatters";
 import { wagmiConfig } from "@/wagmi";
+import { optimism } from "viem/chains";
 
 interface WalletContextProps {
   villagerAttestationCount: number | null;
@@ -56,11 +57,12 @@ export const WalletContextProvider = ({
     });
   }, [villagerAttestationCount]);
 
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { notifyError, notifySuccess } = useNotify();
   const unwatch = watchAccount(wagmiConfig, {
     onChange() {},
   });
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     // First Time user in page
@@ -87,6 +89,15 @@ export const WalletContextProvider = ({
   const handleQuery = async () => {
     // If the user is ROOT we skip the checkin validation
     if (address) {
+      if (chainId !== optimism.id) {
+        notifyError({
+          title: "Unsupported network",
+          message:
+            "Please switch to the supported network to use this application.",
+        });
+        switchChain({ chainId: optimism.id });
+        return;
+      }
       const isRoot = await hasRole(ROLES.ROOT, address);
       if (isRoot) {
         setVillagerAttestationCount(2);
