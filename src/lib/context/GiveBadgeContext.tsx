@@ -9,8 +9,7 @@ import React, {
 } from "react";
 
 import { optimism } from "viem/chains";
-import { optimism } from "viem/chains";
-import { useAccount, useSwitchChain, useSwitchChain } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
 import { useNotify } from "@/hooks";
@@ -84,9 +83,8 @@ export const GiveBadgeContextProvider = ({
   }, [badgeInputAddress, addressStep, inputBadgeTitleList, newTitleAdded]);
 
   const { switchChain } = useSwitchChain();
-  const { chainId, address, chainId } = useAccount();
+  const { chainId, address } = useAccount();
   const { notifyError } = useNotify();
-  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (address) {
@@ -107,16 +105,7 @@ export const GiveBadgeContextProvider = ({
       notifyError({
         title: "Unsupported network",
         message:
-          "Please switch to the supported network to use this application.",
-      });
-      switchChain({ chainId: optimism.id });
-      return;
-    }
-
-    if (chainId !== optimism.id) {
-      notifyError({
-        title: "Unsupported network",
-        message: "Please switch to Optimism network to use this application.",
+          "Please switch to the Optimism network to use this application.",
       });
       switchChain({ chainId: optimism.id });
       return;

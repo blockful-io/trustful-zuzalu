@@ -154,7 +154,7 @@ export const MyBadgeSection: React.FC = () => {
       notifyError({
         title: "Unsupported network",
         message:
-          "Please switch to the supported network to use this application.",
+          "Please switch to the Optmism network to use this application.",
       });
       switchChain({ chainId: optimism.id });
       return;
