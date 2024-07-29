@@ -8,7 +8,8 @@ import React, {
   useEffect,
 } from "react";
 
-import { useAccount } from "wagmi";
+import { optimism } from "viem/chains";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
 import { useNotify } from "@/hooks";
@@ -81,7 +82,8 @@ export const GiveBadgeContextProvider = ({
     });
   }, [badgeInputAddress, addressStep, inputBadgeTitleList, newTitleAdded]);
 
-  const { address } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const { chainId, address } = useAccount();
   const { notifyError } = useNotify();
 
   useEffect(() => {
@@ -96,6 +98,15 @@ export const GiveBadgeContextProvider = ({
         title: "No account connected",
         message: "Please connect your wallet.",
       });
+      return;
+    }
+
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message: "Please switch to Optimism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
       return;
     }
 
