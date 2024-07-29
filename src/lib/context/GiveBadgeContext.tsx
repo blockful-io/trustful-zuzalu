@@ -84,7 +84,6 @@ export const GiveBadgeContextProvider = ({
 
   const { switchChain } = useSwitchChain();
   const { chainId, address } = useAccount();
-  const { chainId, address } = useAccount();
   const { notifyError } = useNotify();
 
   useEffect(() => {
