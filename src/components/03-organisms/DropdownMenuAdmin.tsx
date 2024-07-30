@@ -87,6 +87,7 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
+    
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -170,6 +171,7 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
+    
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -265,6 +267,7 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
+    
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -360,6 +363,7 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
+    
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -369,6 +373,7 @@ export const DropdownMenuAdmin = () => {
       switchChain({ chainId: optimism.id });
       return;
     }
+    
     const response = await setSchema({
       from: address,
       uid: schemaUID as `0x${string}`,
@@ -560,6 +565,7 @@ export const DropdownMenuAdmin = () => {
         switchChain({ chainId: optimism.id });
         return;
       }
+      
       const isRoot = await hasRole(ROLES.ROOT, address);
       if (isRoot) setConnectedRole(ROLES.ROOT);
       else {
