@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
-import { optimism } from "viem/chains";
 import { useAccount } from "wagmi";
 
 import {
@@ -35,7 +34,7 @@ interface Attestation {
 }
 
 export const MyBadgeSection: React.FC = () => {
-  const { address, chainId } = useAccount();
+  const { address } = useAccount();
   const { notifyError } = useNotify();
   const { push } = useRouter();
 
