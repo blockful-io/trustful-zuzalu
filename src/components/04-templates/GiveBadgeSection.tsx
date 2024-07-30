@@ -153,15 +153,6 @@ export const GiveBadgeSection = () => {
   }, [inputAddress]);
 
   const handleResolveEns = async () => {
-    if (chainId !== optimism.id) {
-      notifyError({
-        title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
-      });
-      switchChain({ chainId: optimism.id });
-      return;
-    }
     if (!inputAddress) return;
     if (!/\.eth$/.test(inputAddress)) {
       setBadgeInputAddress(null);
@@ -279,6 +270,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
+    
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -306,6 +298,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
+    
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
