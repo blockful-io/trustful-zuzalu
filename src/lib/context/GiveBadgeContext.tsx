@@ -104,7 +104,8 @@ export const GiveBadgeContextProvider = ({
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
-        message: "Please switch to Optimism network to use this application.",
+        message:
+          "Please switch to the Optimism network to use this application.",
       });
       switchChain({ chainId: optimism.id });
       return;

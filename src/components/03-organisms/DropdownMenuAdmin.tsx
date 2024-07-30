@@ -16,7 +16,8 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress } from "viem";
-import { useAccount } from "wagmi";
+import { optimism } from "viem/chains";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import { InputAddressUser } from "@/components/02-molecules/";
 import { useNotify } from "@/hooks";
@@ -40,7 +41,7 @@ import {
 } from "@/utils/ui-utils";
 
 export const DropdownMenuAdmin = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { push } = useRouter();
   const { notifyError } = useNotify();
   const toast = useToast();
@@ -59,6 +60,7 @@ export const DropdownMenuAdmin = () => {
   const [schemaUID, setSchemaUID] = useState<string | `0x${string}`>("");
   const [action, setAction] = useState<number>(0);
   const { setNewTitleAdded } = useContext(GiveBadgeContext);
+  const { switchChain } = useSwitchChain();
 
   // Updates the validAddress when the inputAddress changes
   useEffect(() => {
@@ -83,6 +85,16 @@ export const DropdownMenuAdmin = () => {
         title: "Please connect first",
         message: "No address found.",
       });
+      return;
+    }
+    
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
       return;
     }
 
@@ -157,6 +169,16 @@ export const DropdownMenuAdmin = () => {
         title: "Please connect first",
         message: "No address found.",
       });
+      return;
+    }
+    
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
       return;
     }
 
@@ -245,6 +267,16 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
+    
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
 
     const response = await setAttestationTitle({
       from: address,
@@ -331,7 +363,17 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
-
+    
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
+    
     const response = await setSchema({
       from: address,
       uid: schemaUID as `0x${string}`,
@@ -395,6 +437,16 @@ export const DropdownMenuAdmin = () => {
   };
 
   const handleRevokeManagerRole = async () => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
+
     const queryVariables = {
       where: {
         schemaId: {
@@ -504,6 +556,16 @@ export const DropdownMenuAdmin = () => {
   // Defines the connected user to use the admin menu
   const handleConnectedAddress = async () => {
     if (address) {
+      if (chainId !== optimism.id) {
+        notifyError({
+          title: "Unsupported network",
+          message:
+            "Please switch to the Optmism network to use this application.",
+        });
+        switchChain({ chainId: optimism.id });
+        return;
+      }
+      
       const isRoot = await hasRole(ROLES.ROOT, address);
       if (isRoot) setConnectedRole(ROLES.ROOT);
       else {

@@ -22,8 +22,9 @@ import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
+import { optimism } from "viem/chains";
 import { normalize } from "viem/ens";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -65,7 +66,7 @@ export enum GiveBadgeStepAddress {
 }
 
 export const GiveBadgeSection = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const toast = useToast();
   const { push } = useRouter();
   const { notifyError } = useNotify();
@@ -80,6 +81,7 @@ export const GiveBadgeSection = () => {
     inputBadgeTitleList,
   } = useContext(GiveBadgeContext);
   const { villagerAttestationCount } = useContext(WalletContext);
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -268,6 +270,16 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
+    
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
 
     if (!badgeInputAddress) {
       setLoading(false);
@@ -286,6 +298,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
+    
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {

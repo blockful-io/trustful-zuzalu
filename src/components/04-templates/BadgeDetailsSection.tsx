@@ -17,7 +17,8 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
-import { useAccount } from "wagmi";
+import { optimism } from "viem/chains";
+import { useAccount, useSwitchChain } from "wagmi";
 
 import {
   BadgeDetailsNavigation,
@@ -43,7 +44,7 @@ import { OutboundLinkButton } from "../01-atoms/OutboundLink";
 import { EnsAvatar, EnsName } from "../02-molecules";
 
 export const BadgeDetailsSection = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { selectedBadge } = useBadge();
   const toast = useToast();
   const { notifyError } = useNotify();
@@ -51,6 +52,7 @@ export const BadgeDetailsSection = () => {
   const { setSelectedBadge } = useBadge();
 
   const { villagerAttestationCount } = useContext(WalletContext);
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -103,6 +105,15 @@ export const BadgeDetailsSection = () => {
     response: any,
     isConfirm: boolean | null,
   ) => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (response instanceof Error) {
       setLoadingConfirm(false);
       setLoadingDeny(false);
@@ -181,6 +192,16 @@ export const BadgeDetailsSection = () => {
 
   // Submit attestation
   const handleAttest = async (isConfirm: boolean) => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
+
     if (!canProcessAttestation()) return;
 
     const data = encodeAbiParameters(
@@ -207,6 +228,15 @@ export const BadgeDetailsSection = () => {
 
   // Submit revoke
   const handleRevoke = async () => {
+    if (chainId !== optimism.id) {
+      notifyError({
+        title: "Unsupported network",
+        message:
+          "Please switch to the Optmism network to use this application.",
+      });
+      switchChain({ chainId: optimism.id });
+      return;
+    }
     if (!canProcessAttestation()) return;
     const response = await revoke(
       address as `0x${string}`,
