@@ -4,7 +4,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { optimism } from "viem/chains";
-import { useAccount, useSwitchChain } from "wagmi";
+import { useAccount } from "wagmi";
 
 import {
   BadgeCard,
@@ -40,7 +40,6 @@ export const MyBadgeSection: React.FC = () => {
   const { push } = useRouter();
 
   const { villagerAttestationCount } = useContext(WalletContext);
-  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     if (villagerAttestationCount === 0) {
@@ -150,15 +149,6 @@ export const MyBadgeSection: React.FC = () => {
     recipient: string | null,
     attestation: string | null,
   ) => {
-    if (chainId !== optimism.id) {
-      notifyError({
-        title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
-      });
-      switchChain({ chainId: optimism.id });
-      return;
-    }
     let queryVariables = {};
     queryVariables = {
       where: {
