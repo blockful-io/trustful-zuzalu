@@ -142,13 +142,13 @@ export const CheckinSection = () => {
     sessionHost: `0x${string}`,
     sessionName: string,
   ) => {
-    axiosClient
+    return axiosClient
       .post("/createEvent", {
         host: sessionHost,
         description: sessionName,
       })
       .then((res) => {
-        console.log(res);
+        return res.data;
       })
       .catch((err) => {
         setSessionCreationError(err);
@@ -305,7 +305,7 @@ export const CheckinSection = () => {
                   onSubmit={async (e: FormEvent) => {
                     e.preventDefault();
                     setSessionCreationError("");
-                    alert("Creating session");
+
                     setIsLoadingSessionCreation(true);
 
                     const sessionHost = (
@@ -334,10 +334,18 @@ export const CheckinSection = () => {
                       ) as HTMLInputElement
                     ).value;
 
-                    await createSession(
+                    const session = await createSession(
                       sessionHost as `0x${string}`,
                       sessionName,
                     );
+
+                    toast({
+                      position: "top-right",
+                      duration: null,
+                      isClosable: true,
+                      title: "Successfully created Session",
+                      description: `Please share this Session ID with your attendees: ${session.event.id}`,
+                    });
 
                     setIsLoadingSessionCreation(false);
                   }}

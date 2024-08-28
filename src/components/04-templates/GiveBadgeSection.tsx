@@ -270,7 +270,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-    
+
     if (chainId !== optimism.id) {
       notifyError({
         title: "Unsupported network",
@@ -298,7 +298,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-    
+
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
