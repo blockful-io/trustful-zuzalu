@@ -1,3 +1,6 @@
+export const SESSIONS_SERVER_ENDPOINT =
+  "https://hack-georgia-production.up.railway.app";
+
 export const EAS_CONTRACT_OP = "0x4200000000000000000000000000000000000021";
 
 export const RESOLVER_CONTRACT_OP =

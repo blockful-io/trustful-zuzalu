@@ -1,3 +1,10 @@
+export type Event = {
+  host: string;
+  description: string;
+  id: number;
+  accounts: `0x${string}`[];
+};
+
 export class EthereumAddress {
   static readonly ETHEREUM_ADDRESS_LENGTH = 40;
   static readonly pattern = new RegExp(
