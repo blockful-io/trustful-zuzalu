@@ -1,8 +1,8 @@
 import { getWalletClient } from "@wagmi/core";
 import { encodeFunctionData, type TransactionReceipt } from "viem";
 import {
-  sendTransaction,
   estimateGas,
+  sendTransaction,
   waitForTransactionReceipt,
 } from "viem/actions";
 
@@ -24,6 +24,113 @@ export interface AttestationRequest {
   schema: `0x${string}`;
   data: AttestationRequestData;
 }
+
+export type MultiAttestationRequest = AttestationRequest[];
+
+// MAKE SURE TO UPDATE THIS FUNCTION TO HANDLE MULTIPLE ATTESTATIONS
+// export async function submitAttests(
+//   from: `0x${string}`,
+//   schemaUID: `0x${string}`,
+//   attestationRequestData: AttestationRequestData[],
+// ): Promise<TransactionReceipt | Error> {
+//   const walletClient = await getWalletClient(wagmiConfig);
+
+//   const AttestationRequests: MultiAttestationRequest =
+//     attestationRequestData.map((att) => {
+//       return {
+//         schema: schemaUID,
+//         data: att,
+//       };
+//     });
+
+//   const data = encodeFunctionData({
+//     abi: [
+//       {
+//         inputs: [
+//           {
+//             components: [
+//               {
+//                 internalType: "bytes32",
+//                 name: "schema",
+//                 type: "bytes32",
+//               },
+//               {
+//                 components: [
+//                   {
+//                     internalType: "address",
+//                     name: "recipient",
+//                     type: "address",
+//                   },
+//                   {
+//                     internalType: "uint64",
+//                     name: "expirationTime",
+//                     type: "uint64",
+//                   },
+//                   {
+//                     internalType: "bool",
+//                     name: "revocable",
+//                     type: "bool",
+//                   },
+//                   {
+//                     internalType: "bytes32",
+//                     name: "refUID",
+//                     type: "bytes32",
+//                   },
+//                   {
+//                     internalType: "bytes",
+//                     name: "data",
+//                     type: "bytes",
+//                   },
+//                   {
+//                     internalType: "uint256",
+//                     name: "value",
+//                     type: "uint256",
+//                   },
+//                 ],
+//                 internalType: "struct AttestationRequestData[]",
+//                 name: "data",
+//                 type: "tuple[]",
+//               },
+//             ],
+//             internalType: "struct MultiAttestationRequest[]",
+//             name: "multiRequests",
+//             type: "tuple[]",
+//           },
+//         ],
+//         name: "multiAttest",
+//         outputs: [
+//           {
+//             internalType: "bytes32[]",
+//             name: "",
+//             type: "bytes32[]",
+//           },
+//         ],
+//         stateMutability: "payable",
+//         type: "function",
+//       },
+//     ],
+
+//     args: [AttestationRequests],
+//   });
+
+//   try {
+//     const transactionHash = await sendTransaction(walletClient, {
+//       account: from as `0x${string}`,
+//       to: EAS_CONTRACT_OP as `0x${string}`,
+//       data: data,
+//       chain: walletClient.chain,
+//     });
+
+//     const transactionReceipt: TransactionReceipt =
+//       await waitForTransactionReceipt(publicClient, {
+//         hash: transactionHash,
+//       });
+
+//     return transactionReceipt;
+//   } catch (error) {
+//     return Error("Error sending transaction.");
+//   }
+// }
 
 export async function submitAttest(
   from: `0x${string}`,
