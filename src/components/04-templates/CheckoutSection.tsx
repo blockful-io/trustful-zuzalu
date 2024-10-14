@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { encodeAbiParameters, parseAbiParameters } from "viem/utils";
 import { useAccount, useSwitchChain } from "wagmi";
 
@@ -86,13 +86,12 @@ export const CheckoutSection = () => {
       });
       return;
     }
-    if (chainId !== optimism.id) {
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
     if (!checkInTxId) {
@@ -175,7 +174,7 @@ export const CheckoutSection = () => {
             <Text>
               Check-out at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com/tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -203,13 +202,12 @@ export const CheckoutSection = () => {
 
   // Check the user's check-in timestamp
   const handleQuery = async () => {
-    if (chainId !== optimism.id) {
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -297,13 +295,12 @@ export const CheckoutSection = () => {
       });
       return;
     }
-    if (chainId !== optimism.id) {
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
     if (villagerAttestationCount && villagerAttestationCount > 2) {

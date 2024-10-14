@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient } from "viem";
 import { http } from "viem";
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { mainnet } from "viem/chains";
 
 const mainnetRpcUrl = process.env.ALCHEMY_RPC_URL;
@@ -11,12 +11,12 @@ if (!mainnetRpcUrl) {
 }
 
 export const publicClient = createPublicClient({
-  chain: optimism,
+  chain: scroll,
   transport: http(),
 });
 
 export const walletClient = createWalletClient({
-  chain: optimism,
+  chain: scroll,
   transport: http(),
 });
 

@@ -6,7 +6,7 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
-import { EAS_CONTRACT_OP } from "@/lib/client/constants";
+import { EAS_CONTRACT_SCROLL } from "@/lib/client/constants";
 import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
@@ -85,7 +85,7 @@ export async function revoke(
   try {
     gasLimit = estimateGas(publicClient, {
       account: from as `0x${string}`,
-      to: EAS_CONTRACT_OP as `0x${string}`,
+      to: EAS_CONTRACT_SCROLL as `0x${string}`,
       data: data,
       value: revocationRequestData.value,
     });
@@ -96,7 +96,7 @@ export async function revoke(
   try {
     const transactionHash = await sendTransaction(walletClient, {
       account: from as `0x${string}`,
-      to: EAS_CONTRACT_OP as `0x${string}`,
+      to: EAS_CONTRACT_SCROLL as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
       value: revocationRequestData.value,

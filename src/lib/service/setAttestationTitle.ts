@@ -6,7 +6,7 @@ import {
   waitForTransactionReceipt,
 } from "viem/actions";
 
-import { RESOLVER_CONTRACT_OP } from "@/lib/client/constants";
+import { RESOLVER_CONTRACT_SCROLL } from "@/lib/client/constants";
 import { publicClient } from "@/lib/wallet/client";
 import { wagmiConfig } from "@/wagmi";
 
@@ -43,7 +43,7 @@ export async function setAttestationTitle({
   try {
     gasLimit = estimateGas(publicClient, {
       account: from as `0x${string}`,
-      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      to: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       data: data,
       value: value,
     });
@@ -54,7 +54,7 @@ export async function setAttestationTitle({
   try {
     const transactionHash = await sendTransaction(walletClient, {
       account: from as `0x${string}`,
-      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      to: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
       value: value,

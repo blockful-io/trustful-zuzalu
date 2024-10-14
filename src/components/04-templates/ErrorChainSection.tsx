@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { useSwitchChain } from "wagmi";
 
 import { TheHeader } from "@/components/01-atoms";
@@ -43,7 +43,7 @@ export const ErrorChainSection = () => {
               bg: "bg-[#B1EF42]",
             }}
             onClick={() => {
-              switchChain({ chainId: optimism.id });
+              switchChain({ chainId: scroll.id });
               if (isSuccess) {
                 router.push("/");
               }

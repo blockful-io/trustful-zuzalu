@@ -8,7 +8,7 @@ import {
 
 import { wagmiConfig } from "@/wagmi";
 
-import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { RESOLVER_CONTRACT_SCROLL } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
 export async function grantRole({
@@ -44,7 +44,7 @@ export async function grantRole({
   try {
     gasLimit = estimateGas(publicClient, {
       account: from as `0x${string}`,
-      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      to: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       data: data,
       value: msgValue,
     });
@@ -55,7 +55,7 @@ export async function grantRole({
   try {
     const transactionHash = await sendTransaction(walletClient, {
       account: from as `0x${string}`,
-      to: RESOLVER_CONTRACT_OP as `0x${string}`,
+      to: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
       value: msgValue,

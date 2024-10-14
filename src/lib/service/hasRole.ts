@@ -1,6 +1,6 @@
 import { readContract } from "viem/actions";
 
-import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { RESOLVER_CONTRACT_SCROLL } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
 export async function hasRole(
@@ -24,7 +24,7 @@ export async function hasRole(
 
   try {
     const response = await readContract(publicClient, {
-      address: RESOLVER_CONTRACT_OP as `0x${string}`,
+      address: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       functionName: "hasRole",
       abi: data.abi,
       args: [role, account],

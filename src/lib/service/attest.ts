@@ -8,7 +8,7 @@ import {
 
 import { wagmiConfig } from "@/wagmi";
 
-import { EAS_CONTRACT_OP } from "../client/constants";
+import { EAS_CONTRACT_SCROLL } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
 export interface AttestationRequestData {
@@ -85,7 +85,7 @@ export async function submitAttest(
   try {
     gasLimit = await estimateGas(publicClient, {
       account: from as `0x${string}`,
-      to: EAS_CONTRACT_OP as `0x${string}`,
+      to: EAS_CONTRACT_SCROLL as `0x${string}`,
       data: data,
       value: attestationRequestData.value,
     });
@@ -96,7 +96,7 @@ export async function submitAttest(
   try {
     const transactionHash = await sendTransaction(walletClient, {
       account: from as `0x${string}`,
-      to: EAS_CONTRACT_OP as `0x${string}`,
+      to: EAS_CONTRACT_SCROLL as `0x${string}`,
       gasLimit: gasLimit,
       data: data,
       value: attestationRequestData.value,

@@ -1,6 +1,6 @@
 import { readContract } from "viem/actions";
 
-import { RESOLVER_CONTRACT_OP } from "../client/constants";
+import { RESOLVER_CONTRACT_SCROLL } from "../client/constants";
 import { publicClient } from "../wallet/client";
 
 export async function getAllAttestationTitles(): Promise<string[] | Error> {
@@ -18,7 +18,7 @@ export async function getAllAttestationTitles(): Promise<string[] | Error> {
 
   try {
     const response = await readContract(publicClient, {
-      address: RESOLVER_CONTRACT_OP as `0x${string}`,
+      address: RESOLVER_CONTRACT_SCROLL as `0x${string}`,
       functionName: "getAllAttestationTitles",
       abi: data.abi,
       args: [],

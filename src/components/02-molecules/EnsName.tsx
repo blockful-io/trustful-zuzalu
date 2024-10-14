@@ -60,7 +60,7 @@ export const EnsName = ({
         )}
         {externalLink && (
           <OutboundLinkButton
-            label={`https://optimistic.etherscan.io/address/${ensAddress?.address}`}
+            label={`https://scrollscan.com/address/${ensAddress?.address}`}
             svgClassName="cursor-pointer text-center ml-1"
           />
         )}

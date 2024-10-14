@@ -22,7 +22,7 @@ import { watchAccount } from "@wagmi/core";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress, encodeAbiParameters, parseAbiParameters } from "viem";
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { normalize } from "viem/ens";
 import { useAccount, useSwitchChain } from "wagmi";
 
@@ -270,14 +270,13 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-    
-    if (chainId !== optimism.id) {
+
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -298,7 +297,7 @@ export const GiveBadgeSection = () => {
       });
       return;
     }
-    
+
     let encodeParam = "";
     let encodeArgs: string[] = [];
     if (inputBadge.uid === ZUVILLAGE_SCHEMAS.ATTEST_MANAGER.uid) {
@@ -439,7 +438,7 @@ export const GiveBadgeSection = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com/tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"

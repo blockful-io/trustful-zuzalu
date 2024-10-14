@@ -1,7 +1,7 @@
-export const EAS_CONTRACT_OP = "0x4200000000000000000000000000000000000021";
+export const EAS_CONTRACT_SCROLL = "0xC47300428b6AD2c7D03BB76D05A176058b47E6B0";
 
-export const RESOLVER_CONTRACT_OP =
-  "0x000000000A83e04396e0B5a101BE093625816cb0";
+export const RESOLVER_CONTRACT_SCROLL =
+  "0xeD4544F10D347e326140dBB869b6f4120DAf2c7B";
 
 export enum ROLES {
   ROOT = "0x79e553c6f53701daa99614646285e66adb98ff0fcc1ef165dd2718e5c873bee6",
@@ -18,25 +18,25 @@ export interface Schemas {
 
 export const ZUVILLAGE_SCHEMAS: { [key: string]: Schemas } = {
   ATTEST_MANAGER: {
-    uid: "0xe7ab13111393053093b6c9b7c9e4d938b389f282b6a55d5f476a3831d9c7b963",
+    uid: "0x3f7ab1b49d993220e928f71da02745eeeabe5bce53308ba9f47416fe0a0abfc4",
     data: "string role",
     revocable: true,
     allowedRole: [ROLES.ROOT],
   },
   ATTEST_VILLAGER: {
-    uid: "0x7e7356f449e9238c4b2d2b4ba18a00c7cc1604e5828a8442cf781bd9d625ae32",
+    uid: "0x622181707fd9d196c9212d09db8788e3b46945304a4b9e7cbc55b4e179602a62",
     data: "string status",
     revocable: false,
     allowedRole: [ROLES.MANAGER],
   },
   ATTEST_EVENT: {
-    uid: "0xa3912c0b67e505ae37ecba65247528d1d2119ce34eee9dcdd916619a9d3463f6",
+    uid: "0xeb6ab1d8bc235579023101a04b1a9e240d4f756e6137b8389e5c54b049ad6972",
     data: "string title,string comment",
     revocable: false,
     allowedRole: [ROLES.VILLAGER],
   },
   ATTEST_RESPONSE: {
-    uid: "0xdb0dc5f4ee2b90d684d787cd109e526823c80587e8a477c5a8fafd13b6fd9ae1",
+    uid: "0x57cb29f73b0ff46e40261932c9a1f5aef91c9098ede3d449f4de7ee43089b988",
     data: "bool status",
     revocable: true,
     allowedRole: [ROLES.VILLAGER],
@@ -80,4 +80,4 @@ export const ZUVILLAGE_BADGE_TITLES: BadgeTitle[] = [
 ];
 
 export const ALCHEMY_PUBLIC_RPC =
-  "https://opt-mainnet.g.alchemy.com/v2/8G0MHGw9nt_PBkot5GcmxLNdQgRaW_DN";
+  "https://scroll-mainnet.g.alchemy.com/v2/jPLttZWzT9-vo0yJD945MbH7QzS8gSd9";

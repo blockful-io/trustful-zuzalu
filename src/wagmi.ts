@@ -12,7 +12,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import type { Transport } from "viem";
 import { createConfig, http } from "wagmi";
-import { optimism } from "wagmi/chains";
+import { scroll } from "wagmi/chains";
 
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -42,11 +42,11 @@ const connectors = connectorsForWallets(
 );
 
 const transports: Record<number, Transport> = {
-  [optimism.id]: http(),
+  [scroll.id]: http(),
 };
 
 export const wagmiConfig = createConfig({
-  chains: [optimism],
+  chains: [scroll],
   connectors,
   transports,
   ssr: true,

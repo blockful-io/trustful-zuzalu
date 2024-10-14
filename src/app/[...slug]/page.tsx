@@ -3,7 +3,7 @@
 
 import { useEffect } from "react";
 
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import {
@@ -27,18 +27,18 @@ export default function renderPage({ params }: { params: { slug: [string] } }) {
 
   useEffect(() => {
     if (address) {
-      if (chainId !== optimism.id) {
+      if (chainId !== scroll.id) {
         notifyError({
           title: "Unsupported network",
           message:
-            "Please switch to the Optmism network to use this application.",
+            "Please switch to the Scroll network to use this application.",
         });
-        switchChain({ chainId: optimism.id });
+        switchChain({ chainId: scroll.id });
       }
     }
   }, [chainId]);
 
-  if (chainId === optimism.id) {
+  if (chainId === scroll.id) {
     switch (params.slug[0]) {
       case "pre-checkin":
         return <PreCheckinSection />;

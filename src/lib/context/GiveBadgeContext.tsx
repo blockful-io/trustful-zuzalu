@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from "react";
 
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { GiveBadgeStepAddress } from "@/components/04-templates/GiveBadgeSection";
@@ -101,13 +101,12 @@ export const GiveBadgeContextProvider = ({
       return;
     }
 
-    if (chainId !== optimism.id) {
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optimism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
