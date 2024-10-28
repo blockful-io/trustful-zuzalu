@@ -7,7 +7,7 @@ export async function fetchEASData(query: any, variables: any) {
       "Content-Type": "application/json",
     };
     const response = await axios.post(
-      "https://optimism.easscan.org/graphql",
+      "https://scroll.easscan.org/graphql",
       {
         query,
         variables,

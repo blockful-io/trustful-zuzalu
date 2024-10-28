@@ -16,7 +16,7 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { isAddress } from "viem";
-import { optimism } from "viem/chains";
+import { scroll } from "viem/chains";
 import { useAccount, useSwitchChain } from "wagmi";
 
 import { InputAddressUser } from "@/components/02-molecules/";
@@ -87,14 +87,13 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
-    
-    if (chainId !== optimism.id) {
+
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -147,7 +146,7 @@ export const DropdownMenuAdmin = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com//tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -171,14 +170,13 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
-    
-    if (chainId !== optimism.id) {
+
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -244,7 +242,7 @@ export const DropdownMenuAdmin = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com//tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -267,14 +265,13 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
-    
-    if (chainId !== optimism.id) {
+
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -326,7 +323,7 @@ export const DropdownMenuAdmin = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com/tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -363,17 +360,16 @@ export const DropdownMenuAdmin = () => {
       });
       return;
     }
-    
-    if (chainId !== optimism.id) {
+
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the  network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
-    
+
     const response = await setSchema({
       from: address,
       uid: schemaUID as `0x${string}`,
@@ -420,7 +416,7 @@ export const DropdownMenuAdmin = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${response.transactionHash}`}
+                href={`https://scrollscan.com/tx/${response.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -437,13 +433,12 @@ export const DropdownMenuAdmin = () => {
   };
 
   const handleRevokeManagerRole = async () => {
-    if (chainId !== optimism.id) {
+    if (chainId !== scroll.id) {
       notifyError({
         title: "Unsupported network",
-        message:
-          "Please switch to the Optmism network to use this application.",
+        message: "Please switch to the Scroll network to use this application.",
       });
-      switchChain({ chainId: optimism.id });
+      switchChain({ chainId: scroll.id });
       return;
     }
 
@@ -539,7 +534,7 @@ export const DropdownMenuAdmin = () => {
             <Text>
               Badge sent at tx:{" "}
               <Link
-                href={`https://optimistic.etherscan.io/tx/${transactionResponse.transactionHash}`}
+                href={`https://scrollscan.com/tx/${transactionResponse.transactionHash}`}
                 isExternal
                 color="white"
                 textDecoration="underline"
@@ -556,16 +551,16 @@ export const DropdownMenuAdmin = () => {
   // Defines the connected user to use the admin menu
   const handleConnectedAddress = async () => {
     if (address) {
-      if (chainId !== optimism.id) {
+      if (chainId !== scroll.id) {
         notifyError({
           title: "Unsupported network",
           message:
-            "Please switch to the Optmism network to use this application.",
+            "Please switch to the Scroll network to use this application.",
         });
-        switchChain({ chainId: optimism.id });
+        switchChain({ chainId: scroll.id });
         return;
       }
-      
+
       const isRoot = await hasRole(ROLES.ROOT, address);
       if (isRoot) setConnectedRole(ROLES.ROOT);
       else {
