@@ -1,4 +1,4 @@
-# Trustful-ZuVillage
+# Trustful Zuzalu Villages
 
 ## It's time to break the reputation silos. Trustful is coming!
 
